@@ -1,16 +1,16 @@
 #pragma once
 enum CAttribute {
-	BULGOGI,
-	SOURCE,
-	CHESSE,
-	VEGAT,
-	BREAD
+	E_BULGOGI,
+	E_SOURCE,
+	E_CHESSE,
+	E_VEGAT,
+	E_BREAD
 };
 
 enum CType {
-	Attack,
-	Deffence,
-	Magic
+	E_Attack,
+	E_Deffence,
+	E_Magic
 };
 
 class Card
@@ -20,5 +20,6 @@ protected:
 	int Rdc;
 	CAttribute Ait;
 	CType Type;
+public:
+	Card();
 };
-
