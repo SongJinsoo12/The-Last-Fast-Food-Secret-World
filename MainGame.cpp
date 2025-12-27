@@ -1,20 +1,22 @@
 #include "MainGame.h"
 
 MainGame::MainGame() {
-	gold = 0;
-	stage = 0;
+	Coin = 0;
+	LargeStage = 1;
+	SmallStage = 1;
+	CardBox = 0;
 }
 
 void MainGame::AddGold(int v) {
-	gold += v;
+	Coin += v;
 }
 
 void MainGame::RemoveGold(int v) {
-	gold -= v;
-	if (gold <= 0)
-		gold = 0;
+	Coin -= v;
+	if (Coin <= 0)
+		Coin = 0;
 }
 
 int MainGame::GetStage() {
-	return stage;
+	return LargeStage, SmallStage;
 }
