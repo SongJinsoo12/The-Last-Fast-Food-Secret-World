@@ -11,12 +11,13 @@ public:
 	CardGacha();
 	virtual ~CardGacha();
 
-	//ÀüÃ¼Ä«µåÁß 1ÀåÀ» ¸®ÅÏ / »çÀÌÁî´Â Å¬·¡½º³» º¯¼ö·Î ÀúÀåÇØµÎ±â
+	//ì „ì²´ì¹´ë“œì¤‘ 1ì¥ì„ ì¸ë²¤ì—ì €ì¥ / ì‚¬ì´ì¦ˆëŠ” í´ë˜ìŠ¤ë‚´ ë³€ìˆ˜ë¡œ ì €ì¥í•´ë‘ê¸°
 	void One(DeckBuilding& p_deck);
-	//ÀüÃ¼Ä«µå Áß 10ÀåÀ» ¸®ÅÏ
+	//ì „ì²´ì¹´ë“œ ì¤‘ 10ì¥ì„ ì¸ë²¤ì—ì €ì¥
 	void Ten(DeckBuilding& p_deck);
 	void GetGacha(bool isOne, DeckBuilding& p_deck);
 
 	void DrawGacha(HDC p_hdc, DeckBuilding p_deck, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[]);
 };
+
 
