@@ -8,3 +8,4 @@ Stats::Stats() {
 int Stats::GetHP() {
 	return health;
 }
+
