@@ -14,24 +14,24 @@ BOOL InCircle(int x, int y, int mx, int my);
 class DeckBuilding : public Stats
 {
 private:
-	//ÇöÀç µ¦
+	//í˜„ì¬ ë±
 	vector<Card> myDeck;
-	//º¸À¯ÇÑ Ä«µåµé
+	//ë³´ìœ í•œ ì¹´ë“œë“¤
 	vector<Card> inven;
 
-	//ÀÓ½Ã ÀüÃ¼Ä«µåÇ®/////////////////////
+	//ì„ì‹œ ì „ì²´ì¹´ë“œí’€/////////////////////
 	Card* allcard = new Card[AllCARDMAXSIZE];
 
 public:
 	DeckBuilding()
 	{
 		
-		//±âº»»çÀÌÁî ¼¼ÆÃ ÈÄ ÁÂÇ¥ ÃÊ±âÈ­
+		//ê¸°ë³¸ì‚¬ì´ì¦ˆ ì„¸íŒ… í›„ ì¢Œí‘œ ì´ˆê¸°í™”
 		myDeck.resize(10);
 		for (int i = 0; i < 10; i++)
 		{
-			int x = i % 5, y = i / 5;		//ÇÑ È­¸é¿¡ °¡·Î5°³, ¼¼·Î5°³
-			myDeck[i].SetCard(CType(rand() % 3), x * 150 + 50, y * 150 + 50, i);	//(val * °£°İ + Á© (¿Ş/À§)ÂÊÀ¸·ÎºÎÅÍÀÇ ¿©¹é)
+			int x = i % 5, y = i / 5;		//í•œ í™”ë©´ì— ê°€ë¡œ5ê°œ, ì„¸ë¡œ5ê°œ
+			myDeck[i].SetCard(CType(rand() % 3), x * 150 + 50, y * 150 + 50, i);	//(val * ê°„ê²© + ì ¤ (ì™¼/ìœ„)ìª½ìœ¼ë¡œë¶€í„°ì˜ ì—¬ë°±)
 		}
 
 		for (int i = 0; i < 256; i++)
@@ -42,7 +42,7 @@ public:
 
 	virtual ~DeckBuilding()
 	{
-		//Æ÷ÀÎÅÍÇØÁ¦ Å¸ÀÌ¹Ö¿¡ ¹®Á¦ÀÖ´Âµí µå·Î¿ìµ¦Á¾·á½Ã ¿¡·¯
+		//í¬ì¸í„°í•´ì œ íƒ€ì´ë°ì— ë¬¸ì œìˆëŠ”ë“¯ ë“œë¡œìš°ë±ì¢…ë£Œì‹œ ì—ëŸ¬
 			//delete[] allcard;
 	}
 
@@ -59,16 +59,16 @@ public:
 		return allcard;
 	}
 
-	//ÀÎº¥->µ¦ (µ¦, ¸¶¿ì½ºX, ¸¶¿ì½ºY)
+	//ì¸ë²¤->ë± (ë±, ë§ˆìš°ìŠ¤X, ë§ˆìš°ìŠ¤Y)
 	void ItoD(DeckBuilding& p_deck, int p_mx, int p_my);
-	//µ¦->ÀÎº¥ (µ¦, ¸¶¿ì½ºX, ¸¶¿ì½ºY)
+	//ë±->ì¸ë²¤ (ë±, ë§ˆìš°ìŠ¤X, ë§ˆìš°ìŠ¤Y)
 	void DtoI(DeckBuilding& p_deck, int p_mx, int p_my);
 	void DeckBuild(DeckBuilding& p_deck, int p_mx, int p_my);
 
-	//ÀÎº¥Åä¸® Ãâ·Â
+	//ì¸ë²¤í† ë¦¬ ì¶œë ¥
 	void DrawInventory(HDC p_hdc, DeckBuilding p_deck, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[]);
-	//¸¶ÀÌµ¦ Ãâ·Â
+	//ë§ˆì´ë± ì¶œë ¥
 	void DrawMyDeck(HDC p_hdc, DeckBuilding p_deck, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[]);
-	//µ¦ºôµù È­¸é Ãâ·Â
+	//ë±ë¹Œë”© í™”ë©´ ì¶œë ¥
 	void DrawDeckBuild(HDC p_hdc, DeckBuilding p_deck, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[]);
 };
