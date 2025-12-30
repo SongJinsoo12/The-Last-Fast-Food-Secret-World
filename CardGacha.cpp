@@ -28,7 +28,7 @@ void CardGacha::Ten(DeckBuilding& p_deck)
 
 void CardGacha::GetGacha(bool isOne, DeckBuilding & p_deck)
 {
-	//ºĞ±â³ª´²¼­ 1Â÷ or 10Â÷ ³ª´©±â
+	//ë¶„ê¸°ë‚˜ëˆ ì„œ 1ì°¨ or 10ì°¨ ë‚˜ëˆ„ê¸°
 	if (isOne)
 	{
 		//RemoveGold(10);
@@ -42,7 +42,7 @@ void CardGacha::GetGacha(bool isOne, DeckBuilding & p_deck)
 
 void CardGacha::DrawGacha(HDC p_hdc, DeckBuilding p_deck, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[])
 {
-	//»ÌÀºÄ«µå Ãâ·ÂÇÏ°Ô ¼öÁ¤ÇÒ°Í///////////////////
+	//ë½‘ì€ì¹´ë“œ ì¶œë ¥í•˜ê²Œ ìˆ˜ì •í• ê²ƒ///////////////////
 	for (int i = 0; i < draw_card.size(); i++)
 	{
 		Rectangle(p_hdc, draw_card[i].x - 15, draw_card[i].y - 30, draw_card[i].x + 15, draw_card[i].y + 30);
@@ -55,7 +55,7 @@ void CardGacha::DrawGacha(HDC p_hdc, DeckBuilding p_deck, HPEN p_hpen, HPEN p_ol
 	}
 	Rectangle(p_hdc, 300, 600, 600, 670);
 	SelectObject(p_hdc, p_oldpen);
-	DeleteObject(p_hpen);	//Ææ»ı¼º / Ææ¿ø»óº¹±¸
+	DeleteObject(p_hpen);	//íœìƒì„± / íœì›ìƒë³µêµ¬
 
 	if (InCircle(950, 635, p_mx, p_my))
 	{
@@ -64,7 +64,7 @@ void CardGacha::DrawGacha(HDC p_hdc, DeckBuilding p_deck, HPEN p_hpen, HPEN p_ol
 	}
 	Rectangle(p_hdc, 800, 600, 1100, 670);
 	SelectObject(p_hdc, p_oldpen);
-	DeleteObject(p_hpen);	//Ææ»ı¼º / Ææ¿ø»óº¹±¸
+	DeleteObject(p_hpen);	//íœìƒì„± / íœì›ìƒë³µêµ¬
 
 	TextOut(p_hdc, 450, 635, TEXT("1"), 1);
 	TextOut(p_hdc, 950, 635, TEXT("10"), 2);
