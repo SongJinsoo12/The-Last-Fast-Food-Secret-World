@@ -23,15 +23,8 @@ protected:
 	CType Type;
 public:
 	//
-	int x, y, num;
+	int x, y, id;
 
 public:
 	Card();
-
-	//카드정보 초기화(카드X, 카드Y, 카드구분용번호)
-	void SetCard(CType p_type, int p_x, int p_y, int p_num)
-	{
-		this->Type = p_type;
-		this->x = p_x, this->y = p_y, this->num = p_num;
-	}
 };
