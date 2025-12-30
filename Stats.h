@@ -25,3 +25,4 @@ template <typename T>
 class Player :public Stats {
 
 };
+
