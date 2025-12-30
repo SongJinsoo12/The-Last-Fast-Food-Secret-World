@@ -1,17 +1,18 @@
 #pragma once
+#include "Card.h"
+#include "macroNum.h"
 
-template <typename T>
 class Stats
 {
-private:
+protected:
 	const int generalMaxHealth = 100;
 
 	int health;
 	int turn;
 
 	const int maxCard = 26;
-	T deck[maxCard];
-	T card[maxCard];
+	Card deck[DECKMAXSIZE];
+	Card card[26];
 	
 public:
 	bool isTurn = false;
@@ -21,7 +22,6 @@ public:
 };
 
 template <typename T>
-class Player :public Stats<T> {
+class Player :public Stats {
 
 };
-

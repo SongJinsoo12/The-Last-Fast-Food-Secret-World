@@ -1,12 +1,10 @@
 #include "Stats.h"
 
-template <typename T>
-Stats<T>::Stats() {
+Stats::Stats() {
 	health = generalMaxHealth;
 	turn = 0;
 }
 
-template <typename T>
-int Stats<T>::GetHP() {
+int Stats::GetHP() {
 	return health;
 }
