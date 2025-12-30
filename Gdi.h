@@ -48,24 +48,7 @@ public:
 			}
 		}
 	}
-
-	void RemoveObject(const wstring& path)
-	{
-		for (int i = 0; i < items.size(); i++)
-		{
-			if (items[i].path == path)
-			{
-				items.erase(items.begin() + i);
-			}
-		}
-	}
-
-	void MoveObject(const wstring& path, int dx, int dy)
-	{
-		RenderItem item = FindItem(path);
-		RemoveObject(item.path);
-		AddObject(item.path, item.x + dx, item.y + dy, item.w, item.h);
-	}
 };
+
 
 
