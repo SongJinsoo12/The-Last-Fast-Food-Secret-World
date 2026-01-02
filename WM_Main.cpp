@@ -1,4 +1,5 @@
 #include <windows.h>										// 헤더
+#include <iostream>
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 HINSTANCE g_hInst;											// 인스턴스 핸들
@@ -6,6 +7,15 @@ LPCTSTR lpszClass = TEXT("Secret World");					// 제목 표시줄에 표시
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
+	#ifdef _DEBUG
+	if (AllocConsole()) {
+		FILE* fp;
+		freopen_s(&fp, "CONOUT$", "w", stdout);
+		freopen_s(&fp, "CONOUT$", "w", stderr); // 에러 출력도 콘솔로
+		std::ios::sync_with_stdio(); // cout과 printf를 섞어 쓸 때 유용
+	}
+#endif
+	
 	HWND hWnd;												// 윈도우 핸들 선언
 	MSG Message;											// 메시지 구조체 변수 선언
 	WNDCLASS WndClass;										// Windows Class 구조체 변수 선언
