@@ -1,94 +1,124 @@
 #include "stage.h"
 #include "item.h"
 #include "MainGame.h"
-//#include gold.h"?
 
 
-GetLargeStage() 
-GetSmallStage() 
+//int Stage::GL_Stage(MainGame & game) { return L_stage = game.GetLargeStage(); } XXXX
 
+//int Stage::GS_Stage(MainGame & game) { return S_stage = game.GetLargeStage(); }XXXX
+
+
+
+//GetSmallStage() 
+
+
+//void Stage::BindGame(MainGame* game)
+//{
+//    this->game = game;
+//}
+
+//MainGame.h SetStage() <-?
 
 bool Stage::GameStart() {
     //GetStage();
-    largeStage = 1;
-    smallStage = 1;
+    S_stage = 1;
+    L_stage = 1;
+    GameState = E_START;
     return true;
 }
-bool Stage::TutorialStart() {
-    return true;
+bool TutorialStage::CheckTutorial() {
+    if (L_stage <= 3 && S_stage <= 3)
+    {
+        //Maingame.h GameStage = E_TUTORIAL;?
+        return IsTutorial = true;
+    }
+    else
+    {
+        return IsTutorial = false;
+    }
 }
 
 int Stage::setgold() {
-    if (GetSmallStage() % 5 == 0)
-        return largeStage * GetSmallStage() * 100; //º¸½º
-    return largeStage * smallStage * 50; // Àâ¸÷
+    if (S_stage % 5 == 0)
+        return L_stage * S_stage * 100; //ë³´ìŠ¤
+    return L_stage * S_stage * 50; // ìž¡ëª¹
 }
 
-void Stage::Init(int large, int small)
-{
-    largeStage = large;
-    smallStage = small;
+//
+//{
+// ì¹´ë“œë°•ìŠ¤ ë“œë¡­ í•¨ìˆ˜?
+//}
+
+//void Stage::Init(int large, int small)
+//{
+//    L_Stage = large;
+//    smallStage = small;
+//}
+
+bool Stage::IsBossStage(const MainGame & game) {
+    //return S_stage == 5;
 }
 
-bool Stage::IsBossStage( const MainGame& game) {
-    return game.GetLargeStage() == 6 && game.GetSmallStage() == 5;
-}
+CType TutorialStage::TutorialCard() {
+    if (IsTutorial)
+        if (L_stage == 1 && S_stage == 1)
+            return E_Attack;
 
-CType Stage::TutorialCard() {
-        if (largeStage = 1 && smallStage == 1)
-           return  E_Attack;
-        
-        if (largeStage == 1 && smallStage == 2)
-            return E_Deffence;
-        
-        if (largeStage == 1 && smallStage == 3)
-            return E_Magic;
-        
-    // Ä«µå.h enum
+    if (L_stage == 1 && S_stage == 2)
+        return E_Deffence;
+
+    if (L_stage == 1 && S_stage == 3)
+        return E_Magic;
+
+    // ì¹´ë“œ.h enum
 }
 
 bool Stage::StageStart() {
     return true;
 }
 
-bool Stage::StageClear(bool isMonsterDead, MainGame& game) {
+bool Stage::StageClear(bool isMonsterDead) {
 
 
-    if (!isMonsterDead) //¸ó½ºÅÍ hp = 0 ¶Ç´Â ¸ó½ºÅÍ ºñÈ°¼ºÈ­
+    if (!isMonsterDead) //ëª¬ìŠ¤í„° hp = 0 ë˜ëŠ” ëª¬ìŠ¤í„° ë¹„í™œì„±í™”ì¼ë•Œ ê±°ì§“
     {
+        GameState = E_PVP;
         return false;
     }
     else
     {
-        if (largeStage == 6 && smallStage == 5)
-            
+        GameState = E_STAGE_CLEAR; // ì„±ê³µ ì‹œ
+        if (L_stage == 6 && S_stage == 5) //ì›”ë“œ 6-5
+            //
 
-        if (smallStage !=5)
-        smallStage++;
-        else
-        {
-            largeStage++;
-            smallStage = 1;
-        }
+            if (S_stage != 5)
+                S_stage++;
+            else
+            {
+                L_stage++;
+                S_stage = 1;
+            }
     }
-    game.AddGold(setgold());
+
+    AddGold(setgold());
     return true;
 
 }
 
 bool Stage::GameClear() {
-   
+
 }
 
 bool Stage::GameOver(bool isPlayerDead) {
 
-    if (!isPlayerDead) { //ÇÃ·¹ÀÌ¾î hp = 0
+    if (!isPlayerDead) { //í”Œë ˆì´ì–´ hp = 0
 
         return false;
     }
     else
     {
-        largeStage = -1;
+        GameState = E_GAMEOVER;
+        //L_stage = -1;
         return true;
     }
 }
