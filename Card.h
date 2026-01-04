@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <Windows.h>
 using namespace std;
 
 enum CAttribute {
@@ -29,26 +30,31 @@ public:
 	//카드 위치
 	int x;
 	int y;
-	////드래그
-	//bool drag;
 };
 
 //덱 및 패
-class Deck
+class CardManager
 {
 public:
-	Deck();
-	~Deck();
+	CardManager();
+	~CardManager();
 
 	int GetDeckCount();
 	int GetHandCount();
 	vector<Card> GetHand();
 	void CardDraw();
 	bool TurnEnd();
+	void CardAct();
+
+	void DrawLine(HDC hdc, int startX, int startY, int lengthX, int lengthY);
+	void DrawBG(HDC hdc, RECT rect, int cardX, int cardY);
+	void DrawDeckCount(HDC hdc,  int rtX, int rtY, int cardX, int cardY);
+	void DrawHand(HDC hdc, int rtX, int rtY, int cardX, int cardY);
+	void HandSelect(WPARAM wParam);
 
 private:
-	int deckCount;//덱 장수
-	int handCount;//패 장수
+	unsigned int deckCount;//덱 장수
+	unsigned int handCount;//패 장수
+	int handSelection;//패 카드 선택
 	vector<Card> hand; //패 카드
 };
-
