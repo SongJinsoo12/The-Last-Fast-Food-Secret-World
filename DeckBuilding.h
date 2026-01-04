@@ -9,6 +9,9 @@
 #include "macroNum.h"
 
 using namespace std;
+
+#define BSIZE 25
+double LenghtPts(int x1, int y1, int x2, int y2);
 BOOL InCircle(int x, int y, int mx, int my);
 
 class DeckBuilding

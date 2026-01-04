@@ -1,8 +1,10 @@
 #pragma once
 #include "DeckBuilding.h"
 #include "MainGame.h"
+#include "macroNum.h"
+#include "Shop.h"
 
-class CardGacha
+class CardGacha : public Shop
 {
 private:
 	vector<Card> draw_card;

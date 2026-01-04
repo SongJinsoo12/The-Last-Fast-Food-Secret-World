@@ -1,5 +1,22 @@
 #include "DeckBuilding.h"
 
+double LenghtPts(int x1, int y1, int x2, int y2)
+{
+	return sqrt((float)((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)));
+}
+
+BOOL InCircle(int x, int y, int mx, int my)
+{
+	if (LenghtPts(x, y, mx, my) < BSIZE)
+	{
+		return TRUE;
+	}
+	else
+	{
+		return FALSE;
+	}
+}
+
 int DeckBuilding::GetSize()
 {
 	return this->inven.size();
@@ -84,7 +101,7 @@ void DeckBuilding::DrawInventory(HDC p_hdc, DeckBuilding p_deck, HPEN p_hpen, HP
 		SelectObject(p_hdc, p_oldpen);
 		DeleteObject(p_hpen);	//Ææ»ý¼º / Ææ¿ø»óº¹±¸
 
-		wsprintf(p_text, TEXT("%d"), p_deck.inven[i].num);
+		wsprintf(p_text, TEXT("%d"), p_deck.inven[i].id);
 		TextOut(p_hdc, p_deck.inven[i].x - 10, p_deck.inven[i].y, p_text, lstrlen(p_text));
 	}
 }
@@ -106,7 +123,7 @@ void DeckBuilding::DrawMyDeck(HDC p_hdc, DeckBuilding p_deck, HPEN p_hpen, HPEN 
 		SelectObject(p_hdc, p_oldpen);
 		DeleteObject(p_hpen);	//Ææ»ý¼º / Ææ¿ø»óº¹±¸
 
-		wsprintf(p_text, TEXT("%d"), p_deck.myDeck[i].num);
+		wsprintf(p_text, TEXT("%d"), p_deck.myDeck[i].id);
 		TextOut(p_hdc, p_deck.myDeck[i].x - 10, p_deck.myDeck[i].y, p_text, lstrlen(p_text));
 	}
 }

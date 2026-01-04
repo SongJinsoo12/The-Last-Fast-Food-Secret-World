@@ -1,5 +1,4 @@
 #include "CardGacha.h"
-#include "macroNum.h"
 
 void CardGacha::one(DeckBuilding& p_deck)
 {
@@ -42,31 +41,34 @@ void CardGacha::GetGacha(bool isOne, DeckBuilding& p_deck)
 
 void CardGacha::DrawGacha(HDC p_hdc, DeckBuilding p_deck, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[])
 {
-	//뽑은카드 출력하게 수정할것///////////////////
-	for (int i = 0; i < draw_card.size(); i++)
+	if (isSelect)
 	{
-		Rectangle(p_hdc, draw_card[i].x - 15, draw_card[i].y - 30, draw_card[i].x + 15, draw_card[i].y + 30);
-	}
+		//뽑은카드 출력하게 수정할것///////////////////
+		for (int i = 0; i < draw_card.size(); i++)
+		{
+			Rectangle(p_hdc, draw_card[i].x - 15, draw_card[i].y - 30, draw_card[i].x + 15, draw_card[i].y + 30);
+		}
 
-	//1뽑 버튼
-	if (InCircle(1217, 465, p_mx, p_my))
-	{
-		p_hpen = CreatePen(PS_SOLID, 5, RGB(0, 255, 0));
-		p_oldpen = (HPEN)SelectObject(p_hdc, p_hpen);
-	}
-	Rectangle(p_hdc, 1050, 430, 1400, 500);
-	SelectObject(p_hdc, p_oldpen);
-	DeleteObject(p_hpen);	//펜생성 / 펜원상복구
-	TextOut(p_hdc, 1213, 465, TEXT("1 - 14G"), 7);
+		//1뽑 버튼
+		if (InCircle(1217, 465, p_mx, p_my))
+		{
+			p_hpen = CreatePen(PS_SOLID, 5, RGB(0, 255, 0));
+			p_oldpen = (HPEN)SelectObject(p_hdc, p_hpen);
+		}
+		Rectangle(p_hdc, 1050, 430, 1400, 500);
+		SelectObject(p_hdc, p_oldpen);
+		DeleteObject(p_hpen);	//펜생성 / 펜원상복구
+		TextOut(p_hdc, 1213, 465, TEXT("1 - 14G"), 7);
 
-	//10뽑 버튼
-	if (InCircle(1210, 565, p_mx, p_my))
-	{
-		p_hpen = CreatePen(PS_SOLID, 5, RGB(0, 255, 0));
-		p_oldpen = (HPEN)SelectObject(p_hdc, p_hpen);
+		//10뽑 버튼
+		if (InCircle(1210, 565, p_mx, p_my))
+		{
+			p_hpen = CreatePen(PS_SOLID, 5, RGB(0, 255, 0));
+			p_oldpen = (HPEN)SelectObject(p_hdc, p_hpen);
+		}
+		Rectangle(p_hdc, 1050, 530, 1400, 600);
+		SelectObject(p_hdc, p_oldpen);
+		DeleteObject(p_hpen);	//펜생성 / 펜원상복구
+		TextOut(p_hdc, 1200, 565, TEXT("10 - 139G"), 9);
 	}
-	Rectangle(p_hdc, 1050, 530, 1400, 600);
-	SelectObject(p_hdc, p_oldpen);
-	DeleteObject(p_hpen);	//펜생성 / 펜원상복구
-	TextOut(p_hdc, 1200, 565, TEXT("10 - 139G"), 9);
 }
