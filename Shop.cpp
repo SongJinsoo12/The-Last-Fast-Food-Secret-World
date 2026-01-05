@@ -1,32 +1,43 @@
 #include "Shop.h"
 
-//»óÀÚ¸¦ ¼±ÅÃÇÔ
+//ìƒìë¥¼ ì„ íƒí•¨
 void Shop::SelectChest(int p_mx, int p_my)
 {
 	for (int i = 0; i < 6; i++)
 	{
 		if (InCircle(chest[i].x, chest[i].y, p_mx, p_my))
 		{
-			this->isSelect = true;
-			this->selectedChest = chest[i];	//ÁÂÇ¥°ª¿¡ µû¶ó »óÀÚ¼±ÅÃÇÏ±â
-			printf("%d¹ø »óÀÚ ¼±ÅÃ\n", selectedChest.GetChestID());
+			this->isSelect = TRUE;
+			this->selectedChest = chest[i];	//ì¢Œí‘œê°’ì— ë”°ë¼ ìƒìì„ íƒí•˜ê¸°
+			printf("%dë²ˆ ìƒì ì„ íƒ\n", selectedChest.GetChestID());
 			return;
 		}
 	}
 }
 
+BOOL Shop::CheckIsSelection()
+{
+	if (this->isSelect) return TRUE;
+	else return FALSE;
+}
+
+void Shop::CancelSeletion()
+{
+	this->isSelect = FALSE;
+}
+
 void Shop::DrawShop(HDC p_hdc, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[])
 {
-	//»óÀÚ Á¤º¸ ÇÏÀÌ¶óÀÌÆ® Ãâ·Â¿ë
+	//ìƒì ì •ë³´ í•˜ì´ë¼ì´íŠ¸ ì¶œë ¥ìš©
 	RoundRect(p_hdc, 50, 500, 550, 700, 100, 100);
-	if (isSelect)
+	if (this->isSelect)
 	{
 		for (int i = 0; i < 4; i++)
 		{
-			wsprintf(p_text, TEXT("%d¼º - %d%%"), i + 1, selectedChest.GetProb(i));
+			wsprintf(p_text, TEXT("%dì„± - %d%%"), i + 1, selectedChest.GetProb(i));
 			if (i == 3)
 			{
-				wsprintf(p_text, TEXT("¸¶¹ı - %d%%"), selectedChest.GetProb(i));
+				wsprintf(p_text, TEXT("ë§ˆë²• - %d%%"), selectedChest.GetProb(i));
 			}
 			TextOut(p_hdc, 100 + i * 100,  675, p_text, lstrlen(p_text));
 		}
@@ -44,13 +55,13 @@ void Shop::DrawShop(HDC p_hdc, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, W
 		Polygon(p_hdc, tjsqks, 12);
 	}
 
-	//»óÀÚµé Ãâ·Â
+	//ìƒìë“¤ ì¶œë ¥
 	for (int i = 0; i < 6; i++)
 	{
 		Rectangle(p_hdc, chest[i].x - 25, chest[i].y - 25, chest[i].x + 25, chest[i].y + 25);
 		wsprintf(p_text, TEXT("%d"), chest[i].GetChestID());
 		TextOut(p_hdc, chest[i].x, chest[i].y, p_text, lstrlen(p_text));
 	}
-	wsprintf(p_text, TEXT("»óÁ¡"));
+	wsprintf(p_text, TEXT("ìƒì "));
 	TextOut(p_hdc, 200, 25, p_text, lstrlen(p_text));
 }
