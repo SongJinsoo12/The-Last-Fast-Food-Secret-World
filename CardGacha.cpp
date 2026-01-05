@@ -25,9 +25,10 @@ void CardGacha::ten(DeckBuilding& p_deck)
 	p_deck.PushCard(out, 10);
 }
 
+//ë½‘ê¸°ë¥¼ í•¨(TRUE-1ë½‘ / FALSE-10ë½‘, ë½‘ì€ì¹´ë“œë¥¼ ì €ì¥í•  ë³€ìˆ˜)
 void CardGacha::GetGacha(bool isOne, DeckBuilding& p_deck)
 {
-	//ºĞ±â³ª´²¼­ 1Â÷ or 10Â÷ ³ª´©±â
+	//ë¶„ê¸°ë‚˜ëˆ ì„œ 1ì°¨ or 10ì°¨ ë‚˜ëˆ„ê¸°
 	if (isOne)
 	{
 		//RemoveGold(10);
@@ -39,36 +40,35 @@ void CardGacha::GetGacha(bool isOne, DeckBuilding& p_deck)
 	}
 }
 
-void CardGacha::DrawGacha(HDC p_hdc, DeckBuilding p_deck, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[])
+void CardGacha::DrawGacha(HDC p_hdc, DeckBuilding p_deck, int p_price, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[])
 {
-	if (isSelect)
+	//ë½‘ì€ì¹´ë“œ ì¶œë ¥í•˜ê²Œ ìˆ˜ì •í• ê²ƒ///////////////////
+	for (int i = 0; i < draw_card.size(); i++)
 	{
-		//»ÌÀºÄ«µå Ãâ·ÂÇÏ°Ô ¼öÁ¤ÇÒ°Í///////////////////
-		for (int i = 0; i < draw_card.size(); i++)
-		{
-			Rectangle(p_hdc, draw_card[i].x - 15, draw_card[i].y - 30, draw_card[i].x + 15, draw_card[i].y + 30);
-		}
-
-		//1»Ì ¹öÆ°
-		if (InCircle(1217, 465, p_mx, p_my))
-		{
-			p_hpen = CreatePen(PS_SOLID, 5, RGB(0, 255, 0));
-			p_oldpen = (HPEN)SelectObject(p_hdc, p_hpen);
-		}
-		Rectangle(p_hdc, 1050, 430, 1400, 500);
-		SelectObject(p_hdc, p_oldpen);
-		DeleteObject(p_hpen);	//Ææ»ı¼º / Ææ¿ø»óº¹±¸
-		TextOut(p_hdc, 1213, 465, TEXT("1 - 14G"), 7);
-
-		//10»Ì ¹öÆ°
-		if (InCircle(1210, 565, p_mx, p_my))
-		{
-			p_hpen = CreatePen(PS_SOLID, 5, RGB(0, 255, 0));
-			p_oldpen = (HPEN)SelectObject(p_hdc, p_hpen);
-		}
-		Rectangle(p_hdc, 1050, 530, 1400, 600);
-		SelectObject(p_hdc, p_oldpen);
-		DeleteObject(p_hpen);	//Ææ»ı¼º / Ææ¿ø»óº¹±¸
-		TextOut(p_hdc, 1200, 565, TEXT("10 - 139G"), 9);
+		//Rectangle(p_hdc, draw_card[i].x - 15, draw_card[i].y - 30, draw_card[i].x + 15, draw_card[i].y + 30);
 	}
+
+	//1ë½‘ ë²„íŠ¼
+	if (InCircle(850, 635, p_mx, p_my))
+	{
+		p_hpen = CreatePen(PS_SOLID, 5, RGB(0, 255, 0));
+		p_oldpen = (HPEN)SelectObject(p_hdc, p_hpen);
+	}
+	Rectangle(p_hdc, 700, 615, 1000, 685);
+	SelectObject(p_hdc, p_oldpen);
+	DeleteObject(p_hpen);	//íœìƒì„± / íœì›ìƒë³µêµ¬
+	wsprintf(p_text, TEXT("1ê°œ - %dG"), p_price);
+	TextOut(p_hdc, 830, 645, p_text, lstrlen(p_text));
+
+	//10ë½‘ ë²„íŠ¼
+	if (InCircle(1200, 635, p_mx, p_my))
+	{
+		p_hpen = CreatePen(PS_SOLID, 5, RGB(0, 255, 0));
+		p_oldpen = (HPEN)SelectObject(p_hdc, p_hpen);
+	}
+	Rectangle(p_hdc, 1050, 615, 1350, 685);
+	SelectObject(p_hdc, p_oldpen);
+	DeleteObject(p_hpen);	//íœìƒì„± / íœì›ìƒë³µêµ¬
+	wsprintf(p_text, TEXT("10ê°œ - %dG"), p_price * 9);
+	TextOut(p_hdc, 1170, 645, p_text, lstrlen(p_text));
 }
