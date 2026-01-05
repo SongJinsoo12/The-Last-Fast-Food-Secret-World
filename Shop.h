@@ -2,12 +2,13 @@
 #include "MainGame.h"
 #include "DeckBuilding.h"
 
-//»óÀÚÀÇ Á¤º¸¸¦ ´ãÀ½(È®·ü, ÁÂÇ¥)
+//ìƒìì˜ ì •ë³´ë¥¼ ë‹´ìŒ(í™•ë¥ , ì¢Œí‘œ)
 class Chest
 {
 private:
-	int probability[4];			//1¼º / 2¼º / 3¼º / ¸¶¹ı º° µîÀåÈ®·ü º¯¼ö(ÃÑÇÕ100)
+	int probability[4];			//1ì„± / 2ì„± / 3ì„± / ë§ˆë²• ë³„ ë“±ì¥í™•ë¥  ë³€ìˆ˜(ì´í•©100)
 	int id;
+	int price;
 public:
 	int x, y;
 
@@ -21,26 +22,23 @@ public:
 
 	}
 
-	//»óÀÚ±¸º°¿ëid / 1¼º / 2¼º / 3¼º / ¸¶¹ı º° µîÀåÈ®·ü ÁöÁ¤(È®·üÃÑÇÕ100, µîÀå¾ÈÇÏ¸é 0)
-	void SetChest(int p_id, int p_1Star = 0, int p_2Star = 0, int p_3Star = 0, int p_magic = 0)
+	//ìƒìêµ¬ë³„ìš©id / 1ìƒì ê°€ê²© / 1ì„± / 2ì„± / 3ì„± / ë§ˆë²• ë³„ ë“±ì¥í™•ë¥  ì§€ì •(í™•ë¥ ì´í•©100, ë“±ì¥ì•ˆí•˜ë©´ 0)
+	void SetChest(int p_id, int p_price, int p_1Star, int p_2Star, int p_3Star, int p_magic)
 	{
 		int chance_check = p_1Star + p_2Star + p_3Star + p_magic;
-		//ÃÑÇÕ 100ÀÌ ¾Æ´Ò½Ã ¼³Á¤Ãë¼Ò
+		//ì´í•© 100ì´ ì•„ë‹ì‹œ ì„¤ì •ì·¨ì†Œ
 		if (chance_check != 100)
 		{
 			return;
 		}
 
-		probability[0] = p_1Star;
-		probability[1] = p_2Star;
-		probability[2] = p_3Star;
-		probability[3] = p_magic;
-
-		id = p_id;
+		probability[0] = p_1Star; probability[1] = p_2Star;
+		probability[2] = p_3Star; probability[3] = p_magic;
+		id = p_id, price = p_price;
 		return;
 	}
 
-	//¿øÇÏ´Â È®·ü ÇÏ³ª¸¦ ¸®ÅÏÇÔ
+	//ì›í•˜ëŠ” í™•ë¥  í•˜ë‚˜ë¥¼ ë¦¬í„´í•¨
 	int GetProb(int p_idx)
 	{
 		return probability[p_idx];
@@ -50,36 +48,40 @@ public:
 	{
 		return id;
 	}
+
+	int GetPrice()
+	{
+		return this->price;
+	}
+
+	void SetInctroducing(string p_text)
+	{
+
+	}
 };
 
 class Shop
 {
-protected:
-	BOOL isSelect = FALSE;			//ÇÏÀÌ¶óÀÌÆ®µÉ »óÀÚ¸¦ ¼±ÅÃÇß´Â°¡
-
 private:
-	Chest chest[6];					//ÀüÃ¼ »óÀÚ
-	Chest selectedChest;			//¼±ÅÃµÈ »óÀÚ
+	Chest chest[6];					//ì „ì²´ ìƒì
+	Chest selectedChest;			//ì„ íƒëœ ìƒì
+	BOOL isSelect = FALSE;			//í•˜ì´ë¼ì´íŠ¸ë  ìƒìë¥¼ ì„ íƒí–ˆëŠ”ê°€
 public:
 	Shop()
 	{
 		srand(time(NULL));
-		//»óÀÚ À§Ä¡ ¼³Á¤ÇØÁÜ
-		chest[0].x = 875, chest[0].y = 250;
-		chest[1].x = 1025, chest[1].y = 250;
-		chest[2].x = 1175, chest[2].y = 250;
-		chest[3].x = 875, chest[3].y = 250 + 200;
-		chest[4].x = 1025, chest[4].y = 250 + 200;
-		chest[5].x = 1175, chest[5].y = 250 + 200;
 
-		for (int i = 0; i < 6; i++)
+		for (int i = 0; i < 6; i++)//0 1 2 3 4 5
 		{
-			//Å×½ºÆ®¿ë ·£´ıÈ®·üÁöÁ¤
+			//í…ŒìŠ¤íŠ¸ìš© ëœë¤í™•ë¥ ì§€ì •
 			int hund = 101, v1 = 0, v2 = 0, v3 = 0, v4 = 0;
 			v1 = rand() % hund, hund -= v1;	//v1 = 0~100 -> 12, hund = 88
 			v2 = rand() % hund, hund -= v2;//v2 = 0~88 -> 20, hund = 68
 			v3 = rand() % hund, hund -= v3, v4 = hund - 1;//v3 = 0~68 -> 40, hund = 28
-			chest[i].SetChest(i, v1, v2, v3, v4);
+			chest[i].SetChest(i, rand() % 100, v1, v2, v3, v4);
+
+			//ìƒì ìœ„ì¹˜ ì„¤ì •í•´ì¤Œ
+			chest[i].x = 875 + (i % 3) * 150, chest[i].y = 250 + (i / 3) * 200;
 		}
 	}
 	virtual ~Shop()
@@ -87,8 +89,14 @@ public:
 
 	}
 
-	//»óÀÚ¸¦ ¼±ÅÃÇÔ
+	//ìƒìë¥¼ ì„ íƒí•¨
 	void SelectChest(int p_mx, int p_my);
+	int GetSelectedPrice()
+	{
+		return selectedChest.GetPrice();
+	}
+	BOOL CheckIsSelection();
+	void CancelSeletion();
 
 	void DrawShop(HDC p_hdc, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[]);
 };
