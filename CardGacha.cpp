@@ -8,7 +8,9 @@ void CardGacha::one(DeckBuilding& p_deck)
 	int x = invensize % 5, y = invensize / 5;
 	out.x = x * 150 + 750, out.y = y * 150 + 50;
 	p_deck.PushCard(&out, 1);
-	return;
+	
+	draw_card.resize(1);
+	draw_card[0] = out;
 }
 
 void CardGacha::ten(DeckBuilding& p_deck)
@@ -18,37 +20,62 @@ void CardGacha::ten(DeckBuilding& p_deck)
 	Card* all = p_deck.GetAllCard();
 	for (int i = 0; i < 10; i++)
 	{
-		out[i] = all[rand() % AllCARDMAXSIZE];
+		out[i] = all[(rand() % AllCARDMAXSIZE - 10) + 10];
 		int x = (invensize + i) % 5, y = (invensize + i) / 5;
 		out[i].x = x * 150 + 750, out[i].y = y * 150 + 50;
 	}
 	p_deck.PushCard(out, 10);
+
+	draw_card.resize(10);
+	for (int i = 0; i < 10; i++)
+	{
+		draw_card[i] = out[i];
+	}
 }
 
-//ë½‘ê¸°ë¥¼ í•¨(TRUE-1ë½‘ / FALSE-10ë½‘, ë½‘ì€ì¹´ë“œë¥¼ ì €ì¥í•  ë³€ìˆ˜)
-void CardGacha::GetGacha(bool isOne, DeckBuilding& p_deck)
+//»Ì±â¸¦ ÇÔ(TRUE-1»Ì / FALSE-10»Ì, »ÌÀºÄ«µå¸¦ ÀúÀåÇÒ º¯¼ö)
+void CardGacha::GetGacha(bool isOne, DeckBuilding& p_deck, MainGame& p_mg, Chest p_selChest)
 {
-	//ë¶„ê¸°ë‚˜ëˆ ì„œ 1ì°¨ or 10ì°¨ ë‚˜ëˆ„ê¸°
+	int remove_gold = p_selChest.GetPrice();
+	//ºĞ±â³ª´²¼­ 1Â÷ or 10Â÷ ³ª´©±â
 	if (isOne)
 	{
-		//RemoveGold(10);
+		if (!p_mg.RemoveGold(remove_gold))
+		{
+			this->isGachaFailed = true;
+		}
 		one(p_deck);
 	}
 	else if (!isOne)
 	{
+		if (!p_mg.RemoveGold(remove_gold * 9))
+		{
+			this->isGachaFailed = true;
+		}
 		ten(p_deck);
 	}
 }
 
-void CardGacha::DrawGacha(HDC p_hdc, DeckBuilding p_deck, int p_price, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[])
+void CardGacha::InGacha()
 {
-	//ë½‘ì€ì¹´ë“œ ì¶œë ¥í•˜ê²Œ ìˆ˜ì •í• ê²ƒ///////////////////
-	for (int i = 0; i < draw_card.size(); i++)
-	{
-		//Rectangle(p_hdc, draw_card[i].x - 15, draw_card[i].y - 30, draw_card[i].x + 15, draw_card[i].y + 30);
-	}
+	int size = draw_card.size();
 
-	//1ë½‘ ë²„íŠ¼
+	if (size == 1)
+	{
+		draw_card[0].x = 700, draw_card[0].y = 350;
+	}
+	else if (size == 10)
+	{
+		for (int i = 0; i < size; i++)
+		{
+			draw_card[i].x = (i % 5) * 250 + 200, draw_card[i].y = (i / 5) * 250 + 200;
+		}
+	}
+}
+
+void CardGacha::DrawGachaButton(HDC p_hdc, DeckBuilding p_deck, Chest p_selChest, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[])
+{
+	//1»Ì ¹öÆ°
 	if (InCircle(850, 635, p_mx, p_my))
 	{
 		p_hpen = CreatePen(PS_SOLID, 5, RGB(0, 255, 0));
@@ -56,11 +83,11 @@ void CardGacha::DrawGacha(HDC p_hdc, DeckBuilding p_deck, int p_price, HPEN p_hp
 	}
 	Rectangle(p_hdc, 700, 615, 1000, 685);
 	SelectObject(p_hdc, p_oldpen);
-	DeleteObject(p_hpen);	//íœìƒì„± / íœì›ìƒë³µêµ¬
-	wsprintf(p_text, TEXT("1ê°œ - %dG"), p_price);
+	DeleteObject(p_hpen);	//Ææ»ı¼º / Ææ¿ø»óº¹±¸
+	wsprintf(p_text, TEXT("1°³ - %dG"), p_selChest.GetPrice());
 	TextOut(p_hdc, 830, 645, p_text, lstrlen(p_text));
 
-	//10ë½‘ ë²„íŠ¼
+	//10»Ì ¹öÆ°
 	if (InCircle(1200, 635, p_mx, p_my))
 	{
 		p_hpen = CreatePen(PS_SOLID, 5, RGB(0, 255, 0));
@@ -68,7 +95,26 @@ void CardGacha::DrawGacha(HDC p_hdc, DeckBuilding p_deck, int p_price, HPEN p_hp
 	}
 	Rectangle(p_hdc, 1050, 615, 1350, 685);
 	SelectObject(p_hdc, p_oldpen);
-	DeleteObject(p_hpen);	//íœìƒì„± / íœì›ìƒë³µêµ¬
-	wsprintf(p_text, TEXT("10ê°œ - %dG"), p_price * 9);
+	DeleteObject(p_hpen);	//Ææ»ı¼º / Ææ¿ø»óº¹±¸
+	wsprintf(p_text, TEXT("10°³ - %dG"), p_selChest.GetPrice() * 9);
 	TextOut(p_hdc, 1170, 645, p_text, lstrlen(p_text));
+
+	if (this->isGachaFailed)
+	{
+		TextOut(p_hdc, 50, 500, TEXT("µ·ÀÌ ºÎÁ·ÇÕ´Ï´Ù."), 10);
+	}
+}
+
+void CardGacha::DrawGacha(HDC p_hdc, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[])
+{
+	//»ÌÀºÄ«µå Ãâ·ÂÇÏ°Ô ¼öÁ¤ÇÒ°Í///////////////////
+	for (int i = 0; i < draw_card.size(); i++)
+	{
+		Rectangle(p_hdc, draw_card[i].x - 45, draw_card[i].y - 75, draw_card[i].x + 45, draw_card[i].y + 75);
+		wsprintf(p_text, TEXT("%d"), draw_card[i].id);
+		TextOut(p_hdc, draw_card[i].x - 2, draw_card[i].y, p_text, lstrlen(p_text));
+	}
+
+	wsprintf(p_text, TEXT("¿ŞÂÊ»ó´ÜÀÇ »óÁ¡ ¹öÆ°À» ´­·¯ µ¹¾Æ°¡±â"));
+	TextOut(p_hdc, 690, 650, p_text, lstrlen(p_text));
 }
