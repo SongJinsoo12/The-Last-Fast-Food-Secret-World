@@ -46,7 +46,7 @@ void CardManager::CardDraw()
 	handCount++;
 
 	//임시
-	Card temp; 
+	Card temp;
 	hand.push_back(temp);
 }
 
@@ -61,7 +61,7 @@ void CardManager::DrawLine(HDC hdc, int startX, int startY, int lengthX, int len
 void CardManager::DrawBG(HDC hdc, RECT rect, int cardX, int cardY)
 {
 	//화면 중간값 및 카드 길이 중간값
-	int midX = rect.right * 0.5; 
+	int midX = rect.right * 0.5;
 	int midY = rect.bottom * 0.5;
 	int cardMidX = cardX * 0.5;
 
@@ -118,9 +118,9 @@ void CardManager::DrawHand(HDC hdc, int rtX, int rtY, int cardX, int cardY, bool
 		return;
 
 	int midX = rtX * 0.5;
-	int handMidX = midX - (cardX * 2) - (cardX * 0.5); 
+	int handMidX = midX - (cardX * 2) - (cardX * 0.5);
 	//패 전체 길이는 임시로 카드 5장 길이로 설정
-	int sliceHand = (cardX * 5) / handCount; 
+	int sliceHand = (cardX * 5) / handCount;
 
 	//패가 5장 보다 적을 시
 	if (handCount < 5)
@@ -163,14 +163,14 @@ void CardManager::HandSelect(WPARAM wParam, CardManager& opponent, HWND hWnd)
 			return;
 		handSelection++;
 		break;
-	//임시 카드 내기 버튼
+		//임시 카드 내기 버튼
 	case VK_RETURN:
 		//자신의 턴이 아니면 행동 불가능
 		if (!isMyTurn)
 			return;
 		CardAct(opponent, hWnd);
 		break;
-	//임시 카드 드로우 버튼
+		//임시 카드 드로우 버튼
 	case VK_DOWN:
 		break;
 	default:
@@ -198,6 +198,7 @@ void CardManager::CardAct(CardManager& opponent, HWND hWnd)
 	this->isMyTurn = !this->isMyTurn;
 	opponent.isMyTurn = !opponent.isMyTurn;
 	SetTimer(hWnd, TURNTIME, 7000, NULL);
+	cout << "턴 교체\n";
 }
 
 //시작 턴 정하기
@@ -208,19 +209,26 @@ void CardManager::StartTurn(CardManager& player, CardManager& opponent)
 	randTurn = cookRandom(gen);
 
 	if (randTurn % 2 == 0)
+	{
 		player.isMyTurn = !player.isMyTurn;
+		cout << "자신의 턴\n";
+	}
 	else
+	{
 		opponent.isMyTurn = !opponent.isMyTurn;
+		cout << "상대방의 턴\n";
+	}
+		
 }
 
 //턴 시간 제한
-void CardManager::TimeLimit(WPARAM wParam, CardManager& opponent, HWND hWnd, LPCWSTR text, LPCWSTR caption, UINT type)
+void CardManager::TimeLimit(WPARAM wParam, CardManager& opponent)
 {
 	switch (wParam)
 	{
 	case TURNTIME:
 		//임시 메시지 박스
-		MessageBox(hWnd, text, caption, type);
+		cout << "턴 교체\n";
 
 		//턴 엔드
 		this->isMyTurn = !this->isMyTurn;
