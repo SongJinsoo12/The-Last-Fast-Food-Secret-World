@@ -1,5 +1,16 @@
 #include <windows.h>										// 헤더
 #include "Card.h"
+#include "RenderManager.h"
+#include "ImageLoad.h"
+#include "ImageManager.h"
+
+#include "Card.h"
+#include "CardTableManager.h"
+
+
+
+
+
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 HINSTANCE g_hInst;											// 인스턴스 핸들
@@ -49,22 +60,27 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 }
 
 CardManager g_player, g_enemy;
+GameImage_M::RenderManager g_renderManager; // 프로시저 위 생성
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
-	HDC hdc;
+	HDC hdc, memDC;
 	PAINTSTRUCT ps;
+	HBITMAP hOldBitmap;
 	static RECT rt;
 
 	switch (iMessage) {
 	case WM_CREATE:
+		g_renderManager.SetImage(L"arceus.png", "Arceus", Rect(0, 0, 245, 342), Rect(100, 100, 245, 342));
+
 		GetClientRect(hWnd, &rt);
-		g_player.StartTurn(g_player, g_enemy);
+		g_player.StartTurn(g_player, g_enemy, hWnd);
 		SetTimer(hWnd, TURNTIME, 7000, NULL);
 		return 0;
 
 	case WM_TIMER:
-		g_player.TimeLimit(wParam, g_enemy);
+		g_player.TimeLimit(wParam, g_enemy, hWnd);
+		InvalidateRect(hWnd, NULL, TRUE);
 		return 0;
 
 	case WM_KEYDOWN:
@@ -72,7 +88,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		InvalidateRect(hWnd, NULL, TRUE);
 		return 0;
 	case WM_PAINT:
+	{
 		hdc = BeginPaint(hWnd, &ps);
+
+		memDC = CreateCompatibleDC(hdc);
+		hOldBitmap = (HBITMAP)SelectObject(memDC, CreateCompatibleBitmap(hdc, rt.right, rt.bottom));
+
+		Graphics graphics(memDC);
+		graphics.Clear(Color(255, 255, 255, 255));
+
+		g_renderManager.RenderAll(&graphics);
+
+		BitBlt(hdc, 0, 0, rt.right, rt.bottom, memDC, 0, 0, SRCCOPY);
+
+		DeleteObject(SelectObject(memDC, hOldBitmap));
+		DeleteDC(memDC);
 
 		g_player.DrawBG(hdc, rt, 61, 85);
 		g_player.DrawDeckCount(hdc, rt.right, rt.bottom, -30, -42);
@@ -81,8 +111,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		g_player.DrawHand(hdc, rt.right, rt.bottom - 105, 61, 85, true);
 		g_enemy.DrawHand(hdc, rt.right, rt.top, 61, 85, false);
 
+
+
+		//CardTableManager* manager = CardTableManager::Instnace()->GetCardData();
+		//manager->GetCardData();
+		Card* card = CardTableManager::Instnace()->GetCardData(0);
+
+		GameCard* gcard = new GameCard(card);
+
+		
+
 		EndPaint(hWnd, &ps);
 		return 0;
+		}
 
 	case WM_DESTROY: // 윈도우 종료 시(창 닫음 메시지)
 		PostQuitMessage(0); // 메시지 큐에 종료 메시지 전달
