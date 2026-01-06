@@ -1,4 +1,4 @@
-#include <windows.h>										// í—¤ë”
+#include <windows.h>										// Çì´õ
 #include <iostream>
 #include <memory>
 #include "DeckBuilding.h"
@@ -10,8 +10,8 @@
 #include "ImageLoad.h"
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-HINSTANCE g_hInst;											// ì¸ìŠ¤í„´ìŠ¤ í•¸ë“¤
-LPCTSTR lpszClass = TEXT("Secret World");					// ì œëª© í‘œì‹œì¤„ì— í‘œì‹œ
+HINSTANCE g_hInst;											// ÀÎ½ºÅÏ½º ÇÚµé
+LPCTSTR lpszClass = TEXT("Secret World");					// Á¦¸ñ Ç¥½ÃÁÙ¿¡ Ç¥½Ã
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
@@ -19,41 +19,41 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	if (AllocConsole()) {
 		FILE* fp;
 		freopen_s(&fp, "CONOUT$", "w", stdout);
-		freopen_s(&fp, "CONOUT$", "w", stderr); // ì—ëŸ¬ ì¶œë ¥ë„ ì½˜ì†”ë¡œ
-		std::ios::sync_with_stdio(); // coutê³¼ printfë¥¼ ì„ì–´ ì“¸ ë•Œ ìœ ìš©
+		freopen_s(&fp, "CONOUT$", "w", stderr); // ¿¡·¯ Ãâ·Âµµ ÄÜ¼Ö·Î
+		std::ios::sync_with_stdio(); // cout°ú printf¸¦ ¼¯¾î ¾µ ¶§ À¯¿ë
 	}
 #endif
 
-	HWND hWnd;												// ìœˆë„ìš° í•¸ë“¤ ì„ ì–¸
-	MSG Message;											// ë©”ì‹œì§€ êµ¬ì¡°ì²´ ë³€ìˆ˜ ì„ ì–¸
-	WNDCLASS WndClass;										// Windows Class êµ¬ì¡°ì²´ ë³€ìˆ˜ ì„ ì–¸
-	g_hInst = hInstance;									// hInstanceê°’ì„ ì™¸ë¶€ì—ì„œë„ ì‚¬ìš©ë˜ê²Œ ì „ì—­ ë³€ìˆ˜ì— ì €ì¥
+	HWND hWnd;												// À©µµ¿ì ÇÚµé ¼±¾ğ
+	MSG Message;											// ¸Ş½ÃÁö ±¸Á¶Ã¼ º¯¼ö ¼±¾ğ
+	WNDCLASS WndClass;										// Windows Class ±¸Á¶Ã¼ º¯¼ö ¼±¾ğ
+	g_hInst = hInstance;									// hInstance°ªÀ» ¿ÜºÎ¿¡¼­µµ »ç¿ëµÇ°Ô Àü¿ª º¯¼ö¿¡ ÀúÀå
 
-	WndClass.cbClsExtra = 0;								// ì˜ˆì•½ ì˜ì—­, ì§€ê¸ˆ ì‚¬ìš© x
-	WndClass.cbWndExtra = 0;								// ì˜ˆì•½ ì˜ì—­
-	WndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);	// ë°°ê²½ ìƒ‰ ì§€ì •
-	WndClass.hCursor = LoadCursor(NULL, IDC_ARROW);			// ë§ˆìš°ìŠ¤ í¬ì¸í„° ëª¨ì–‘ ì§€ì •
-	WndClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);		// ì»¤ì„œ ì•„ì´ì½˜ ì§€ì •
-	WndClass.hInstance = hInstance;							// í´ë˜ìŠ¤ ë“±ë¡í•˜ëŠ” í”„ë¡œê·¸ë¨ ë²ˆí˜¸
-	WndClass.lpfnWndProc = WndProc;							// ë©”ì‹œì§€ ì²˜ë¦¬ í•¨ìˆ˜ ì§€ì •
-	WndClass.lpszClassName = lpszClass;						// í´ë˜ìŠ¤ ì´ë¦„ ì§€ì •
-	WndClass.lpszMenuName = NULL;							// ë©”ë‰´ ì§€ì •
-	WndClass.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;		// ìŠ¤íƒ€ì¼ ì •ì˜
+	WndClass.cbClsExtra = 0;								// ¿¹¾à ¿µ¿ª, Áö±İ »ç¿ë x
+	WndClass.cbWndExtra = 0;								// ¿¹¾à ¿µ¿ª
+	WndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);	// ¹è°æ »ö ÁöÁ¤
+	WndClass.hCursor = LoadCursor(NULL, IDC_ARROW);			// ¸¶¿ì½º Æ÷ÀÎÅÍ ¸ğ¾ç ÁöÁ¤
+	WndClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);		// Ä¿¼­ ¾ÆÀÌÄÜ ÁöÁ¤
+	WndClass.hInstance = hInstance;							// Å¬·¡½º µî·ÏÇÏ´Â ÇÁ·Î±×·¥ ¹øÈ£
+	WndClass.lpfnWndProc = WndProc;							// ¸Ş½ÃÁö Ã³¸® ÇÔ¼ö ÁöÁ¤
+	WndClass.lpszClassName = lpszClass;						// Å¬·¡½º ÀÌ¸§ ÁöÁ¤
+	WndClass.lpszMenuName = NULL;							// ¸Ş´º ÁöÁ¤
+	WndClass.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;		// ½ºÅ¸ÀÏ Á¤ÀÇ
 
 	RegisterClass(&WndClass);
 
-	hWnd = CreateWindow(lpszClass, lpszClass, // ìœˆë„ìš° ìƒì„±
+	hWnd = CreateWindow(lpszClass, lpszClass, // À©µµ¿ì »ı¼º
 		WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
 		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT
 		/*100,100,500,500*/, NULL, (HMENU)NULL, hInstance, NULL);
 
 	ShowWindow(hWnd, nCmdShow);
 
-	while (GetMessage(&Message, NULL, 0, 0)) { //Queueì— ìˆëŠ” ë©”ì‹œì§€ ì½ì–´ë“¤ì„
-		TranslateMessage(&Message); // í‚¤ë³´ë“œ ì…ë ¥ ë©”ì‹œì§€ ê°€ê³µ
-		DispatchMessage(&Message); // ë©”ì‹œì§€ ì²˜ë¦¬
+	while (GetMessage(&Message, NULL, 0, 0)) { //Queue¿¡ ÀÖ´Â ¸Ş½ÃÁö ÀĞ¾îµéÀÓ
+		TranslateMessage(&Message); // Å°º¸µå ÀÔ·Â ¸Ş½ÃÁö °¡°ø
+		DispatchMessage(&Message); // ¸Ş½ÃÁö Ã³¸®
 	}
-	return (int)Message.wParam; // íƒˆì¶œ ì½”ë“œ, í”„ë¡œê·¸ë¨ ì¢…ë£Œ
+	return (int)Message.wParam; // Å»Ãâ ÄÚµå, ÇÁ·Î±×·¥ Á¾·á
 }
 
 GameImage_M::RenderManager g_renderManager;
@@ -69,11 +69,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static MainGame mg;
 	static RECT rt;
 	static RECT a;
-	static HPEN hPen, oldPen;		//íœì •ë³´
-	static int screen = -1;			//í˜„ì¬í™”ë©´ë²ˆí˜¸
+	static HPEN hPen, oldPen;		//ÆæÁ¤º¸
+	static int screen = -1;			//ÇöÀçÈ­¸é¹øÈ£
 	static Shop shop;
 	static HWND b;
-	static BOOL isGrad = FALSE;		//ê²©ìëˆˆê¸ˆ ì˜¨ì˜¤í”„ìš©
+	static BOOL isGrad = FALSE;		//°İÀÚ´«±İ ¿Â¿ÀÇÁ¿ë
 
 	switch (iMessage)
 	{
@@ -81,21 +81,28 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	{
 		srand(time(NULL));
 		GetClientRect(hWnd, &rt);
+		SetTimer(hWnd, 1, 50, NULL);
 		a.left = 20, a.right = 120, a.top = 20, a.bottom = 45;
-		//í‘¸ì‹œë²„íŠ¼
-		b = CreateWindow(TEXT("button"), TEXT("ë±í¸ì§‘"), WS_CHILD | WS_VISIBLE		//(TEXT("button"), TEXT(ë²„íŠ¼ë‚´ìš©), WS_CHILD | WS_VISIBLE
-			| BS_PUSHBUTTON, 20, 20, 100, 25, hWnd, (HMENU)0, g_hInst, NULL);	//| BS_PUSHBUTTON, startx, starty, ë„ˆë¹„, ë†’ì´, hWnd, (HMENU)wParamë²ˆí˜¸, g_hInst, NULL)
-		//í‘¸ì‹œë²„íŠ¼
-		CreateWindow(TEXT("button"), TEXT("ìƒì "), WS_CHILD | WS_VISIBLE		//(TEXT("button"), TEXT(ë²„íŠ¼ë‚´ìš©), WS_CHILD | WS_VISIBLE
-			| BS_PUSHBUTTON, 20, 50, 100, 25, hWnd, (HMENU)1, g_hInst, NULL);	//| BS_PUSHBUTTON, startx, starty, ë„ˆë¹„, ë†’ì´, hWnd, (HMENU)wParamë²ˆí˜¸, g_hInst, NULL)
-		CreateWindow(TEXT("button"), TEXT("ê²©ìëˆˆê¸ˆ"), WS_CHILD | WS_VISIBLE		//(TEXT("button"), TEXT(ë²„íŠ¼ë‚´ìš©), WS_CHILD | WS_VISIBLE
-			| BS_AUTOCHECKBOX, 20, 80, 100, 25, hWnd, (HMENU)2, g_hInst, NULL);	//| BS_PUSHBUTTON, startx, starty, ë„ˆë¹„, ë†’ì´, hWnd, (HMENU)wParamë²ˆí˜¸, g_hInst, NULL)
-		//g_renderManager.SetImage(L"images.png", "1", Rect(100, 500, 198, 254), Rect(100, 100, 198, 254));
+		//Çª½Ã¹öÆ°
+		b = CreateWindow(TEXT("button"), TEXT("µ¦ÆíÁı"), WS_CHILD | WS_VISIBLE		//(TEXT("button"), TEXT(¹öÆ°³»¿ë), WS_CHILD | WS_VISIBLE
+			| BS_PUSHBUTTON, 20, 20, 100, 25, hWnd, (HMENU)0, g_hInst, NULL);	//| BS_PUSHBUTTON, startx, starty, ³Êºñ, ³ôÀÌ, hWnd, (HMENU)wParam¹øÈ£, g_hInst, NULL)
+		//Çª½Ã¹öÆ°
+		CreateWindow(TEXT("button"), TEXT("»óÁ¡"), WS_CHILD | WS_VISIBLE		//(TEXT("button"), TEXT(¹öÆ°³»¿ë), WS_CHILD | WS_VISIBLE
+			| BS_PUSHBUTTON, 20, 50, 100, 25, hWnd, (HMENU)1, g_hInst, NULL);	//| BS_PUSHBUTTON, startx, starty, ³Êºñ, ³ôÀÌ, hWnd, (HMENU)wParam¹øÈ£, g_hInst, NULL)
+		CreateWindow(TEXT("button"), TEXT("°İÀÚ´«±İ"), WS_CHILD | WS_VISIBLE		//(TEXT("button"), TEXT(¹öÆ°³»¿ë), WS_CHILD | WS_VISIBLE
+			| BS_AUTOCHECKBOX, 20, 80, 100, 25, hWnd, (HMENU)2, g_hInst, NULL);	//| BS_PUSHBUTTON, startx, starty, ³Êºñ, ³ôÀÌ, hWnd, (HMENU)wParam¹øÈ£, g_hInst, NULL)
+		g_renderManager.SetImage(L"asdf.jpg", "1", Rect(0, 0, 225, 225), Rect(100, 100, 225, 225));
 
 		return 0;
 	}
+	case WM_TIMER:
+		if (wParam == 1)
+		{
+			//InvalidateRect(hWnd, &rt, TRUE);
+		}
+		return 0;
 	case WM_COMMAND:
-		switch (LOWORD(wParam))		//ë²„íŠ¼ì˜ wParam
+		switch (LOWORD(wParam))		//¹öÆ°ÀÇ wParam
 		{
 		case 0:
 			ShowWindow(b, SW_SHOW);
@@ -113,9 +120,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			break;
 		}
 
-		shop.CancelSeletion();	//í™”ë©´ì „í™˜ì‹œ ìƒìì„ íƒì„ FALSEë¡œ ë³€ê²½
+		shop.CancelSeletion();	//È­¸éÀüÈ¯½Ã »óÀÚ¼±ÅÃÀ» FALSE·Î º¯°æ
 		InvalidateRect(hWnd, &rt, TRUE);
-		
+
 		return 0;
 
 	case WM_LBUTTONDOWN:
@@ -128,13 +135,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			shop.SelectChest(mg.mx, mg.my);
 			if (shop.CheckIsSelection())
 			{
-				if (InCircle(1217, 465, mg.mx, mg.my))
+				if (InCircle(850, 635, mg.mx, mg.my))
 				{
-					gacha.GetGacha(TRUE, deck);
+					gacha.GetGacha(TRUE, deck, mg, shop.GetSelectedChest());
+					screen = 2;
 				}
-				else if (InCircle(1210, 565, mg.mx, mg.my))
+				else if (InCircle(1200, 635, mg.mx, mg.my))
 				{
-					gacha.GetGacha(FALSE, deck);
+					gacha.GetGacha(FALSE, deck, mg, shop.GetSelectedChest());
+					screen = 2;
 				}
 			}
 		}
@@ -145,13 +154,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEMOVE:
 		mg.mx = LOWORD(lParam);
 		mg.my = HIWORD(lParam);
-		InvalidateRect(hWnd, &rt, TRUE);
+		//InvalidateRect(hWnd, &rt, TRUE);
 		return 0;
 
-	case WM_PAINT://ë”ë¸” ë²„í¼ë§
+	case WM_PAINT://´õºí ¹öÆÛ¸µ
 	{
 		hdc = BeginPaint(hWnd, &ps);
-		/*memDC = CreateCompatibleDC(hdc);
+		memDC = CreateCompatibleDC(hdc);
 		hOldBitmap = (HBITMAP)SelectObject(memDC, CreateCompatibleBitmap(hdc, rt.right, rt.bottom));
 
 		Graphics graphics(memDC);
@@ -159,7 +168,51 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 		g_renderManager.RenderAll(&graphics);
 
-		BitBlt(hdc, 0, 0, rt.right, rt.bottom, memDC, 0, 0, SRCCOPY);*/
+		BitBlt(hdc, 0, 0, rt.right, rt.bottom, memDC, 0, 0, SRCCOPY);
+		DeleteObject(SelectObject(memDC, hOldBitmap));
+		DeleteDC(memDC);
+
+		for (int i = 0; i < rt.bottom; i++)
+		{
+			if (i < 256)
+			{
+				hPen = CreatePen(PS_SOLID, 5, RGB(255, i, 0));
+			}
+			else if (i >= 256 && i < 512)
+			{
+				hPen = CreatePen(PS_SOLID, 5, RGB(255 - i, 255, 0));
+			}
+			else if (i >= 512 && i < 768)
+			{
+				hPen = CreatePen(PS_SOLID, 5, RGB(0, 255, i));
+			}
+			//if (i < 256 - 64)
+			//{
+			//	hPen = CreatePen(PS_SOLID, 5, RGB(255, i * (int)(256 / 256 - 64), 0));//0-0 192-255 1-255/192
+			//}
+			//else if (i >= 256 - 64 && i < 256 + 64)
+			//{
+			//	hPen = CreatePen(PS_SOLID, 5, RGB(255, 255, 0));
+			//}
+			//else if (i >= 256 + 64 && i < 512 - 64)
+			//{
+			//	hPen = CreatePen(PS_SOLID, 5, RGB(0, 255, i % 256));
+			//}
+			//else if (i >= 512 - 64 && i < 512 + 64)
+			//{
+			//	hPen = CreatePen(PS_SOLID, 5, RGB(0, 255, 255));
+			//}
+			//else if (i >= 512 + 64 && i < 768 - 64)
+			//{
+			//	hPen = CreatePen(PS_SOLID, 5, RGB(0, 0, 255));
+			//}
+
+			oldPen = (HPEN)SelectObject(hdc, hPen);
+			Rectangle(hdc, 0, i, rt.right, i + 1);
+			SelectObject(hdc, oldPen);
+			DeleteObject(hPen);	//Ææ»ı¼º / Ææ¿ø»óº¹±¸
+		}
+
 
 		if (screen == 0)
 		{
@@ -170,17 +223,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			shop.DrawShop(hdc, hPen, oldPen, mg.mx, mg.my, print);
 			if (shop.CheckIsSelection())
 			{
-				gacha.DrawGacha(hdc, deck, shop.GetSelectedPrice(), hPen, oldPen, mg.mx, mg.my, print);
+				gacha.DrawGachaButton(hdc, deck, shop.GetSelectedChest(), hPen, oldPen, mg.mx, mg.my, print);
 			}
 		}
+		else if (screen == 2)
+		{
+			gacha.InGacha();
+			gacha.DrawGacha(hdc, hPen, oldPen, mg.mx, mg.my, print);
+		}
 
-		//ë³€ìˆ˜ í™•ì¸ìš©
-		wsprintf(print, TEXT(" ë³´ìœ í•œì¹´ë“œìˆ˜ : %d / ìƒìì„ íƒ? : %d"), deck.GetSize(), (int)(shop.CheckIsSelection()));
+		//º¯¼ö È®ÀÎ¿ë
+		wsprintf(print, TEXT(" º¸À¯ÇÑÄ«µå¼ö : %d / ÄÚÀÎ : %d"), deck.GetSize(), mg.GetGold());
 		TextOut(hdc, 10, 500, print, lstrlen(print));
 
 		if (isGrad)
 		{
-			//ë“œë¡œìš° í™•ì¸ìš© 100pxê°„ê²© ê²©ìëˆˆê¸ˆ
+			//µå·Î¿ì È®ÀÎ¿ë 100px°£°İ °İÀÚ´«±İ
 			for (int i = 0; i < 14; i++)
 			{
 				MoveToEx(hdc, (i + 1) * 100, rt.top, NULL);
@@ -193,13 +251,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			}
 		}
 
-		/*DeleteObject(SelectObject(memDC, hOldBitmap));
-		DeleteDC(memDC);*/
 		EndPaint(hWnd, &ps);
 		return 0;
 	}
-	case WM_DESTROY: // ìœˆë„ìš° ì¢…ë£Œ ì‹œ(ì°½ ë‹«ìŒ ë©”ì‹œì§€)
-		PostQuitMessage(0); // ë©”ì‹œì§€ íì— ì¢…ë£Œ ë©”ì‹œì§€ ì „ë‹¬
+	case WM_DESTROY: // À©µµ¿ì Á¾·á ½Ã(Ã¢ ´İÀ½ ¸Ş½ÃÁö)
+		//GameImage_M::ImageManager::GetInstance()->Release();
+		PostQuitMessage(0); // ¸Ş½ÃÁö Å¥¿¡ Á¾·á ¸Ş½ÃÁö Àü´Ş
 		return 0;
 	}
 
