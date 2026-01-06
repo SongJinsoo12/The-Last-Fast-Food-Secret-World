@@ -3,31 +3,34 @@
 #include "MainGame.h"
 
 
-//int Stage::GL_Stage(MainGame & game) { return L_stage = game.GetLargeStage(); } XXXX
-
-//int Stage::GS_Stage(MainGame & game) { return S_stage = game.GetLargeStage(); }XXXX
 
 
 
-//GetSmallStage() 
 
+int Stage::Get_LargeStage() {
+    return LargeStage;
+}
+
+int Stage::Get_SmallStage() {
+    return SmallStage;
+}
 
 //void Stage::BindGame(MainGame* game)
 //{
 //    this->game = game;
 //}
 
-//MainGame.h SetStage() <-?
+
 
 bool Stage::GameStart() {
     //GetStage();
-    S_stage = 1;
-    L_stage = 1;
-    GameState = E_START;
+    SmallStage = 1;
+    LargeStage = 1;
+    GameState = E_PVP;
     return true;
 }
 bool TutorialStage::CheckTutorial() {
-    if (L_stage <= 3 && S_stage <= 3)
+    if ( Get_LargeStage() <= 3 && Get_SmallStage() <= 3)
     {
         //Maingame.h GameStage = E_TUTORIAL;?
         return IsTutorial = true;
@@ -39,9 +42,9 @@ bool TutorialStage::CheckTutorial() {
 }
 
 int Stage::setgold() {
-    if (S_stage % 5 == 0)
-        return L_stage * S_stage * 100; //보스
-    return L_stage * S_stage * 50; // 잡몹
+    if (SmallStage % 5 == 0)
+        return LargeStage * SmallStage * 100; //보스
+    return LargeStage * SmallStage * 50; // 잡몹
 }
 
 //
@@ -49,76 +52,106 @@ int Stage::setgold() {
 // 카드박스 드롭 함수?
 //}
 
-//void Stage::Init(int large, int small)
-//{
-//    L_Stage = large;
-//    smallStage = small;
+
+bool Stage::IsLastBossStage() { 
+    if (LargeStage == 6 && SmallStage == 5)
+        return true;
+} //라보 스테이지 체크
+
+//CType TutorialStage::TutorialCard() {
+//    if (CheckTutorial()) {
+//
+//        if (Get_LargeStage() == 1 && Get_SmallStage() == 1)
+//            return E_Attack;
+//
+//        if (Get_LargeStage() == 1 && Get_SmallStage() == 2)
+//            return E_Deffence;
+//
+//        if (Get_LargeStage() == 1 && Get_SmallStage() == 3)
+//            return E_Magic;
+//    }
+//    
+//    // 카드.h enum
 //}
-
-bool Stage::IsBossStage(const MainGame & game) {
-    //return S_stage == 5;
-}
-
-CType TutorialStage::TutorialCard() {
-    if (IsTutorial)
-        if (L_stage == 1 && S_stage == 1)
-            return E_Attack;
-
-    if (L_stage == 1 && S_stage == 2)
-        return E_Deffence;
-
-    if (L_stage == 1 && S_stage == 3)
-        return E_Magic;
-
-    // 카드.h enum
-}
 
 bool Stage::StageStart() {
     return true;
 }
 
-bool Stage::StageClear(bool isMonsterDead) {
 
 
-    if (!isMonsterDead) //몬스터 hp = 0 또는 몬스터 비활성화일때 거짓
+
+//enum State {
+//    E_START,
+//    E_MENU,
+//    E_SHOP,
+//    E_PVP,
+//    E_STAGE_CLEAR,
+//    E_DEAD,
+//    E_GAMEOVER
+//};
+int Stage::StageClear(bool isMonsterLost) {
+
+
+    if (!isMonsterLost) //몬스터 hp = 0 또는 몬스터 비활성화일떄 else 코드 실행
     {
+        GameState = E_PVP;
+        return GameState;
+    }
+    else
+    {
+        GameState = E_STAGE_CLEAR; 
+        if (IsLastBossStage)
+            return 7;
+    }
+
+    AddGold(setgold());
+    //보상 화면출력 함수?
+    GameState = E_MENU;
+    return GameState;
+
+}
+//if (LargeStage == 6 && SmallStage == 5) //월드 6-5
+int Stage::NextStage() {
+    /*if (IsGameClear() == 7)
+        return false;*/
+
+    if (StageClear(/* ? */) == E_MENU) {
+        
+            
+
+            if (SmallStage != 5)
+            {
+                SmallStage++;
+                
+            }
+            else
+            {
+                LargeStage++;
+                SmallStage = 1;
+               
+            }
+        GameState = E_PVP;
+        return GameState;
+    }
+}
+
+bool Stage::IsGameClear() {
+    if (StageClear(/* ? */) == 7) {
+        return true;
+    }
+}
+
+bool Stage::GameOver(bool isPlayerLost) {
+
+    if (!isPlayerLost) { //플레이어 hp = 0
         GameState = E_PVP;
         return false;
     }
     else
     {
-        GameState = E_STAGE_CLEAR; // 성공 시
-        if (L_stage == 6 && S_stage == 5) //월드 6-5
-            //
-
-            if (S_stage != 5)
-                S_stage++;
-            else
-            {
-                L_stage++;
-                S_stage = 1;
-            }
-    }
-
-    AddGold(setgold());
-    return true;
-
-}
-
-bool Stage::GameClear() {
-
-}
-
-bool Stage::GameOver(bool isPlayerDead) {
-
-    if (!isPlayerDead) { //플레이어 hp = 0
-
-        return false;
-    }
-    else
-    {
         GameState = E_GAMEOVER;
-        //L_stage = -1;
+        
         return true;
     }
 }
