@@ -7,20 +7,21 @@ using namespace std;
 class Stage : MainGame
 {
 protected:
-	int L_stage; //월드
-	int S_stage; //스테이지
+	int L_Stage; //월드
+	int S_Stage; //스테이지
 	MainGame* Game;
 public:
-	bool IsBossStage(const MainGame& game);
+	bool IsLastBossStage();
 	bool GameStart();
-	bool StageClear(bool isMonsterDead);
-	bool GameOver(bool isPlayerDead);
+	int StageClear(bool isMonsterLost);
+	bool GameOver(bool isPlayerLost);
 	//bool CheckTutorial();
 	bool StageStart();
-	bool GameClear();
-	//int GL_Stage(MainGame& game);
-	//int GS_Stage(MainGame& game);
-
+	bool IsGameClear();
+	int NextStage();
+	
+	int Get_LargeStage();
+	int Get_SmallStage();
 	//int getstage();
 	int setgold();
 	
@@ -28,12 +29,12 @@ public:
 };
 
 
-class TutorialStage : Stage //다중 상속?
+class TutorialStage : Stage
 {
 private:
 	bool IsTutorial;
 
 public:
-	CType TutorialCard();
+	//CType TutorialCard();
 	bool CheckTutorial();
 };
