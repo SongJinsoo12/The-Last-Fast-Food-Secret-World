@@ -2,6 +2,7 @@
 #include <vector>
 #include <Windows.h>
 #include <random>
+#include <iostream>
 using namespace std;
 
 #define TURNTIME 777
@@ -54,11 +55,11 @@ public:
 
 	void DrawLine(HDC hdc, int startX, int startY, int lengthX, int lengthY);
 	void DrawBG(HDC hdc, RECT rect, int cardX, int cardY);
-	void DrawDeckCount(HDC hdc,  int rtX, int rtY, int cardX, int cardY);
+	void DrawDeckCount(HDC hdc, int rtX, int rtY, int cardX, int cardY);
 	void DrawHand(HDC hdc, int rtX, int rtY, int cardX, int cardY, bool isPlayer);
 	void HandSelect(WPARAM wParam, CardManager& opponent, HWND hWnd);
 	void StartTurn(CardManager& player, CardManager& opponent);
-	void TimeLimit(WPARAM wParam, CardManager& opponent, HWND hWnd, LPCWSTR text, LPCWSTR caption, UINT type);
+	void TimeLimit(WPARAM wParam, CardManager& opponent);
 
 private:
 	unsigned int deckCount;//덱 장수
