@@ -1,5 +1,5 @@
 #include <windows.h>										// 헤더
-#include <iostream>
+#include "Card.h"
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 HINSTANCE g_hInst;											// 인스턴스 핸들
@@ -7,7 +7,7 @@ LPCTSTR lpszClass = TEXT("Secret World");					// 제목 표시줄에 표시
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
-	#ifdef _DEBUG
+#ifdef _DEBUG
 	if (AllocConsole()) {
 		FILE* fp;
 		freopen_s(&fp, "CONOUT$", "w", stdout);
@@ -15,7 +15,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 		std::ios::sync_with_stdio(); // cout과 printf를 섞어 쓸 때 유용
 	}
 #endif
-	
+
 	HWND hWnd;												// 윈도우 핸들 선언
 	MSG Message;											// 메시지 구조체 변수 선언
 	WNDCLASS WndClass;										// Windows Class 구조체 변수 선언
@@ -35,9 +35,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	RegisterClass(&WndClass);
 
 	hWnd = CreateWindow(lpszClass, lpszClass, // 윈도우 생성
-		WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
-		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT
-		/*100,100,500,500*/, NULL, (HMENU)NULL, hInstance, NULL);
+		WS_OVERLAPPEDWINDOW, /*CW_USEDEFAULT,
+		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT*/
+		0, 0, 1280, 720, NULL, (HMENU)NULL, hInstance, NULL);
 
 	ShowWindow(hWnd, nCmdShow);
 
@@ -48,19 +48,45 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	return (int)Message.wParam; // 탈출 코드, 프로그램 종료
 }
 
+CardManager g_player, g_enemy;
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
 	HDC hdc;
 	PAINTSTRUCT ps;
+	static RECT rt;
 
 	switch (iMessage) {
+	case WM_CREATE:
+		GetClientRect(hWnd, &rt);
+		g_player.StartTurn(g_player, g_enemy);
+		SetTimer(hWnd, TURNTIME, 7000, NULL);
+		return 0;
+
+	case WM_TIMER:
+		g_player.TimeLimit(wParam, g_enemy);
+		return 0;
+
+	case WM_KEYDOWN:
+		g_player.HandSelect(wParam, g_enemy, hWnd);
+		InvalidateRect(hWnd, NULL, TRUE);
+		return 0;
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
+
+		g_player.DrawBG(hdc, rt, 61, 85);
+		g_player.DrawDeckCount(hdc, rt.right, rt.bottom, -30, -42);
+		g_enemy.DrawDeckCount(hdc, rt.left, rt.top, 30, 42);
+
+		g_player.DrawHand(hdc, rt.right, rt.bottom - 105, 61, 85, true);
+		g_enemy.DrawHand(hdc, rt.right, rt.top, 61, 85, false);
+
 		EndPaint(hWnd, &ps);
 		return 0;
 
 	case WM_DESTROY: // 윈도우 종료 시(창 닫음 메시지)
 		PostQuitMessage(0); // 메시지 큐에 종료 메시지 전달
+		KillTimer(hWnd, TURNTIME);
 		return 0;
 	}
 	return(DefWindowProc(hWnd, iMessage, wParam, lParam));
