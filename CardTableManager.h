@@ -11,7 +11,7 @@ class CardTableManager
 protected:
 	static CardTableManager* m_Instance;
 public:
-	static CardTableManager* Instnace();
+	static CardTableManager* Instance();
 
 public:
 	CardTableManager();
@@ -29,4 +29,3 @@ protected:
 	vector<Card*> m_AllCardDataVec;//전체 카드
 
 };
-
