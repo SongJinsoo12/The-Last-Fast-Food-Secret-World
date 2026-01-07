@@ -1,15 +1,9 @@
 #include <windows.h>										// 헤더
 #include "Card.h"
-#include "RenderManager.h"
-#include "ImageLoad.h"
-#include "ImageManager.h"
-
-#include "Card.h"
+//#include "RenderManager.h"
+//#include "ImageLoad.h"
+//#include "ImageManager.h"
 #include "CardTableManager.h"
-
-
-
-
 
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -60,7 +54,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 }
 
 CardManager g_player, g_enemy;
-GameImage_M::RenderManager g_renderManager; // 프로시저 위 생성
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
@@ -68,18 +61,43 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	PAINTSTRUCT ps;
 	HBITMAP hOldBitmap;
 	static RECT rt;
+	static int index = 0;//임시
 
 	switch (iMessage) {
 	case WM_CREATE:
-		g_renderManager.SetImage(L"arceus.png", "Arceus", Rect(0, 0, 245, 342), Rect(100, 100, 245, 342));
-
+		//임시 카드 로드
+		GameCard* g_card[6];
+		for (size_t i = BASEATK + 1; i <= ATK02; i++)
+		{
+			Card* card = CardTableManager::Instance()->GetCardData(i);
+			//unique_ptr<GameCard> g_card(new GameCard(card));
+			g_card[index] = new GameCard(card);
+			cout << "UID: " << g_card[index]->GetUid() << " ATK: " << g_card[index]->GetAtk() << " DEF: " << g_card[index]->GetDef() << endl;
+			index++;
+		}
+		for (size_t i = BASEDEF + 1; i <= DEF02; i++)
+		{
+			Card* card = CardTableManager::Instance()->GetCardData(i);
+			
+			g_card[index] = new GameCard(card);
+			cout << "UID: " << g_card[index]->GetUid() << " ATK: " << g_card[index]->GetAtk() << " DEF: " << g_card[index]->GetDef() << endl;
+			index++;
+		}
+		for (size_t i = BASEMAGIC + 1; i <= MAGIC02; i++)
+		{
+			Card* card = CardTableManager::Instance()->GetCardData(i);
+			
+			g_card[index] = new GameCard(card);
+			cout << "UID: " << g_card[index]->GetUid() << " ATK: " << g_card[index]->GetAtk() << " DEF: " << g_card[index]->GetDef() << endl;
+			index++;
+		}
 		GetClientRect(hWnd, &rt);
-		g_player.StartTurn(g_player, g_enemy, hWnd);
+		g_player.StartTurn(g_player, g_enemy);
 		SetTimer(hWnd, TURNTIME, 7000, NULL);
 		return 0;
 
 	case WM_TIMER:
-		g_player.TimeLimit(wParam, g_enemy, hWnd);
+		g_player.TimeLimit(wParam, g_enemy);
 		InvalidateRect(hWnd, NULL, TRUE);
 		return 0;
 
@@ -91,18 +109,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	{
 		hdc = BeginPaint(hWnd, &ps);
 
-		memDC = CreateCompatibleDC(hdc);
-		hOldBitmap = (HBITMAP)SelectObject(memDC, CreateCompatibleBitmap(hdc, rt.right, rt.bottom));
-
-		Graphics graphics(memDC);
-		graphics.Clear(Color(255, 255, 255, 255));
-
-		g_renderManager.RenderAll(&graphics);
-
-		BitBlt(hdc, 0, 0, rt.right, rt.bottom, memDC, 0, 0, SRCCOPY);
-
-		DeleteObject(SelectObject(memDC, hOldBitmap));
-		DeleteDC(memDC);
+		
 
 		g_player.DrawBG(hdc, rt, 61, 85);
 		g_player.DrawDeckCount(hdc, rt.right, rt.bottom, -30, -42);
@@ -113,17 +120,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 
 
-		//CardTableManager* manager = CardTableManager::Instnace()->GetCardData();
-		//manager->GetCardData();
-		Card* card = CardTableManager::Instnace()->GetCardData(0);
-
-		GameCard* gcard = new GameCard(card);
-
-		
-
 		EndPaint(hWnd, &ps);
 		return 0;
-		}
+	}
 
 	case WM_DESTROY: // 윈도우 종료 시(창 닫음 메시지)
 		PostQuitMessage(0); // 메시지 큐에 종료 메시지 전달
