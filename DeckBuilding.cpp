@@ -1,5 +1,22 @@
 #include "DeckBuilding.h"
 
+double LenghtPts(int x1, int y1, int x2, int y2)
+{
+	return sqrt((float)((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)));
+}
+
+BOOL InCircle(int x, int y, int mx, int my)
+{
+	if (LenghtPts(x, y, mx, my) < BSIZE)
+	{
+		return TRUE;
+	}
+	else
+	{
+		return FALSE;
+	}
+}
+
 int DeckBuilding::GetSize()
 {
 	return this->inven.size();
@@ -9,22 +26,22 @@ void DeckBuilding::ItoD(DeckBuilding& p_deck, int p_mx, int p_my)
 {
 	for (int i = 0; i < p_deck.inven.size(); i++)
 	{
-		//Ä«µå°¡ Å¬¸¯µÇ¾úÀ»°æ¿ì
+		//ì¹´ë“œê°€ í´ë¦­ë˜ì—ˆì„ê²½ìš°
 		if (InCircle(p_deck.inven[i].x, p_deck.inven[i].y, p_mx, p_my))
 		{
-			//µ¦ÀÌ ²Ë Â÷¸é ÇÔ¼öÁ¾·á
+			//ë±ì´ ê½‰ ì°¨ë©´ í•¨ìˆ˜ì¢…ë£Œ
 			if (p_deck.myDeck.size() >= 25)
 			{
 				return;
 			}
 
-			//ÀÌµ¿½ÃÅ³ Ä«µåÀÇ ÁÂÇ¥¸¦ º¯°æ. Ãâ¹ßÁö ¹è¿­¿¡¼­ Á¦°Å ÈÄ ¸ñÀûÁö ¹è¿­ ¸Ç µÚ¿¡ Ãß°¡
+			//ì´ë™ì‹œí‚¬ ì¹´ë“œì˜ ì¢Œí‘œë¥¼ ë³€ê²½. ì¶œë°œì§€ ë°°ì—´ì—ì„œ ì œê±° í›„ ëª©ì ì§€ ë°°ì—´ ë§¨ ë’¤ì— ì¶”ê°€
 			int x = p_deck.myDeck.size() % 5, y = p_deck.myDeck.size() / 5;
 			p_deck.inven[i].x = x * 150 + 50, p_deck.inven[i].y = y * 150 + 50;
 			p_deck.myDeck.push_back(p_deck.inven[i]);
 			p_deck.inven.erase(p_deck.inven.begin() + i);
 
-			//ÀÌµ¿µÈ Ä«µåÀÇ µÚÂÊ Ä«µåµéÀ» ¾ÕÀ¸·Î ÇÑÄ­¾¿ ÁÂÇ¥¸¦ º¯°æ
+			//ì´ë™ëœ ì¹´ë“œì˜ ë’¤ìª½ ì¹´ë“œë“¤ì„ ì•ìœ¼ë¡œ í•œì¹¸ì”© ì¢Œí‘œë¥¼ ë³€ê²½
 			for (int j = i; j < p_deck.inven.size(); j++)
 			{
 				p_deck.inven[j].x -= 150;
@@ -42,16 +59,16 @@ void DeckBuilding::DtoI(DeckBuilding& p_deck, int p_mx, int p_my)
 {
 	for (int i = 0; i < p_deck.myDeck.size(); i++)
 	{
-		//Ä«µå°¡ Å¬¸¯µÇ¾úÀ»°æ¿ì
+		//ì¹´ë“œê°€ í´ë¦­ë˜ì—ˆì„ê²½ìš°
 		if (InCircle(p_deck.myDeck[i].x, p_deck.myDeck[i].y, p_mx, p_my))
 		{
-			//ÀÌµ¿½ÃÅ³ Ä«µåÀÇ ÁÂÇ¥¸¦ º¯°æ. Ãâ¹ßÁö ¹è¿­¿¡¼­ Á¦°Å ÈÄ ¸ñÀûÁö ¹è¿­ ¸Ç µÚ¿¡ Ãß°¡
+			//ì´ë™ì‹œí‚¬ ì¹´ë“œì˜ ì¢Œí‘œë¥¼ ë³€ê²½. ì¶œë°œì§€ ë°°ì—´ì—ì„œ ì œê±° í›„ ëª©ì ì§€ ë°°ì—´ ë§¨ ë’¤ì— ì¶”ê°€
 			int x = p_deck.inven.size() % 5, y = p_deck.inven.size() / 5;
 			p_deck.myDeck[i].x = x * 150 + 750, p_deck.myDeck[i].y = y * 150 + 50;
 			p_deck.inven.push_back(p_deck.myDeck[i]);
 			p_deck.myDeck.erase(p_deck.myDeck.begin() + i);
 
-			//ÀÌµ¿µÈ Ä«µåÀÇ µÚÂÊ Ä«µåµéÀ» ¾ÕÀ¸·Î ÇÑÄ­¾¿ ÁÂÇ¥¸¦ º¯°æ
+			//ì´ë™ëœ ì¹´ë“œì˜ ë’¤ìª½ ì¹´ë“œë“¤ì„ ì•ìœ¼ë¡œ í•œì¹¸ì”© ì¢Œí‘œë¥¼ ë³€ê²½
 			for (int j = i; j < p_deck.myDeck.size(); j++)
 			{
 				p_deck.myDeck[j].x -= 150;
@@ -67,8 +84,8 @@ void DeckBuilding::DtoI(DeckBuilding& p_deck, int p_mx, int p_my)
 
 void DeckBuilding::DeckBuild(DeckBuilding& p_deck, int p_mx, int p_my)
 {
-	p_deck.ItoD(p_deck, p_mx, p_my);	//ÀÎº¥->¸¶ÀÌµ¦
-	p_deck.DtoI(p_deck, p_mx, p_my);	//¸¶ÀÌµ¦->ÀÎº¥
+	p_deck.ItoD(p_deck, p_mx, p_my);	//ì¸ë²¤->ë§ˆì´ë±
+	p_deck.DtoI(p_deck, p_mx, p_my);	//ë§ˆì´ë±->ì¸ë²¤
 }
 
 void DeckBuilding::DrawInventory(HDC p_hdc, DeckBuilding p_deck, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[])
@@ -82,9 +99,9 @@ void DeckBuilding::DrawInventory(HDC p_hdc, DeckBuilding p_deck, HPEN p_hpen, HP
 		}
 		Rectangle(p_hdc, p_deck.inven[i].x - 15, p_deck.inven[i].y - 30, p_deck.inven[i].x + 15, p_deck.inven[i].y + 30);
 		SelectObject(p_hdc, p_oldpen);
-		DeleteObject(p_hpen);	//Ææ»ı¼º / Ææ¿ø»óº¹±¸
+		DeleteObject(p_hpen);	//íœìƒì„± / íœì›ìƒë³µêµ¬
 
-		wsprintf(p_text, TEXT("%d"), p_deck.inven[i].num);
+		wsprintf(p_text, TEXT("%d"), p_deck.inven[i].id);
 		TextOut(p_hdc, p_deck.inven[i].x - 10, p_deck.inven[i].y, p_text, lstrlen(p_text));
 	}
 }
@@ -104,19 +121,19 @@ void DeckBuilding::DrawMyDeck(HDC p_hdc, DeckBuilding p_deck, HPEN p_hpen, HPEN 
 		}
 		Rectangle(p_hdc, p_deck.myDeck[i].x - 15, p_deck.myDeck[i].y - 30, p_deck.myDeck[i].x + 15, p_deck.myDeck[i].y + 30);
 		SelectObject(p_hdc, p_oldpen);
-		DeleteObject(p_hpen);	//Ææ»ı¼º / Ææ¿ø»óº¹±¸
+		DeleteObject(p_hpen);	//íœìƒì„± / íœì›ìƒë³µêµ¬
 
-		wsprintf(p_text, TEXT("%d"), p_deck.myDeck[i].num);
+		wsprintf(p_text, TEXT("%d"), p_deck.myDeck[i].id);
 		TextOut(p_hdc, p_deck.myDeck[i].x - 10, p_deck.myDeck[i].y, p_text, lstrlen(p_text));
 	}
 }
 
 void DeckBuilding::DrawDeckBuild(HDC p_hdc, DeckBuilding p_deck, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[])
 {
-	p_deck.DrawInventory(p_hdc, p_deck, p_hpen, p_oldpen, p_mx, p_my, p_text);	//ÀÎº¥
-	p_deck.DrawMyDeck(p_hdc, p_deck, p_hpen, p_oldpen, p_mx, p_my, p_text);	//¸¶ÀÌµ¦
+	p_deck.DrawInventory(p_hdc, p_deck, p_hpen, p_oldpen, p_mx, p_my, p_text);	//ì¸ë²¤
+	p_deck.DrawMyDeck(p_hdc, p_deck, p_hpen, p_oldpen, p_mx, p_my, p_text);	//ë§ˆì´ë±
 
-	//Áß¾Ó°æ°è¼±
+	//ì¤‘ì•™ê²½ê³„ì„ 
 	MoveToEx(p_hdc, 700, 0, NULL);
 	LineTo(p_hdc, 700, 720);
 }
