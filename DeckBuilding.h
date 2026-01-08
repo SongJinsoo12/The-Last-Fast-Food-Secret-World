@@ -5,46 +5,50 @@
 #include <time.h>
 #include <Windows.h>
 #include "Card.h"
+#include "Stats.h"
+#include "macroNum.h"
 
 using namespace std;
+
+#define BSIZE 25
+double LenghtPts(int x1, int y1, int x2, int y2);
 BOOL InCircle(int x, int y, int mx, int my);
 
 class DeckBuilding
 {
-protected://ÆÛºí¸¯ °ú¿¬ ±¦ÂúÀº°¡
-	//ÇöÀç µ¦
+private:
+	//í˜„ì¬ ë±
 	vector<Card> myDeck;
-	//º¸À¯ÇÑ Ä«µåµé
+	//ë³´ìœ í•œ ì¹´ë“œë“¤
 	vector<Card> inven;
-
-	//ÀÓ½Ã ÀüÃ¼Ä«µåÇ®/////////////////////
-	Card* allcard = new Card[256];
+	//ë±ë¹Œë”© í• ë•Œ ì„±ì œí•œ ì—¬ë¶€ í™•ì¸í•˜ê¸°
+	//ì„ì‹œ ì „ì²´ì¹´ë“œí’€/////////////////////
+	Card* allcard = new Card[AllCARDMAXSIZE];
 
 public:
 	DeckBuilding()
 	{
-		//±âº»»çÀÌÁî ¼¼ÆÃ ÈÄ ÁÂÇ¥ ÃÊ±âÈ­
+		//ê¸°ë³¸ì‚¬ì´ì¦ˆ ì„¸íŒ… í›„ ì¢Œí‘œ ì´ˆê¸°í™”
 		myDeck.resize(10);
 		for (int i = 0; i < 10; i++)
 		{
-			int x = i % 5, y = i / 5;		//ÇÑ È­¸é¿¡ °¡·Î5°³, ¼¼·Î5°³
-			myDeck[i].SetCard(CType(rand() % 3), x * 150 + 50, y * 150 + 50, i);	//(val * °£°İ + Á© (¿Ş/À§)ÂÊÀ¸·ÎºÎÅÍÀÇ ¿©¹é)
+			int x = i % 5, y = i / 5;		//í•œ í™”ë©´ì— ê°€ë¡œ5ê°œ, ì„¸ë¡œ5ê°œ
+			myDeck[i].SetCard(CType(rand() % 3), i, x * 150 + 50, y * 150 + 50);	//(val * ê°„ê²© + ì ¤ (ì™¼/ìœ„)ìª½ìœ¼ë¡œë¶€í„°ì˜ ì—¬ë°±)
 		}
 
 		for (int i = 0; i < 256; i++)
 		{
-			allcard[i].SetCard(CType(rand() % 3), 0, 0, i);
+			allcard[i].SetCard(CType(rand() % 3), i, 0, 0);
 		}
 	}
 
 	virtual ~DeckBuilding()
 	{
-		//Æ÷ÀÎÅÍÇØÁ¦ Å¸ÀÌ¹Ö¿¡ ¹®Á¦ÀÖ´Âµí µå·Î¿ìµ¦Á¾·á½Ã ¿¡·¯
-			//delete[] allcard;
+
 	}
 
 	int GetSize();
-	void GetCard(Card* p_cards, int p_size)
+	void PushCard(Card* p_cards, int p_size)
 	{
 		for (int i = 0; i < p_size; i++)
 		{
@@ -56,16 +60,16 @@ public:
 		return allcard;
 	}
 
-	//ÀÎº¥->µ¦ (µ¦, ¸¶¿ì½ºX, ¸¶¿ì½ºY)
+	//ì¸ë²¤->ë± (ë±, ë§ˆìš°ìŠ¤X, ë§ˆìš°ìŠ¤Y)
 	void ItoD(DeckBuilding& p_deck, int p_mx, int p_my);
-	//µ¦->ÀÎº¥ (µ¦, ¸¶¿ì½ºX, ¸¶¿ì½ºY)
+	//ë±->ì¸ë²¤ (ë±, ë§ˆìš°ìŠ¤X, ë§ˆìš°ìŠ¤Y)
 	void DtoI(DeckBuilding& p_deck, int p_mx, int p_my);
 	void DeckBuild(DeckBuilding& p_deck, int p_mx, int p_my);
 
-	//ÀÎº¥Åä¸® Ãâ·Â
+	//ì¸ë²¤í† ë¦¬ ì¶œë ¥
 	void DrawInventory(HDC p_hdc, DeckBuilding p_deck, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[]);
-	//¸¶ÀÌµ¦ Ãâ·Â
+	//ë§ˆì´ë± ì¶œë ¥
 	void DrawMyDeck(HDC p_hdc, DeckBuilding p_deck, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[]);
-	//µ¦ºôµù È­¸é Ãâ·Â
+	//ë±ë¹Œë”© í™”ë©´ ì¶œë ¥
 	void DrawDeckBuild(HDC p_hdc, DeckBuilding p_deck, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[]);
 };
