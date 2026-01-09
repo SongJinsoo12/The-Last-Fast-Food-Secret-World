@@ -2,13 +2,18 @@
 #include <iostream>
 
 namespace GameImage_M {
+	RenderManager::~RenderManager()
+	{
+		m_RenderList.clear();
+		ImageManager::GetInstance()->Release();
+	}
 	void RenderManager::SetImage(wstring p_path, string p_id, Rect load, Rect render)
 	{
 		for (vector<shared_ptr<ImageLoad>>::iterator it = m_RenderList.begin() ; 
 			it != m_RenderList.end(); )
 		{
 			if ((*it)->GetID() == p_id) {
-				cout << "ID Áßº¹ °ª Á¸Àç" << endl;
+				cout << "ID ÃÃŸÂºÂ¹ Â°Âª ÃÂ¸Ã€Ã§" << endl;
 				return;
 			}
 			else
@@ -50,3 +55,4 @@ namespace GameImage_M {
 		}
 	}
 }
+
