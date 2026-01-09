@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ImageLoad.h"
+#include "ImageManager.h"
 
 namespace GameImage_M {
 
@@ -8,6 +9,9 @@ namespace GameImage_M {
 	{
 	private:
 		vector<shared_ptr<ImageLoad>> m_RenderList;
+
+	public:
+		~RenderManager();
 
 	public:
 		void SetImage(wstring p_path, string p_id, Rect load, Rect render);
@@ -18,4 +22,5 @@ namespace GameImage_M {
 	};
 
 }
+
 
