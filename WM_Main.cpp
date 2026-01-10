@@ -53,7 +53,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	return (int)Message.wParam; // 탈출 코드, 프로그램 종료
 }
 
-CardManager g_player, g_enemy;
+
+vector<GameCard*> g_playerDeck, g_enemyDeck;
+CardManager g_playerHand, g_enemyHand;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
@@ -65,57 +67,39 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 	switch (iMessage) {
 	case WM_CREATE:
+	{
 		//임시 카드 로드
-		GameCard* g_card[250];
-		for (size_t i = BASEATK + 1; i < ATKLIMIT; i++)
-		{
-			Card* card = CardTableManager::Instance()->GetCardData(i);
-			g_card[index] = new GameCard(card);
-			cout << "UID: " << g_card[index]->GetUid() << " ATK: " << g_card[index]->GetAtk() << " DEF: " << g_card[index]->GetDef() << endl;
-			index++;
-		}
-		for (size_t i = BASEDEF + 1; i < DEFLIMIT; i++)
-		{
-			Card* card = CardTableManager::Instance()->GetCardData(i);
-			
-			g_card[index] = new GameCard(card);
-			cout << "UID: " << g_card[index]->GetUid() << " ATK: " << g_card[index]->GetAtk() << " DEF: " << g_card[index]->GetDef() << endl;
-			index++;
-		}
-		for (size_t i = BASEMAGIC + 1; i < MAGICLIMIT; i++)
-		{
-			Card* card = CardTableManager::Instance()->GetCardData(i);
-			
-			g_card[index] = new GameCard(card);
-			cout << "UID: " << g_card[index]->GetUid() << " ATK: " << g_card[index]->GetAtk() << " DEF: " << g_card[index]->GetDef() << endl;
-			index++;
-		}
+
+		//임시 덱 로드
+		g_playerDeck = CardTableManager::Instance()->GetRandomCard(25);
+		g_enemyDeck = CardTableManager::Instance()->GetRandomCard(25);
+		g_playerHand.StartGame(g_playerDeck);
+		g_enemyHand.StartGame(g_enemyDeck);
 		GetClientRect(hWnd, &rt);
-		g_player.StartTurn(g_player, g_enemy);
+		g_playerHand.StartTurn(g_playerHand, g_enemyHand);
 		SetTimer(hWnd, TURNTIME, 7000, NULL);
 		return 0;
+	}
 
 	case WM_TIMER:
-		g_player.TimeLimit(wParam, g_enemy);
+		g_playerHand.TimeLimit(wParam, g_enemyHand, g_playerDeck);
 		InvalidateRect(hWnd, NULL, TRUE);
 		return 0;
 
 	case WM_KEYDOWN:
-		g_player.HandSelect(wParam, g_enemy, hWnd);
+		g_playerHand.HandSelect(wParam, g_enemyHand, hWnd);
 		InvalidateRect(hWnd, NULL, TRUE);
 		return 0;
 	case WM_PAINT:
 	{
 		hdc = BeginPaint(hWnd, &ps);
 
-		
+		g_playerHand.DrawBG(hdc, rt, 61, 85);
+		g_playerHand.DrawDeckCount(hdc, rt.right, rt.bottom, -30, -42);
+		g_enemyHand.DrawDeckCount(hdc, rt.left, rt.top, 30, 42);
 
-		g_player.DrawBG(hdc, rt, 61, 85);
-		g_player.DrawDeckCount(hdc, rt.right, rt.bottom, -30, -42);
-		g_enemy.DrawDeckCount(hdc, rt.left, rt.top, 30, 42);
-
-		g_player.DrawHand(hdc, rt.right, rt.bottom - 105, 61, 85, true);
-		g_enemy.DrawHand(hdc, rt.right, rt.top, 61, 85, false);
+		g_playerHand.DrawHand(hdc, rt.right, rt.bottom - 105, 61, 85, true);
+		g_enemyHand.DrawHand(hdc, rt.right, rt.top, 61, 85, false);
 
 
 
@@ -124,7 +108,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	}
 
 	case WM_DESTROY: // 윈도우 종료 시(창 닫음 메시지)
-		delete[] g_card;
+		FreeMemory(g_playerDeck);
+		FreeMemory(g_enemyDeck);
 
 		PostQuitMessage(0); // 메시지 큐에 종료 메시지 전달
 		KillTimer(hWnd, TURNTIME);
