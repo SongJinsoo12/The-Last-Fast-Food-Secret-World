@@ -24,12 +24,12 @@ public:
 	Card* GetCardData(int p_uid);
 	Card* GetCardData(ALLCARDEnum p_uid);
 
-	vector<Card*> GetRandomCard(int p_count);
+	vector<GameCard*> GetRandomCard(int p_count);
 
 	CAttribute StrToAit(string str);
 	CType StrToType(string str);
 
 protected:
-	vector<Card*> m_AllCardDataVec;//ÀüÃ¼ Ä«µå
+	vector<Card*> m_AllCardDataVec;//ì „ì²´ ì¹´ë“œ
 
 };
