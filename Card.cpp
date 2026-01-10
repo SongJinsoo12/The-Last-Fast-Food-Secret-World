@@ -87,12 +87,24 @@ GameCard::~GameCard()
 {
 }
 
-
-CardManager::CardManager() : deckCount(25), handCount(5), handSelection(4), isMyTurn(false)
+void FreeMemory(vector<GameCard*> vec)
 {
-	Card temp;
-	for (size_t i = 0; i < handCount; i++)
-		hand.push_back(temp);
+	for (size_t i = 0; i < vec.size(); i++)
+	{
+		if (vec[i] != nullptr)
+		{
+			delete vec[i];
+		}
+	}
+}
+
+CardManager::CardManager() : deckCount(25), handCount(0), handSelection(4), isMyTurn(false)
+{
+}
+
+void CardManager::StartGame(vector<GameCard*> deck) 
+{
+	CardDraw(deck, 5);
 }
 
 CardManager::~CardManager()
@@ -109,24 +121,26 @@ int CardManager::GetHandCount()
 	return handCount;
 }
 
-vector<Card> CardManager::GetHand()
+vector<GameCard*> CardManager::GetHand()
 {
 	return hand;
 }
 
 //드로우
-void CardManager::CardDraw()
+void CardManager::CardDraw(vector<GameCard*> deck, int drawNum)
 {
-	//덱에 카드가 없으면 리턴
-	if (deckCount <= 0)
-		return;
+	for (size_t i = 0; i < drawNum; i++)
+	{
+		//덱에 카드가 없으면 리턴
+		if (deckCount <= 0)
+			return;
 
-	deckCount--;
-	handCount++;
+		deckCount--;
+		handCount++;
 
-	//임시
-	Card temp;
-	hand.push_back(temp);
+		//임시
+		hand.push_back(deck[deckCount - 1]);
+	}
 }
 
 //라인 그리기
@@ -267,6 +281,19 @@ void CardManager::CardAct(CardManager& opponent, HWND hWnd)
 	if (handSelection < 0)
 		return;
 
+	switch (hand[handSelection]->GetType())
+	{
+	case E_Attack:
+		cout << "공격 카드 사용!!\n";
+		break;
+	case E_Deffense:
+		cout << "방어 카드 사용!!\n";
+		break;
+	case E_Magic:
+		cout << "보조 카드 사용!!\n";
+		break;
+	}
+
 	hand.erase(hand.begin() + handSelection);
 	handCount--;
 	//사용한 카드가 패의 가장 오른쪽 카드이면 왼쪽 카드 선택
@@ -301,7 +328,7 @@ void CardManager::StartTurn(CardManager& player, CardManager& opponent)
 }
 
 //턴 시간 제한
-void CardManager::TimeLimit(WPARAM wParam, CardManager& opponent)
+void CardManager::TimeLimit(WPARAM wParam, CardManager& opponent, vector<GameCard*> deck)
 {
 	switch (wParam)
 	{
@@ -313,7 +340,7 @@ void CardManager::TimeLimit(WPARAM wParam, CardManager& opponent)
 		//자신의 차례면 드로우
 		if (this->isMyTurn)
 		{
-			CardDraw();
+			CardDraw(deck, 1);
 			cout << "자신의 턴\n";
 		}
 		else
