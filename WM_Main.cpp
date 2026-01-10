@@ -66,16 +66,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	switch (iMessage) {
 	case WM_CREATE:
 		//임시 카드 로드
-		GameCard* g_card[6];
-		for (size_t i = BASEATK + 1; i <= ATK02; i++)
+		GameCard* g_card[250];
+		for (size_t i = BASEATK + 1; i < ATKLIMIT; i++)
 		{
 			Card* card = CardTableManager::Instance()->GetCardData(i);
-			//unique_ptr<GameCard> g_card(new GameCard(card));
 			g_card[index] = new GameCard(card);
 			cout << "UID: " << g_card[index]->GetUid() << " ATK: " << g_card[index]->GetAtk() << " DEF: " << g_card[index]->GetDef() << endl;
 			index++;
 		}
-		for (size_t i = BASEDEF + 1; i <= DEF02; i++)
+		for (size_t i = BASEDEF + 1; i < DEFLIMIT; i++)
 		{
 			Card* card = CardTableManager::Instance()->GetCardData(i);
 			
@@ -83,7 +82,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			cout << "UID: " << g_card[index]->GetUid() << " ATK: " << g_card[index]->GetAtk() << " DEF: " << g_card[index]->GetDef() << endl;
 			index++;
 		}
-		for (size_t i = BASEMAGIC + 1; i <= MAGIC02; i++)
+		for (size_t i = BASEMAGIC + 1; i < MAGICLIMIT; i++)
 		{
 			Card* card = CardTableManager::Instance()->GetCardData(i);
 			
@@ -125,6 +124,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	}
 
 	case WM_DESTROY: // 윈도우 종료 시(창 닫음 메시지)
+		delete[] g_card;
+
 		PostQuitMessage(0); // 메시지 큐에 종료 메시지 전달
 		KillTimer(hWnd, TURNTIME);
 		return 0;
