@@ -23,4 +23,6 @@ namespace GameImage_M {
 
 }
 
+extern GameImage_M::RenderManager g_renderManager;
+
 
