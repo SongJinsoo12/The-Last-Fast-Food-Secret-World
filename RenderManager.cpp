@@ -56,3 +56,5 @@ namespace GameImage_M {
 	}
 }
 
+GameImage_M::RenderManager g_renderManager;
+
