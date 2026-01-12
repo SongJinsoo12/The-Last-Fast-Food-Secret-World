@@ -1,6 +1,7 @@
 #pragma once
 #include "MainGame.h"
 #include "DeckBuilding.h"
+#include "RenderManager.h"
 
 //상자의 정보를 담음(확률, 좌표)
 class Chest
@@ -41,22 +42,17 @@ public:
 	//원하는 확률 하나를 리턴함
 	int GetProb(int p_idx)
 	{
-		return probability[p_idx];
+		return this->probability[p_idx];
 	}
 
 	int GetChestID()
 	{
-		return id;
+		return this->id;
 	}
 
 	int GetPrice()
 	{
 		return this->price;
-	}
-
-	void SetInctroducing(string p_text)
-	{
-
 	}
 };
 
@@ -66,11 +62,11 @@ private:
 	Chest chest[6];					//전체 상자
 	Chest selectedChest;			//선택된 상자
 	BOOL isSelect = FALSE;			//하이라이트될 상자를 선택했는가
+	GameImage_M::RenderManager* renderManager_shop = nullptr;
 public:
-	Shop()
+	Shop(GameImage_M::RenderManager* p_renderManager_shop) : renderManager_shop(p_renderManager_shop)
 	{
 		srand(time(NULL));
-
 		for (int i = 0; i < 6; i++)//0 1 2 3 4 5
 		{
 			//테스트용 랜덤확률지정
@@ -86,7 +82,7 @@ public:
 	}
 	virtual ~Shop()
 	{
-
+		
 	}
 
 	//상자를 선택함
@@ -95,8 +91,16 @@ public:
 	{
 		return selectedChest.GetPrice();
 	}
+	Chest GetSelectedChest()
+	{
+		return this->selectedChest;
+	}
 	BOOL CheckIsSelection();
-	void CancelSeletion();
+	void CancelSelection();
 
 	void DrawShop(HDC p_hdc, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[]);
+	void DrawEnterShop()
+	{
+
+	}
 };
