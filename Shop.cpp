@@ -21,15 +21,23 @@ BOOL Shop::CheckIsSelection()
 	else return FALSE;
 }
 
-void Shop::CancelSeletion()
+void Shop::CancelSelection()
 {
 	this->isSelect = FALSE;
 }
 
 void Shop::DrawShop(HDC p_hdc, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[])
 {
-	//상자 정보 하이라이트 출력용
-	RoundRect(p_hdc, 50, 500, 550, 700, 100, 100);
+	//상자 보관용 선반
+	renderManager_shop->SetImage(L"shelf.png", "shelf", Rect(0, 0, 651, 101), Rect(700, 250, 651, 101));
+	renderManager_shop->SetImage(L"shelf.png", "shelf2", Rect(0, 0, 651, 101), Rect(700, 450, 651, 101));
+
+	//상점 주인
+	renderManager_shop->SetImage(L"cookie.png", "cookie", Rect(0, 0, 2500, 2500), Rect(300 - 180, 430 - 180, 360, 360));
+
+	//상자 정보 하이라이트 및 상점 주인 대사 출력용
+	renderManager_shop->SetImage(L"textbox.png", "textbox", Rect(0, 0, 500, 200), Rect(50, 500, 500, 200));
+
 	if (this->isSelect)
 	{
 		for (int i = 0; i < 4; i++)
@@ -39,26 +47,17 @@ void Shop::DrawShop(HDC p_hdc, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, W
 			{
 				wsprintf(p_text, TEXT("마법 - %d%%"), selectedChest.GetProb(i));
 			}
-			TextOut(p_hdc, 100 + i * 100,  675, p_text, lstrlen(p_text));
+			TextOut(p_hdc, 100 + i * 100, 675, p_text, lstrlen(p_text));
 		}
 		wsprintf(p_text, TEXT("%d"), selectedChest.GetChestID());
 		TextOut(p_hdc, 100, 625, p_text, lstrlen(p_text));
 	}
 
-	for (int i = 0; i < 2; i++)
-	{
-		int startx = 700, starty = 300, gap = i * 200;
-		POINT tjsqks[12] = { {startx, starty + gap}, {startx + 500, starty + gap}, {startx + 500, starty + 50 + gap}
-			, {startx, starty + 50 + gap}, {startx, starty + gap}, {startx + 150, starty - 50 + gap}
-			, {startx + 650, starty - 50 + gap}, {startx + 500, starty + gap}, {startx + 500, starty + 50 + gap}
-		, {startx + 650, starty + gap}, {startx + 650, starty - 50 + gap}, {startx + 500, starty + gap} };
-		Polygon(p_hdc, tjsqks, 12);
-	}
-
 	//상자들 출력
 	for (int i = 0; i < 6; i++)
 	{
-		Rectangle(p_hdc, chest[i].x - 25, chest[i].y - 25, chest[i].x + 25, chest[i].y + 25);
+		renderManager_shop->SetImage(L"chest.png", "chest" + to_string(i), Rect(0, 0, 1024, 1024), Rect(chest[i].x - 48, chest[i].y - 78, 128, 128));
+		//Rectangle(p_hdc, chest[i].x - 25, chest[i].y - 25, chest[i].x + 25, chest[i].y + 25);
 		wsprintf(p_text, TEXT("%d"), chest[i].GetChestID());
 		TextOut(p_hdc, chest[i].x, chest[i].y, p_text, lstrlen(p_text));
 	}
