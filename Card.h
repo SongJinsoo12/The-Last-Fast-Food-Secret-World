@@ -2,6 +2,7 @@
 #include <vector>
 #include <Windows.h>
 #include <random>
+#include <iostream>
 using namespace std;
 
 #define TURNTIME 777
@@ -20,43 +21,80 @@ enum CAttribute {
 
 enum CType {
 	E_Attack,
-	E_Deffence,
+	E_Deffense,
 	E_Magic
+};
+
+enum ALLCARDEnum
+{
+	BASEATK = 0,
+	ATK01,
+	ATK02,
+	ATKLIMIT = 41,
+
+	BASEDEF = 100,
+	DEF01,
+	DEF02,
+	DEFLIMIT = 144,
+
+	BASEMAGIC = 200,
+	MAGIC01,
+	MAGIC02,
+	MAGICLIMIT = 233,
 };
 
 class Card
 {
 protected:
-	int Atk;
-	int Rdc;
+	int uid;
+	int atk;
+	int def;
 	CAttribute Ait;
 	CType Type;
 
 public:
+	int x, y;
 	Card();
-	//카드 위치
-	int x;
-	int y;
+	Card(int p_uid);
+	void Init();
 
-	int id;//
-	////////////////////////////
-	void SetCard(CType p_type, int p_id, int p_x, int p_y)
-	{
-		Type = p_type, x = p_x, y = p_y, id = p_id;
-	}
+	//Get Set 함수
+	int GetUid();
+	void SetUid(int p_uid);
+	int GetAtk();
+	void SetAtk(int p_atk);
+	int GetDef();
+	void SetDef(int p_def);
+	CAttribute GetAit();
+	void SetAit(CAttribute p_Ait);
+	CType GetType();
+	void SetType(CType p_Type);
 };
+
+class GameCard : public Card
+{
+public:
+	GameCard();
+	GameCard(Card* p_Card);
+	virtual ~GameCard();
+
+private:
+
+};
+
 
 //덱 및 패
 class CardManager
 {
 public:
 	CardManager();
+	void StartGame(vector<GameCard*> deck);
 	~CardManager();
 
 	int GetDeckCount();
 	int GetHandCount();
-	vector<Card> GetHand();
-	void CardDraw();
+	vector<GameCard*> GetHand();
+	void CardDraw(vector<GameCard*> deck, int drawNum);
 	void CardAct(CardManager& opponent, HWND hWnd);
 
 	void DrawLine(HDC hdc, int startX, int startY, int lengthX, int lengthY);
@@ -65,13 +103,15 @@ public:
 	void DrawHand(HDC hdc, int rtX, int rtY, int cardX, int cardY, bool isPlayer);
 	void HandSelect(WPARAM wParam, CardManager& opponent, HWND hWnd);
 	void StartTurn(CardManager& player, CardManager& opponent);
-	void TimeLimit(WPARAM wParam, CardManager& opponent, HWND hWnd, LPCWSTR text, LPCWSTR caption, UINT type);
+	void TimeLimit(WPARAM wParam, CardManager& opponent, vector<GameCard*> deck);
+	void OpponentAct();
 
 private:
-	unsigned int deckCount;//덱 장수
-	unsigned int handCount;//패 장수
+	int deckCount;//덱 장수
+	int handCount;//패 장수
 	int handSelection;//패 카드 선택
-	vector<Card> hand;//패 카드
+	vector<GameCard*> hand;//패 카드
 	bool isMyTurn;//턴 확인
 };
 
+void FreeMemory(vector<GameCard*> vec);
