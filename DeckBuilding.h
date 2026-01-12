@@ -21,25 +21,18 @@ private:
 	vector<Card> myDeck;
 	//보유한 카드들
 	vector<Card> inven;
-
-	//임시 전체카드풀/////////////////////
-	Card* allcard = new Card[AllCARDMAXSIZE];
+	//덱빌딩 할때 성제한 여부 확인하기
 
 public:
 	DeckBuilding()
 	{
 		//기본사이즈 세팅 후 좌표 초기화
-		myDeck.resize(10);
-		for (int i = 0; i < 10; i++)
-		{
-			int x = i % 5, y = i / 5;		//한 화면에 가로5개, 세로5개
-			myDeck[i].SetCard(CType(rand() % 3), i, x * 150 + 50, y * 150 + 50);	//(val * 간격 + 젤 (왼/위)쪽으로부터의 여백)
-		}
-
-		for (int i = 0; i < 256; i++)
-		{
-			allcard[i].SetCard(CType(rand() % 3), i, 0, 0);
-		}
+		//myDeck.resize(10);
+		//for (int i = 0; i < 10; i++)
+		//{
+		//	int x = i % 5, y = i / 5;		//한 화면에 가로5개, 세로5개
+		//	myDeck[i].x = x * 150 + 50, myDeck[i].y = y * 150 + 50; //(val * 간격 + 젤 (왼/위)쪽으로부터의 여백)
+		//}
 	}
 
 	virtual ~DeckBuilding()
@@ -54,10 +47,6 @@ public:
 		{
 			inven.push_back(p_cards[i]);
 		}
-	}
-	Card* GetAllCard()
-	{
-		return allcard;
 	}
 
 	//인벤->덱 (덱, 마우스X, 마우스Y)
