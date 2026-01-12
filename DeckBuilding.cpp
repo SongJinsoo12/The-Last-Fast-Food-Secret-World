@@ -101,7 +101,7 @@ void DeckBuilding::DrawInventory(HDC p_hdc, DeckBuilding p_deck, HPEN p_hpen, HP
 		SelectObject(p_hdc, p_oldpen);
 		DeleteObject(p_hpen);	//펜생성 / 펜원상복구
 
-		wsprintf(p_text, TEXT("%d"), p_deck.inven[i].id);
+		wsprintf(p_text, TEXT("%d"), p_deck.inven[i].GetUid());
 		TextOut(p_hdc, p_deck.inven[i].x - 10, p_deck.inven[i].y, p_text, lstrlen(p_text));
 	}
 }
@@ -123,7 +123,7 @@ void DeckBuilding::DrawMyDeck(HDC p_hdc, DeckBuilding p_deck, HPEN p_hpen, HPEN 
 		SelectObject(p_hdc, p_oldpen);
 		DeleteObject(p_hpen);	//펜생성 / 펜원상복구
 
-		wsprintf(p_text, TEXT("%d"), p_deck.myDeck[i].id);
+		wsprintf(p_text, TEXT("%d"), p_deck.myDeck[i].GetUid());
 		TextOut(p_hdc, p_deck.myDeck[i].x - 10, p_deck.myDeck[i].y, p_text, lstrlen(p_text));
 	}
 }
