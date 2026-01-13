@@ -59,6 +59,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
+	//뽑기 화면을 사이즈별이 아닌 뽑기종류에 따라 출력하도록 변경 / 중복카드 획득 후 인벤 저장 시 사이즈관련오류 해결하기
+	//1뽑도 중복처리하기 / 상점 입장 연출 / 덱편집화면에서 카드 정보 확인 가능하게 / 덱빌딩한것을 json사용해서 저장할 수 있게
 	HDC hdc, memDC;////////////////////////
 	PAINTSTRUCT ps;
 	HBITMAP hOldBitmap;
@@ -70,11 +72,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static RECT a;
 	static HPEN hPen, oldPen;		//펜정보
 	static int screen = -1;			//현재화면번호
-	static Shop shop(&g_renderManager);
+	static Shop shop;
 	static HWND b;
 	static BOOL isGrad = FALSE;		//격자눈금 온오프용
-	//
-	static int index = 0;//임시
 
 	switch (iMessage)
 	{
@@ -91,12 +91,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		CreateWindow(TEXT("button"), TEXT("격자눈금"), WS_CHILD | WS_VISIBLE		//(TEXT("button"), TEXT(버튼내용), WS_CHILD | WS_VISIBLE
 			| BS_AUTOCHECKBOX, 20, 80, 100, 25, hWnd, (HMENU)2, g_hInst, NULL);	//| BS_PUSHBUTTON, startx, starty, 너비, 높이, hWnd, (HMENU)wParam번호, g_hInst, NULL)
 
+		InvalidateRect(hWnd, &rt, FALSE);
 		return 0;
 	}
 	case WM_TIMER:
 		return 0;
 
 	case WM_COMMAND:
+		shop.ClearShop();
+		shop.CancelSelection();	//화면전환시 상자선택을 FALSE로 변경함
 		switch (LOWORD(wParam))		//버튼의 wParam
 		{
 		case 0:
@@ -105,6 +108,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			break;
 		case 1:
 			ShowWindow(b, SW_SHOW);
+			shop.SetDrawShop();
 			screen = 1;
 			break;
 		case 2:
@@ -115,15 +119,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			break;
 		}
 
-		shop.CancelSelection();	//화면전환시 상자선택을 FALSE로 변경함
-		InvalidateRect(hWnd, &rt, TRUE);
+		InvalidateRect(hWnd, &rt, FALSE);
 
 		return 0;
 
 	case WM_LBUTTONDOWN:
 		if (screen == 0)
 		{
-			deck.DeckBuild(deck, mg.mx, mg.my);
+			deck.DeckBuild(mg.mx, mg.my);
 		}
 		else if (screen == 1)
 		{
@@ -134,22 +137,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				{
 					gacha.GetGacha(TRUE, deck, mg, shop.GetSelectedChest());
 					screen = 2;
+					shop.ClearShop();
 				}
 				else if (InCircle(1200, 635, mg.mx, mg.my))
 				{
 					gacha.GetGacha(FALSE, deck, mg, shop.GetSelectedChest());
 					screen = 2;
+					shop.ClearShop();
 				}
 			}
 		}
 
-		InvalidateRect(hWnd, &rt, TRUE);
+		InvalidateRect(hWnd, &rt, FALSE);
 		return 0;
 
 	case WM_MOUSEMOVE:
 		mg.mx = LOWORD(lParam);
 		mg.my = HIWORD(lParam);
-		//InvalidateRect(hWnd, &rt, TRUE);
 		return 0;
 
 	case WM_PAINT://더블 버퍼링
@@ -162,19 +166,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		Graphics graphics(memDC);
 		graphics.Clear(Color(255, 255, 255, 255));
 
-		for (int i = 0; i < rt.bottom; i++) {
-			Color lineColor;
-			if (i < 128) lineColor = Color(255, 255, i, 0);
-			else if (i < 256) lineColor = Color(255, 255, i, 0);
-			else if (i < 384) lineColor = Color(255, 255 - i, 255, i);
-			else if (i < 512) lineColor = Color(255, 255 - i, 255, i);
-			else if (i < 640) lineColor = Color(255, i, 255 - i, 255);
-			else lineColor = Color(255, i, 255 - i, 255);
-
-			Pen pen(lineColor, 1);
-			//graphics.DrawLine(&pen, 0, i, rt.right, i);
-		}
-
 		g_renderManager.RenderAll(&graphics);
 
 		BitBlt(hdc, 0, 0, rt.right, rt.bottom, memDC, 0, 0, SRCCOPY);
@@ -183,11 +174,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 		if (screen == 0)
 		{
-			deck.DrawDeckBuild(hdc, deck, hPen, oldPen, mg.mx, mg.my, print);
+			deck.DrawDeckBuild(hdc, hPen, oldPen, mg.mx, mg.my, print);
 		}
 		else if (screen == 1)
 		{
-			shop.DrawShop(hdc, hPen, oldPen, mg.mx, mg.my, print);
+			shop.DrawShop(hdc, print);
 			if (shop.CheckIsSelection())
 			{
 				gacha.DrawGachaButton(hdc, deck, shop.GetSelectedChest(), hPen, oldPen, mg.mx, mg.my, print);
@@ -222,7 +213,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		return 0;
 	}
 	case WM_DESTROY: // 윈도우 종료 시(창 닫음 메시지)
-		//GameImage_M::ImageManager::GetInstance()->Release();
 		PostQuitMessage(0); // 메시지 큐에 종료 메시지 전달
 		return 0;
 	}
