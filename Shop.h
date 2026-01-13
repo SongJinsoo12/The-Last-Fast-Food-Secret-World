@@ -62,9 +62,8 @@ private:
 	Chest chest[6];					//전체 상자
 	Chest selectedChest;			//선택된 상자
 	BOOL isSelect = FALSE;			//하이라이트될 상자를 선택했는가
-	GameImage_M::RenderManager* renderManager_shop = nullptr;
 public:
-	Shop(GameImage_M::RenderManager* p_renderManager_shop) : renderManager_shop(p_renderManager_shop)
+	Shop()
 	{
 		srand(time(NULL));
 		for (int i = 0; i < 6; i++)//0 1 2 3 4 5
@@ -98,7 +97,37 @@ public:
 	BOOL CheckIsSelection();
 	void CancelSelection();
 
-	void DrawShop(HDC p_hdc, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[]);
+	//이미지 로드 확인해보기
+	void SetDrawShop()
+	{
+		//상자 보관용 선반
+		g_renderManager.SetImage(L"shelf.png", "shelf1", Rect(0, 0, 651, 101), Rect(700, 250, 651, 101));
+		g_renderManager.SetImage(L"shelf.png", "shelf2", Rect(0, 0, 651, 101), Rect(700, 450, 651, 101));
+
+		//상점 주인
+		g_renderManager.SetImage(L"cookie.png", "cookie", Rect(0, 0, 2500, 2500), Rect(300 - 180, 430 - 180, 360, 360));
+
+		//상자 정보 하이라이트 및 상점 주인 대사 출력용
+		g_renderManager.SetImage(L"textbox.png", "textbox", Rect(0, 0, 500, 200), Rect(50, 500, 500, 200));
+
+		//상자들 출력
+		for (int i = 0; i < 6; i++)
+		{
+			g_renderManager.SetImage(L"chest.png", "chest" + to_string(i), Rect(0, 0, 1024, 1024), Rect(chest[i].x - 48, chest[i].y - 78, 128, 128));
+		}
+	}
+	void ClearShop()
+	{
+		g_renderManager.RemoveIamage("shelf1");
+		g_renderManager.RemoveIamage("shelf2");
+		g_renderManager.RemoveIamage("cookie");
+		g_renderManager.RemoveIamage("textbox");
+		for (int i = 0; i < 6; i++)
+		{
+			g_renderManager.RemoveIamage("chest" + to_string(i));
+		}
+	}
+	void DrawShop(HDC p_hdc, WCHAR p_text[]);
 	void DrawEnterShop()
 	{
 
