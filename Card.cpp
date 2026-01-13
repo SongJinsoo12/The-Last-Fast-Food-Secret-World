@@ -1,116 +1,361 @@
-#pragma once
-#include <vector>
-#include <Windows.h>
-#include <random>
-#include <iostream>
-using namespace std;
+#include "Card.h"
 
-#define TURNTIME 777
-#define randomInit(start, end)  \
-	random_device rd; \
-	mt19937 gen(rd()); \
-	uniform_int_distribution<int> cookRandom(start, end)
-
-enum CAttribute {
-	E_BULGOGI,
-	E_SOURCE,
-	E_CHESSE,
-	E_VEGAT,
-	E_BREAD
-};
-
-enum CType {
-	E_Attack,
-	E_Deffense,
-	E_Magic
-};
-
-enum ALLCARDEnum
+Card::Card()
 {
-	BASEATK = 0,
-	ATK01,
-	ATK02,
-	ATKLIMIT = 41,
+	Init();
+}
 
-	BASEDEF = 100,
-	DEF01,
-	DEF02,
-	DEFLIMIT = 144,
-
-	BASEMAGIC = 200,
-	MAGIC01,
-	MAGIC02,
-	MAGICLIMIT = 233,
-};
-
-class Card
+Card::Card(int p_uid)
 {
-protected:
-	int uid;
-	int atk;
-	int def;
-	CAttribute Ait;
-	CType Type;
+	Init();
+	uid = p_uid;
+}
 
-public:
-	Card();
-	Card(int p_uid);
-	void Init();
-
-	//Get Set 함수
-	int GetUid();
-	void SetUid(int p_uid);
-	int GetAtk();
-	void SetAtk(int p_atk);
-	int GetDef();
-	void SetDef(int p_def);
-	CAttribute GetAit();
-	void SetAit(CAttribute p_Ait);
-	CType GetType();
-	void SetType(CType p_Type);
-};
-
-class GameCard : public Card
+void Card::Init()
 {
-public:
-	GameCard();
-	GameCard(Card* p_Card);
-	virtual ~GameCard();
+	uid = -1;
+	atk = 0;
+	def = 0;
+	Ait = E_BREAD;
+	Type = E_Attack;
+}
 
-private:
-
-};
-
-
-//덱 및 패
-class CardManager
+int Card::GetUid()
 {
-public:
-	CardManager();
-	void StartGame(vector<GameCard*> deck);
-	~CardManager();
+	return uid;
+}
 
-	int GetDeckCount();
-	int GetHandCount();
-	vector<GameCard*> GetHand();
-	void CardDraw(vector<GameCard*> deck, int drawNum);
-	void CardAct(CardManager& opponent, HWND hWnd);
+void Card::SetUid(int p_uid)
+{
+	uid = p_uid;
+}
 
-	void DrawLine(HDC hdc, int startX, int startY, int lengthX, int lengthY);
-	void DrawBG(HDC hdc, RECT rect, int cardX, int cardY);
-	void DrawDeckCount(HDC hdc, int rtX, int rtY, int cardX, int cardY);
-	void DrawHand(HDC hdc, int rtX, int rtY, int cardX, int cardY, bool isPlayer);
-	void HandSelect(WPARAM wParam, CardManager& opponent, HWND hWnd);
-	void StartTurn(CardManager& player, CardManager& opponent);
-	void TimeLimit(WPARAM wParam, CardManager& opponent, vector<GameCard*> deck);
-	void OpponentAct();
+int Card::GetAtk()
+{
+	return atk;
+}
 
-private:
-	int deckCount;//덱 장수
-	int handCount;//패 장수
-	int handSelection;//패 카드 선택
-	vector<GameCard*> hand;//패 카드
-	bool isMyTurn;//턴 확인
-};
+void Card::SetAtk(int p_atk)
+{
+	atk = p_atk;
+}
 
-void FreeMemory(vector<GameCard*> vec);
+int Card::GetDef()
+{
+	return def;
+}
+
+void Card::SetDef(int p_def)
+{
+	def = p_def;
+}
+
+CAttribute Card::GetAit()
+{
+	return Ait;
+}
+
+void Card::SetAit(CAttribute p_Ait)
+{
+	Ait = p_Ait;
+}
+
+CType Card::GetType()
+{
+	return Type;
+}
+
+void Card::SetType(CType p_Type)
+{
+	Type = p_Type;
+}
+
+GameCard::GameCard()
+{
+}
+
+GameCard::GameCard(Card* p_Card)
+{
+	this->SetUid(p_Card->GetUid());
+	this->SetAtk(p_Card->GetAtk());
+	this->SetDef(p_Card->GetDef());
+	this->SetAit(p_Card->GetAit());
+	this->SetType(p_Card->GetType());
+}
+
+GameCard::~GameCard()
+{
+}
+
+void FreeMemory(vector<GameCard*> vec)
+{
+	for (size_t i = 0; i < vec.size(); i++)
+	{
+		if (vec[i] != nullptr)
+		{
+			delete vec[i];
+		}
+	}
+}
+
+CardManager::CardManager() : deckCount(25), handCount(0), handSelection(4), isMyTurn(false)
+{
+}
+
+void CardManager::StartGame(vector<GameCard*> deck) 
+{
+	CardDraw(deck, 5);
+}
+
+CardManager::~CardManager()
+{
+}
+
+int CardManager::GetDeckCount()
+{
+	return deckCount;
+}
+
+int CardManager::GetHandCount()
+{
+	return handCount;
+}
+
+vector<GameCard*> CardManager::GetHand()
+{
+	return hand;
+}
+
+//드로우
+void CardManager::CardDraw(vector<GameCard*> deck, int drawNum)
+{
+	for (size_t i = 0; i < drawNum; i++)
+	{
+		//덱에 카드가 없으면 리턴
+		if (deckCount <= 0)
+			return;
+
+		deckCount--;
+		handCount++;
+
+		//임시
+		hand.push_back(deck[deckCount - 1]);
+	}
+}
+
+//라인 그리기
+void CardManager::DrawLine(HDC hdc, int startX, int startY, int lengthX, int lengthY) {
+
+	MoveToEx(hdc, startX, startY, nullptr);
+	LineTo(hdc, lengthX, lengthY);
+}
+
+//배경 그리기
+void CardManager::DrawBG(HDC hdc, RECT rect, int cardX, int cardY)
+{
+	//화면 중간값 및 카드 길이 중간값
+	int midX = rect.right * 0.5;
+	int midY = rect.bottom * 0.5;
+	int cardMidX = cardX * 0.5;
+
+	HPEN myPen, oldPen;
+	myPen = CreatePen(PS_SOLID, 1, RGB(0, 0, 0));
+	oldPen = (HPEN)SelectObject(hdc, myPen);
+
+	DrawLine(hdc, 0, midY, rect.right, midY);
+
+	SelectObject(hdc, oldPen);
+	DeleteObject(myPen);
+
+	//중앙 카드 박스
+	Rectangle(hdc, midX - cardMidX, midY - (cardY + 10), midX + cardMidX, midY - 10);
+	Rectangle(hdc, midX - cardMidX, midY + 10, midX + cardMidX, midY + (cardY + 10));
+
+	//덱 카드 박스
+	HBRUSH myBrush, oldBrush;
+	myBrush = CreateSolidBrush(RGB(0, 0, 0));
+	oldBrush = (HBRUSH)SelectObject(hdc, myBrush);
+	Rectangle(hdc, 0, 0, cardX, cardY);
+	Rectangle(hdc, rect.right - cardX, rect.bottom - cardY, rect.right, rect.bottom);
+
+	SelectObject(hdc, oldBrush);
+	DeleteObject(myBrush);
+
+	//패에 카드 없으면 리턴
+	if (handCount <= 0)
+		return;
+
+	//선택 중인 패 카드 정보 출력
+	myPen = CreatePen(PS_SOLID, 1, RGB(0, 0, 255));
+	oldPen = (HPEN)SelectObject(hdc, myPen);
+	Rectangle(hdc, rect.left + 30, midY + 30, (rect.left + 30) + (cardX * 3), (midY + 30) + (cardY * 3));
+	SelectObject(hdc, oldPen);
+	DeleteObject(myPen);
+}
+
+//덱 장수 출력 
+void CardManager::DrawDeckCount(HDC hdc, int rtX, int rtY, int cardX, int cardY)
+{
+	SetBkMode(hdc, TRANSPARENT); //문자 배경 투명
+	SetTextColor(hdc, RGB(255, 255, 255)); //문자 색 변경
+	TCHAR buffer[56];
+	wsprintf(buffer, TEXT("%d"), this->GetDeckCount());
+	TextOut(hdc, rtX + cardX, rtY + cardY, buffer, lstrlen(buffer));
+}
+
+//패 출력
+void CardManager::DrawHand(HDC hdc, int rtX, int rtY, int cardX, int cardY, bool isPlayer)
+{
+	//패가 없으면 리턴
+	if (handCount <= 0)
+		return;
+
+	int midX = rtX * 0.5;
+	int handMidX = midX - (cardX * 2) - (cardX * 0.5);
+	//패 전체 길이는 임시로 카드 5장 길이로 설정
+	int sliceHand = (cardX * 5) / handCount;
+
+	//패가 5장 보다 적을 시
+	if (handCount < 5)
+	{
+		sliceHand = (cardX * handCount) / handCount;
+		handMidX = midX - (cardX);
+	}
+
+	for (size_t i = 0; i < handCount; i++)
+	{
+		int startPos = handMidX + (sliceHand * i);
+		if (i == handSelection && isPlayer)
+		{
+			HPEN myPen, oldPen;
+			myPen = CreatePen(PS_SOLID, 1, RGB(255, 215, 0));
+			oldPen = (HPEN)SelectObject(hdc, myPen);
+			Rectangle(hdc, startPos, rtY - 10, startPos + cardX, rtY + (cardY - 10));
+			SelectObject(hdc, oldPen);
+			DeleteObject(myPen);
+		}
+		else
+		{
+			Rectangle(hdc, startPos, rtY + 10, startPos + cardX, rtY + (10 + cardY));
+		}
+	}
+}
+
+//패 카드 선택
+void CardManager::HandSelect(WPARAM wParam, CardManager& opponent, HWND hWnd)
+{
+	switch (wParam)
+	{
+	case VK_LEFT:
+		if (handSelection <= 0)
+			return;
+		handSelection--;
+		break;
+	case VK_RIGHT:
+		if (handSelection >= handCount - 1)
+			return;
+		handSelection++;
+		break;
+		//임시 카드 내기 버튼
+	case VK_RETURN:
+		//자신의 턴이 아니면 행동 불가능
+		if (!isMyTurn)
+			return;
+		CardAct(opponent, hWnd);
+		break;
+		//임시 카드 드로우 버튼
+	case VK_DOWN:
+		break;
+	default:
+		break;
+	}
+}
+
+//패 카드 사용
+void CardManager::CardAct(CardManager& opponent, HWND hWnd)
+{
+	//패에 카드가 없으면 리턴
+	if (handCount <= 0)
+		return;
+	//선택 중이지 않으면 리턴
+	if (handSelection < 0)
+		return;
+
+	switch (hand[handSelection]->GetType())
+	{
+	case E_Attack:
+		cout << "공격 카드 사용!!\n";
+		break;
+	case E_Deffense:
+		cout << "방어 카드 사용!!\n";
+		break;
+	case E_Magic:
+		cout << "보조 카드 사용!!\n";
+		break;
+	}
+
+	hand.erase(hand.begin() + handSelection);
+	handCount--;
+	//사용한 카드가 패의 가장 오른쪽 카드이면 왼쪽 카드 선택
+	if (handSelection >= handCount && handSelection != 0)
+		handSelection--;
+
+	//턴 엔드
+	this->isMyTurn = !this->isMyTurn;
+	opponent.isMyTurn = !opponent.isMyTurn;
+	SetTimer(hWnd, TURNTIME, 7000, NULL);
+	cout << "상대방의 턴\n";
+}
+
+//시작 턴 정하기
+void CardManager::StartTurn(CardManager& player, CardManager& opponent)
+{
+	randomInit(0, 100);
+	int randTurn;
+	randTurn = cookRandom(gen);
+
+	if (randTurn % 2 == 0)
+	{
+		player.isMyTurn = !player.isMyTurn;
+		cout << "자신의 턴\n";
+	}
+	else
+	{
+		opponent.isMyTurn = !opponent.isMyTurn;
+		cout << "상대방의 턴\n";
+	}
+
+}
+
+//턴 시간 제한
+void CardManager::TimeLimit(WPARAM wParam, CardManager& opponent, vector<GameCard*> deck)
+{
+	switch (wParam)
+	{
+	case TURNTIME:
+		//턴 엔드
+		this->isMyTurn = !this->isMyTurn;
+		opponent.isMyTurn = !opponent.isMyTurn;
+
+		//자신의 차례면 드로우
+		if (this->isMyTurn)
+		{
+			CardDraw(deck, 1);
+			cout << "자신의 턴\n";
+		}
+		else
+		{
+			cout << "상대방의 턴\n";
+		}
+			
+		break;
+	default:
+		break;
+	}
+}
+
+//보스 / 몬스터 행동
+void CardManager::OpponentAct()
+{
+
+}
