@@ -87,12 +87,13 @@ class CardManager
 {
 public:
 	CardManager();
+	void StartGame(vector<GameCard*> deck);
 	~CardManager();
 
 	int GetDeckCount();
 	int GetHandCount();
-	vector<Card> GetHand();
-	void CardDraw();
+	vector<GameCard*> GetHand();
+	void CardDraw(vector<GameCard*> deck, int drawNum);
 	void CardAct(CardManager& opponent, HWND hWnd);
 
 	void DrawLine(HDC hdc, int startX, int startY, int lengthX, int lengthY);
@@ -101,13 +102,15 @@ public:
 	void DrawHand(HDC hdc, int rtX, int rtY, int cardX, int cardY, bool isPlayer);
 	void HandSelect(WPARAM wParam, CardManager& opponent, HWND hWnd);
 	void StartTurn(CardManager& player, CardManager& opponent);
-	void TimeLimit(WPARAM wParam, CardManager& opponent);
+	void TimeLimit(WPARAM wParam, CardManager& opponent, vector<GameCard*> deck);
 	void OpponentAct();
 
 private:
 	int deckCount;//덱 장수
 	int handCount;//패 장수
 	int handSelection;//패 카드 선택
-	vector<Card> hand;//패 카드
+	vector<GameCard*> hand;//패 카드
 	bool isMyTurn;//턴 확인
 };
+
+void FreeMemory(vector<GameCard*> vec);
