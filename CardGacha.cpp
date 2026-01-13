@@ -1,37 +1,46 @@
 #include "CardGacha.h"
 
-void CardGacha::one(DeckBuilding& p_deck)
+void CardGacha::one(DeckBuilding& p_deck, MainGame& p_mg)
 {
 	int invensize = p_deck.GetSize();
 	int randID = allCard[rand() % AllCARDMAXSIZE]->GetUid();
-	Card out;
-	out.SetUid(randID);
-	int x = invensize % 5, y = invensize / 5;
-	out.x = x * 150 + 750, out.y = y * 150 + 50;
-	p_deck.PushCard(&out, 1);
-
 	draw_card.resize(1);
-	draw_card[0] = out;
+	draw_card[0].SetUid(randID);
+	int x = invensize % 5, y = invensize / 5;
+	draw_card[0].x = x * 75 + 1050, draw_card[0].y = y * 150 + 50;
+	p_deck.PushCard(draw_card);
 }
 
-void CardGacha::ten(DeckBuilding& p_deck)
+void CardGacha::ten(DeckBuilding& p_deck, MainGame& p_mg)
 {
-	Card out[10];
 	int invensize = p_deck.GetSize();
-	for (int i = 0; i < 10; i++)
-	{
-		int randID = allCard[rand() % AllCARDMAXSIZE]->GetUid();
-		out[i].SetUid(randID);
-		int x = (invensize + i) % 5, y = (invensize + i) / 5;
-		out[i].x = x * 150 + 750, out[i].y = y * 150 + 50;
-	}
-	p_deck.PushCard(out, 10);
-
+	cout << "인벤 사이즈는 " << invensize << "\n";
+	int outsize = 10, idx = 0;
 	draw_card.resize(10);
 	for (int i = 0; i < 10; i++)
 	{
-		draw_card[i] = out[i];
+		int randIdx = rand() % AllCARDMAXSIZE;
+		int ID = allCard[randIdx]->GetUid();
+		draw_card[i].SetUid(ID);
+
+		if (isObtain[randIdx])
+		{
+			cout << draw_card[i].GetUid() << "는 중복" << "\n";
+			p_mg.AddGold(100 * 4); //고정값 * 레어도별 가중치
+			--outsize;
+			--idx;
+		}
+		else
+		{
+			cout << draw_card[i].GetUid() << "는 신규" << "\n";
+			isObtain[randIdx] = TRUE;
+			int x = (invensize + idx) % 5, y = (invensize + idx) / 5;
+			draw_card[i].x = x * 75 + 1050, draw_card[i].y = y * 150 + 50;
+			++idx;
+		}
 	}
+	draw_card.resize(outsize);
+	p_deck.PushCard(draw_card);
 }
 
 //뽑기를 함(TRUE-1뽑 / FALSE-10뽑, 뽑은카드를 저장할 변수)
@@ -45,7 +54,7 @@ void CardGacha::GetGacha(bool isOne, DeckBuilding& p_deck, MainGame& p_mg, Chest
 		{
 			this->isGachaFailed = true;
 		}
-		one(p_deck);
+		one(p_deck, p_mg);
 	}
 	else if (!isOne)
 	{
@@ -53,7 +62,7 @@ void CardGacha::GetGacha(bool isOne, DeckBuilding& p_deck, MainGame& p_mg, Chest
 		{
 			this->isGachaFailed = true;
 		}
-		ten(p_deck);
+		ten(p_deck, p_mg);
 	}
 }
 
