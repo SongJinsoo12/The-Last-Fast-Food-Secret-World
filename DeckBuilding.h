@@ -40,25 +40,26 @@ public:
 
 	}
 
+	//인벤토리의 사이즈 리턴
 	int GetSize();
-	void PushCard(Card* p_cards, int p_size)
+	void PushCard(vector<Card> p_cards)
 	{
-		for (int i = 0; i < p_size; i++)
+		for (int i = 0; i < p_cards.size(); i++)
 		{
 			inven.push_back(p_cards[i]);
 		}
 	}
 
 	//인벤->덱 (덱, 마우스X, 마우스Y)
-	void ItoD(DeckBuilding& p_deck, int p_mx, int p_my);
+	void ItoD(int p_mx, int p_my);
 	//덱->인벤 (덱, 마우스X, 마우스Y)
-	void DtoI(DeckBuilding& p_deck, int p_mx, int p_my);
-	void DeckBuild(DeckBuilding& p_deck, int p_mx, int p_my);
+	void DtoI(int p_mx, int p_my);
+	void DeckBuild(int p_mx, int p_my);
 
 	//인벤토리 출력
-	void DrawInventory(HDC p_hdc, DeckBuilding p_deck, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[]);
+	void DrawInventory(HDC p_hdc, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[]);
 	//마이덱 출력
-	void DrawMyDeck(HDC p_hdc, DeckBuilding p_deck, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[]);
+	void DrawMyDeck(HDC p_hdc, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[]);
 	//덱빌딩 화면 출력
-	void DrawDeckBuild(HDC p_hdc, DeckBuilding p_deck, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[]);
+	void DrawDeckBuild(HDC p_hdc, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[]);
 };
