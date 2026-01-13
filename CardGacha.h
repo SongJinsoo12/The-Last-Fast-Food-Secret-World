@@ -8,11 +8,13 @@
 class CardGacha
 {
 private:
+	int gold_out;
 	vector<Card> draw_card;
 	bool isGachaFailed = false;
 	int index = 0;
 	//전체카드풀
 	GameCard* allCard[AllCARDMAXSIZE];
+	BOOL isObtain[AllCARDMAXSIZE] = { FALSE, };
 public:
 	CardGacha()
 	{
@@ -39,8 +41,8 @@ public:
 	}
 
 	void Sort(); //중복카드 제거 및 id순서대로 정렬
-	void one(DeckBuilding& p_deck);	//전체카드 중 1장을 인벤에저장
-	void ten(DeckBuilding& p_deck);	//전체카드 중 10장을 인벤에저장
+	void one(DeckBuilding& p_deck, MainGame& p_mg);	//전체카드 중 1장을 인벤에저장
+	void ten(DeckBuilding& p_deck, MainGame& p_mg);	//전체카드 중 10장을 인벤에저장
 	void GetGacha(bool isOne, DeckBuilding& p_deck, MainGame& p_mg, Chest p_selChest); //뽑기를 실행(T-1/F-10)
 	void InGacha(); //뽑기화면 속 로직
 
