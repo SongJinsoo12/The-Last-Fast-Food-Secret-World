@@ -1,5 +1,5 @@
 #include "stage.h"
-#include "item.h"
+
 #include "MainGame.h"
 
 
@@ -26,17 +26,19 @@ bool Stage::GameStart() {
     //GetStage();
     SmallStage = 1;
     LargeStage = 1;
+    StageState = E_STAGE_TUTORIAL;
     GameState = E_PVP;
     return true;
 }
 bool TutorialStage::CheckTutorial() {
     if ( Get_LargeStage() <= 3 && Get_SmallStage() <= 3)
     {
-        //Maingame.h GameStage = E_TUTORIAL;?
+        StageState = E_STAGE_TUTORIAL;
         return IsTutorial = true;
     }
     else
     {
+        StageState = E_STAGE_NORMAL;
         return IsTutorial = false;
     }
 }
@@ -52,27 +54,45 @@ int Stage::setgold() {
 // 카드박스 드롭 함수?
 //}
 
+bool Stage::IsBossStage() {
+    if (SmallStage == 5)
+    {
+        if (IsLastBossStage())
+            return true;
+        StageState = E_STAGE_BOSS;
+        return true;
+    }    
+    else
+    {
+        StageState = E_STAGE_NORMAL;
+        return false;
+    }
+        
+}
 
 bool Stage::IsLastBossStage() { 
     if (LargeStage == 6 && SmallStage == 5)
+    {
+        StageState = E_STAGE_LASTBOSS;
         return true;
+    }
 } //라보 스테이지 체크
 
-//CType TutorialStage::TutorialCard() {
-//    if (CheckTutorial()) {
-//
-//        if (Get_LargeStage() == 1 && Get_SmallStage() == 1)
-//            return E_Attack;
-//
-//        if (Get_LargeStage() == 1 && Get_SmallStage() == 2)
-//            return E_Deffence;
-//
-//        if (Get_LargeStage() == 1 && Get_SmallStage() == 3)
-//            return E_Magic;
-//    }
-//    
-//    // 카드.h enum
-//}
+TCard TutorialStage::TutorialCard() {
+    if (CheckTutorial()) {
+
+        if (Get_LargeStage() == 1 && Get_SmallStage() == 1)
+            return E_TUTORIAL_ATTACK;
+
+        if (Get_LargeStage() == 1 && Get_SmallStage() == 2)
+            return E_TUTORIAL_DEFENSE;
+
+        if (Get_LargeStage() == 1 && Get_SmallStage() == 3)
+            return E_TUTORIAL_MAGIC;
+    }
+    
+    // 카드.h enum
+}
 
 bool Stage::StageStart() {
     return true;
@@ -92,6 +112,9 @@ bool Stage::StageStart() {
 //};
 int Stage::StageClear(bool isMonsterLost) {
 
+    if (IsLastBossStage())
+        StageState = E_STAGE_GAMECLEAR;
+
 
     if (!isMonsterLost) //몬스터 hp = 0 또는 몬스터 비활성화일떄 else 코드 실행
     {
@@ -101,17 +124,18 @@ int Stage::StageClear(bool isMonsterLost) {
     else
     {
         GameState = E_STAGE_CLEAR; 
-        if (IsLastBossStage)
-            return 7;
+    
     }
 
     AddGold(setgold());
+    DropCard();
+    //if (
     //보상 화면출력 함수?
-    GameState = E_MENU;
-    return GameState;
+    //GameState = E_MENU;
+    return GameState; 
 
 }
-//if (LargeStage == 6 && SmallStage == 5) //월드 6-5
+
 int Stage::NextStage() {
     /*if (IsGameClear() == 7)
         return false;*/
@@ -137,7 +161,7 @@ int Stage::NextStage() {
 }
 
 bool Stage::IsGameClear() {
-    if (StageClear(/* ? */) == 7) {
+    if (StageClear(/* ? */) == E_STAGE_GAMECLEAR) {
         return true;
     }
 }
