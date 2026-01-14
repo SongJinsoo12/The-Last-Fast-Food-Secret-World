@@ -1,4 +1,10 @@
 #include "Card.h"
+#include <string>
+#include "RenderManager.h"
+#include "ImageLoad.h"
+#include "ImageManager.h"
+#include "ConstData.h"
+#include "CardTableManager.h"
 
 Card::Card()
 {
@@ -18,6 +24,8 @@ void Card::Init()
 	def = 0;
 	Ait = E_BREAD;
 	Type = E_Attack;
+
+	//SetImage();
 }
 
 int Card::GetUid()
@@ -70,6 +78,22 @@ void Card::SetType(CType p_Type)
 	Type = p_Type;
 }
 
+void CardManager::SetImage()
+{
+	g_renderManager.SetImage(L"card_image.png", "Card_Middle_Up",
+		Gdiplus::Rect(0, 0, 96, 122), Gdiplus::Rect(0, 0, 0, 0));
+	g_renderManager.SetImage(L"card_image.png", "Card_Middle_Down",
+		Gdiplus::Rect(0, 0, 96, 122), Gdiplus::Rect(0, 0, 0, 0));
+
+	g_renderManager.SetImage(L"card_back.png", "Card_Deck_Up",
+		Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0));
+	g_renderManager.SetImage(L"card_back.png", "Card_Deck_Down",
+		Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0));
+
+
+	cout << "이미지 로드 확인\n";
+}
+
 GameCard::GameCard()
 {
 }
@@ -87,24 +111,15 @@ GameCard::~GameCard()
 {
 }
 
-void FreeMemory(vector<GameCard*> vec)
-{
-	for (size_t i = 0; i < vec.size(); i++)
-	{
-		if (vec[i] != nullptr)
-		{
-			delete vec[i];
-		}
-	}
-}
 
 CardManager::CardManager() : deckCount(25), handCount(0), handSelection(4), isMyTurn(false)
 {
 }
 
-void CardManager::StartGame(vector<GameCard*> deck) 
+void CardManager::StartGame()
 {
-	CardDraw(deck, 5);
+	CardDraw(5);
+	cout << "처음 카드 드로우 확인\n";
 }
 
 CardManager::~CardManager()
@@ -126,8 +141,15 @@ vector<GameCard*> CardManager::GetHand()
 	return hand;
 }
 
+void CardManager::SetDeck()
+{
+	deck = CardTableManager::Instance()->GetRandomCard(25);
+
+	StartGame();
+}
+
 //드로우
-void CardManager::CardDraw(vector<GameCard*> deck, int drawNum)
+void CardManager::CardDraw(int drawNum)
 {
 	for (size_t i = 0; i < drawNum; i++)
 	{
@@ -141,6 +163,14 @@ void CardManager::CardDraw(vector<GameCard*> deck, int drawNum)
 		//임시
 		hand.push_back(deck[deckCount - 1]);
 	}
+
+	//패 카드 임시 확인
+	cout << "패 카드 번호: [ ";
+	for (size_t i = 0; i < handCount; i++)
+	{
+		cout << hand[i]->GetUid() << " ";
+	}
+	cout << " ]\n";
 }
 
 //라인 그리기
@@ -151,46 +181,25 @@ void CardManager::DrawLine(HDC hdc, int startX, int startY, int lengthX, int len
 }
 
 //배경 그리기
-void CardManager::DrawBG(HDC hdc, RECT rect, int cardX, int cardY)
+void CardManager::DrawBG()
 {
 	//화면 중간값 및 카드 길이 중간값
-	int midX = rect.right * 0.5;
-	int midY = rect.bottom * 0.5;
-	int cardMidX = cardX * 0.5;
+	int midX = 1280 * 0.5;
+	int midY = 720 * 0.5;
+	int cardMidX = CARDX * 0.5;
+	int deckX = CARDX;
+	int deckY = CARDY;
 
-	HPEN myPen, oldPen;
-	myPen = CreatePen(PS_SOLID, 1, RGB(0, 0, 0));
-	oldPen = (HPEN)SelectObject(hdc, myPen);
+	g_renderManager.MoveImage("Card_Middle_Up",
+		Gdiplus::Rect(midX - cardMidX, midY - (deckY + 10), deckX, deckY));
+	g_renderManager.MoveImage("Card_Middle_Down",
+		Gdiplus::Rect(midX - cardMidX, (midY + 10), deckX, deckY));
+	g_renderManager.MoveImage("Card_Deck_Up",
+		Gdiplus::Rect(0, 0, deckX, deckY));
+	g_renderManager.MoveImage("Card_Deck_Down",
+		Gdiplus::Rect(1265 - deckX, 682 - deckY, deckX, deckY));
 
-	DrawLine(hdc, 0, midY, rect.right, midY);
-
-	SelectObject(hdc, oldPen);
-	DeleteObject(myPen);
-
-	//중앙 카드 박스
-	Rectangle(hdc, midX - cardMidX, midY - (cardY + 10), midX + cardMidX, midY - 10);
-	Rectangle(hdc, midX - cardMidX, midY + 10, midX + cardMidX, midY + (cardY + 10));
-
-	//덱 카드 박스
-	HBRUSH myBrush, oldBrush;
-	myBrush = CreateSolidBrush(RGB(0, 0, 0));
-	oldBrush = (HBRUSH)SelectObject(hdc, myBrush);
-	Rectangle(hdc, 0, 0, cardX, cardY);
-	Rectangle(hdc, rect.right - cardX, rect.bottom - cardY, rect.right, rect.bottom);
-
-	SelectObject(hdc, oldBrush);
-	DeleteObject(myBrush);
-
-	//패에 카드 없으면 리턴
-	if (handCount <= 0)
-		return;
-
-	//선택 중인 패 카드 정보 출력
-	myPen = CreatePen(PS_SOLID, 1, RGB(0, 0, 255));
-	oldPen = (HPEN)SelectObject(hdc, myPen);
-	Rectangle(hdc, rect.left + 30, midY + 30, (rect.left + 30) + (cardX * 3), (midY + 30) + (cardY * 3));
-	SelectObject(hdc, oldPen);
-	DeleteObject(myPen);
+	cout << "배경 출력 확인\n";
 }
 
 //덱 장수 출력 
@@ -204,22 +213,28 @@ void CardManager::DrawDeckCount(HDC hdc, int rtX, int rtY, int cardX, int cardY)
 }
 
 //패 출력
-void CardManager::DrawHand(HDC hdc, int rtX, int rtY, int cardX, int cardY, bool isPlayer)
+void CardManager::DrawHand(bool isPlayer)
 {
 	//패가 없으면 리턴
 	if (handCount <= 0)
 		return;
 
-	int midX = rtX * 0.5;
-	int handMidX = midX - (cardX * 2) - (cardX * 0.5);
+	int posY;
+	if (isPlayer) 
+		posY = 720 - 180;
+	else 
+		posY = 18;
+
+	int midX = 1280 * 0.5;
+	int handMidX = midX - (CARDX * 2) - (CARDX * 0.5);
 	//패 전체 길이는 임시로 카드 5장 길이로 설정
-	int sliceHand = (cardX * 5) / handCount;
+	int sliceHand = (CARDX * 5) / handCount;
 
 	//패가 5장 보다 적을 시
 	if (handCount < 5)
 	{
-		sliceHand = (cardX * handCount) / handCount;
-		handMidX = midX - (cardX);
+		sliceHand = (CARDX * handCount) / handCount;
+		handMidX = midX - 200;
 	}
 
 	for (size_t i = 0; i < handCount; i++)
@@ -227,17 +242,15 @@ void CardManager::DrawHand(HDC hdc, int rtX, int rtY, int cardX, int cardY, bool
 		int startPos = handMidX + (sliceHand * i);
 		if (i == handSelection && isPlayer)
 		{
-			HPEN myPen, oldPen;
-			myPen = CreatePen(PS_SOLID, 1, RGB(255, 215, 0));
-			oldPen = (HPEN)SelectObject(hdc, myPen);
-			Rectangle(hdc, startPos, rtY - 10, startPos + cardX, rtY + (cardY - 10));
-			SelectObject(hdc, oldPen);
-			DeleteObject(myPen);
+			g_renderManager.MoveImage(to_string(hand[i]->GetUid()), 
+				Gdiplus::Rect(startPos, posY - 10, CARDX, CARDY));
 		}
 		else
 		{
-			Rectangle(hdc, startPos, rtY + 10, startPos + cardX, rtY + (10 + cardY));
+			g_renderManager.MoveImage(to_string(hand[i]->GetUid()), 
+				Gdiplus::Rect(startPos, posY + 10, CARDX, CARDY));
 		}
+
 	}
 }
 
@@ -294,6 +307,9 @@ void CardManager::CardAct(CardManager& opponent, HWND hWnd)
 		break;
 	}
 
+	//이미지 안보이기
+	g_renderManager.RemoveIamage(to_string(hand[handSelection]->GetUid()));
+
 	hand.erase(hand.begin() + handSelection);
 	handCount--;
 	//사용한 카드가 패의 가장 오른쪽 카드이면 왼쪽 카드 선택
@@ -305,6 +321,8 @@ void CardManager::CardAct(CardManager& opponent, HWND hWnd)
 	opponent.isMyTurn = !opponent.isMyTurn;
 	SetTimer(hWnd, TURNTIME, 7000, NULL);
 	cout << "상대방의 턴\n";
+
+	opponent.OpponentAct();
 }
 
 //시작 턴 정하기
@@ -323,12 +341,13 @@ void CardManager::StartTurn(CardManager& player, CardManager& opponent)
 	{
 		opponent.isMyTurn = !opponent.isMyTurn;
 		cout << "상대방의 턴\n";
+		opponent.OpponentAct();
 	}
 
 }
 
 //턴 시간 제한
-void CardManager::TimeLimit(WPARAM wParam, CardManager& opponent, vector<GameCard*> deck)
+void CardManager::TimeLimit(WPARAM wParam, CardManager& opponent)
 {
 	switch (wParam)
 	{
@@ -340,14 +359,15 @@ void CardManager::TimeLimit(WPARAM wParam, CardManager& opponent, vector<GameCar
 		//자신의 차례면 드로우
 		if (this->isMyTurn)
 		{
-			CardDraw(deck, 1);
+			CardDraw(1);
 			cout << "자신의 턴\n";
 		}
 		else
 		{
 			cout << "상대방의 턴\n";
+			opponent.OpponentAct();
 		}
-			
+
 		break;
 	default:
 		break;
@@ -357,5 +377,5 @@ void CardManager::TimeLimit(WPARAM wParam, CardManager& opponent, vector<GameCar
 //보스 / 몬스터 행동
 void CardManager::OpponentAct()
 {
-
+	CardDraw(1);
 }
