@@ -1,4 +1,12 @@
 #include "CardTableManager.h"
+#include "RenderManager.h"
+#include "ImageLoad.h"
+#include "ImageManager.h"
+
+#include <random>
+#include <fstream>
+#include <sstream>
+#include <string>
 
 CardTableManager* CardTableManager::m_Instance = nullptr;
 
@@ -50,7 +58,7 @@ void CardTableManager::Init()
 			row.push_back(cell);
 		}
 
-		if (row.size() < 5) 
+		if (row.size() < 5)
 			continue;
 
 		int uid = stoi(row[0]);
@@ -67,6 +75,8 @@ void CardTableManager::Init()
 		newCard->SetAit(StrToAit(aitStr));
 		newCard->SetType(StrToType(typeStr));
 		m_AllCardDataVec[uid] = newCard;
+
+		CardImageLoad(uid, StrToAit(aitStr), StrToType(typeStr));
 	}
 
 	file.close();
@@ -106,6 +116,7 @@ vector<GameCard*> CardTableManager::GetRandomCard(int p_count)
 		}
 	}
 
+	cout << "카드 셔플 확인\n";
 	return outvec;
 }
 
@@ -122,7 +133,40 @@ CAttribute CardTableManager::StrToAit(string str)
 CType CardTableManager::StrToType(string str)
 {
 	if (str == "E_Attack") return E_Attack;
-	if (str == "E_Deffence") return E_Deffense;
+	if (str == "E_Deffense") return E_Deffense;
 	if (str == "E_Magic") return E_Magic;
 	return E_Attack; // 기본값
+}
+
+void CardTableManager::CardImageLoad(int uid, CAttribute  ait, CType type)
+{
+	switch (type)
+	{
+	case E_Attack:
+		g_renderManager.SetImage(L"card_atk.png", to_string(uid),
+			Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0));
+		break;
+	case E_Deffense:
+		g_renderManager.SetImage(L"card_def.png", to_string(uid),
+			Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0));
+		break;
+	case E_Magic:
+		g_renderManager.SetImage(L"card_magic.png", to_string(uid),
+			Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0));
+		break;
+	}
+
+	switch (ait)
+	{
+	case E_BULGOGI:
+		break;
+	case E_SOURCE:
+		break;
+	case E_CHESSE:
+		break;
+	case E_VEGAT:
+		break;
+	case E_BREAD:
+		break;
+	}
 }
