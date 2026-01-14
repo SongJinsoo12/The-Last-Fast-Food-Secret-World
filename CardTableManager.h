@@ -1,11 +1,12 @@
 #pragma once
-#include "Card.h"
 #include <vector>
-#include <random>
-#include <fstream>
-#include <sstream>
-#include <string>
+
+#include "Card.h"
+
 using namespace std;
+
+class Card;
+class GameCard;
 
 class CardTableManager
 {
@@ -28,6 +29,7 @@ public:
 
 	CAttribute StrToAit(string str);
 	CType StrToType(string str);
+	void CardImageLoad(int uid, CAttribute  ait, CType type);
 
 protected:
 	vector<Card*> m_AllCardDataVec;//전체 카드
