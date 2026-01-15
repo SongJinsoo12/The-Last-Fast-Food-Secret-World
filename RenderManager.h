@@ -18,11 +18,10 @@ namespace GameImage_M {
 		void RenderAll(Graphics* grap);
 
 		void MoveImage(string p_id, Rect renderPos);
-		void RemoveIamage(string p_id);
+		void RemoveIDIamage(string p_id);
+		void AllRemoveImage();
 	};
-
 }
 
 extern GameImage_M::RenderManager g_renderManager;
-
 
