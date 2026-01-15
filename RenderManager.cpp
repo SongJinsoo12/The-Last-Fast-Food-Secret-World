@@ -2,9 +2,10 @@
 #include <iostream>
 
 namespace GameImage_M {
+
 	RenderManager::~RenderManager()
 	{
-		m_RenderList.clear();
+		AllRemoveImage();
 		ImageManager::GetInstance()->Release();
 	}
 	void RenderManager::SetImage(wstring p_path, string p_id, Rect load, Rect render)
@@ -13,7 +14,7 @@ namespace GameImage_M {
 			it != m_RenderList.end(); )
 		{
 			if ((*it)->GetID() == p_id) {
-				cout << "ID Áßº¹ °ª Á¸Àç" << endl;
+				cout << "ID 중복 값 존재" << endl;
 				return;
 			}
 			else
@@ -44,7 +45,7 @@ namespace GameImage_M {
 			}
 		}
 	}
-	void RenderManager::RemoveIamage(string p_id)
+	void RenderManager::RemoveIDIamage(string p_id)
 	{
 		for (size_t i = 0; i < m_RenderList.size(); i++)
 		{
@@ -54,7 +55,11 @@ namespace GameImage_M {
 			}
 		}
 	}
+	void RenderManager::AllRemoveImage()
+	{
+		m_RenderList.clear();
+		m_RenderList.shrink_to_fit();
+	}
 }
 
 GameImage_M::RenderManager g_renderManager;
-
