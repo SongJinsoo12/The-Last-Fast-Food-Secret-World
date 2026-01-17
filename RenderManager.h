@@ -14,9 +14,10 @@ namespace GameImage_M {
 		~RenderManager();
 
 	public:
-		void SetImage(wstring p_path, string p_id, Rect load, Rect render);
+		void SetImage(wstring p_path, string p_id, Rect load, Rect render, bool isVisible);
 		void RenderAll(Graphics* grap);
 
+		void ImageVisible(string p_id, bool isVisible);
 		void MoveImage(string p_id, Rect renderPos);
 		void RemoveIDIamage(string p_id);
 		void AllRemoveImage();
