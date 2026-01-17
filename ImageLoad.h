@@ -14,7 +14,6 @@ namespace  GameImage_M {
 
 	class Compoment {
 	public:
-		virtual void Update() = 0;
 		virtual void Render(Graphics* grap) = 0;
 	};
 
@@ -25,17 +24,19 @@ namespace  GameImage_M {
 		string id;
 		Rect loadRect;
 		Rect renderRect;
+		bool isVisible;
 
 		shared_ptr<Image> my_loadImage;
 	public:
 
-		void LoadI(wstring p_path, string p_Id, Rect p_load, Rect p_render);
+		void LoadI(wstring p_path, string p_Id, Rect p_load, Rect p_render, bool p_ISvisible);
 
-		void Update() override;
 		void Render(Graphics* grap) override;
 
 		string GetID();
 		void Move(Rect p_renderMovePos);
+		void IsVisibleImage(bool p_isVisible);
+		bool GetVisible();
 	};
 }
 
