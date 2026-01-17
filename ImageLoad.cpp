@@ -3,19 +3,17 @@
 
 namespace GameImage_M {
 
-	void ImageLoad::LoadI(wstring p_path, string p_Id, Rect p_load, Rect p_render)
+	void ImageLoad::LoadI(wstring p_path, string p_Id, Rect p_load, Rect p_render, bool p_ISvisible)
 	{
-		//ÆÄÀÏ ÀÌ¸§À» Æ÷ÀÎÅÍ¿¡ ÀúÀå
+		//íŒŒì¼ ì´ë¦„ì„ í¬ì¸í„°ì— ì €ìž¥
 		my_loadImage = ImageManager::GetInstance()->GetImage(p_path);
 
 		id = p_Id;
 		loadRect = p_load;
 		renderRect = p_render;
+		isVisible = p_ISvisible;
 	}
-	void ImageLoad::Update()
-	{
 
-	}
 	void ImageLoad::Render(Graphics* grap)
 	{
 		if (my_loadImage != nullptr && grap != nullptr) {
@@ -37,6 +35,14 @@ namespace GameImage_M {
 		}
 		else
 			renderRect = p_renderMovePos;
+	}
+	void ImageLoad::IsVisibleImage(bool p_isVisible)
+	{
+		isVisible = p_isVisible;
+	}
+	bool ImageLoad::GetVisible()
+	{
+		return isVisible;
 	}
 }
 
