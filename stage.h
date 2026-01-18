@@ -38,7 +38,7 @@ public:
 	//int getstage();
 	int setgold();
 	
-
+ 
 };
 
 enum TCard
@@ -58,3 +58,4 @@ public:
 	TCard TutorialCard();
 	bool CheckTutorial();
 };
+
