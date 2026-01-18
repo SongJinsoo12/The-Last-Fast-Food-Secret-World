@@ -80,16 +80,20 @@ void Card::SetType(CType p_Type)
 
 void CardManager::SetImage()
 {
-	g_renderManager.SetImage(L"card_image.png", "Card_Middle_Up",
-		Gdiplus::Rect(0, 0, 96, 122), Gdiplus::Rect(0, 0, 0, 0));
-	g_renderManager.SetImage(L"card_image.png", "Card_Middle_Down",
-		Gdiplus::Rect(0, 0, 96, 122), Gdiplus::Rect(0, 0, 0, 0));
+	g_renderManager.SetImage(L"background_city_night.png", "City_Night",
+		Gdiplus::Rect(0, 0, 2304, 1296), Gdiplus::Rect(0, 0, 1280, 720));
+
+	g_renderManager.SetImage(L"card_zone.png", "Card_Middle_Up",
+		Gdiplus::Rect(0, 0, 88, 110), Gdiplus::Rect(0, 0, 0, 0));
+	g_renderManager.SetImage(L"card_zone.png", "Card_Middle_Down",
+		Gdiplus::Rect(0, 0, 88, 110), Gdiplus::Rect(0, 0, 0, 0));
 
 	g_renderManager.SetImage(L"card_back.png", "Card_Deck_Up",
 		Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0));
 	g_renderManager.SetImage(L"card_back.png", "Card_Deck_Down",
 		Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0));
 
+	
 
 	cout << "이미지 로드 확인\n";
 }
@@ -124,6 +128,10 @@ void CardManager::StartGame()
 
 CardManager::~CardManager()
 {
+	for (size_t i = 0; i < handCount; i++)
+	{
+		delete deck[i];
+	}
 }
 
 int CardManager::GetDeckCount()
@@ -190,6 +198,8 @@ void CardManager::DrawBG()
 	int deckX = CARDX;
 	int deckY = CARDY;
 
+	/*g_renderManager.MoveImage("City_Night",
+		Gdiplus::Rect(0, 0, 1280, 720));*/
 	g_renderManager.MoveImage("Card_Middle_Up",
 		Gdiplus::Rect(midX - cardMidX, midY - (deckY + 10), deckX, deckY));
 	g_renderManager.MoveImage("Card_Middle_Down",
@@ -198,6 +208,7 @@ void CardManager::DrawBG()
 		Gdiplus::Rect(0, 0, deckX, deckY));
 	g_renderManager.MoveImage("Card_Deck_Down",
 		Gdiplus::Rect(1265 - deckX, 682 - deckY, deckX, deckY));
+	
 
 	cout << "배경 출력 확인\n";
 }
@@ -210,6 +221,8 @@ void CardManager::DrawDeckCount(HDC hdc, int rtX, int rtY, int cardX, int cardY)
 	TCHAR buffer[56];
 	wsprintf(buffer, TEXT("%d"), this->GetDeckCount());
 	TextOut(hdc, rtX + cardX, rtY + cardY, buffer, lstrlen(buffer));
+
+	DrawCardInfo(hdc);
 }
 
 //패 출력
@@ -253,6 +266,58 @@ void CardManager::DrawHand(bool isPlayer)
 
 	}
 }
+
+//선택 카드 정보 출력
+void CardManager::DrawCardInfo(HDC hdc)
+{
+	SetBkMode(hdc, TRANSPARENT); //문자 배경 투명
+	SetTextColor(hdc, RGB(0, 0, 0)); //문자 색 변경
+	TCHAR info_uid[56];
+	TCHAR info_atk_def[56];
+	wsprintf(info_uid, TEXT("카드 번호: %d"), hand[handSelection]->GetUid());
+	TextOut(hdc, 0, 400, info_uid, lstrlen(info_uid));
+	
+	switch (hand[handSelection]->GetAit())
+	{
+	case E_BULGOGI:
+		TextOut(hdc, 0, 430, TEXT("카드 속성 : 불고기"), 26);
+		break;
+	case E_SOURCE:
+		TextOut(hdc, 0, 430, TEXT("카드 속성 : 소스"), 23);
+		break;
+	case E_CHESSE:
+		TextOut(hdc, 0, 430, TEXT("카드 속성 : 치즈"), 23);
+		break;
+	case E_VEGAT:
+		TextOut(hdc, 0, 430, TEXT("카드 속성 : 야채"), 23);
+		break;
+	case E_BREAD:
+		TextOut(hdc, 0, 430, TEXT("카드 속성 : 빵"), 20);
+		break;
+	}
+
+	switch (hand[handSelection]->GetType())
+	{
+	case E_Attack:
+		TextOut(hdc, 0, 460, TEXT("카드 타입 : 공격"), 23);
+
+		wsprintf(info_atk_def, TEXT("카드 공격력: %d"), hand[handSelection]->GetAtk());
+		TextOut(hdc, 0, 490, info_atk_def, lstrlen(info_atk_def));
+		break;
+	case E_Deffense:
+		TextOut(hdc, 0, 460, TEXT("카드 타입 : 방어"), 23);
+
+		wsprintf(info_atk_def, TEXT("카드 방어력: %d"), hand[handSelection]->GetDef());
+		TextOut(hdc, 0, 490, info_atk_def, lstrlen(info_atk_def));
+		break;
+	case E_Magic:
+		TextOut(hdc, 0, 460, TEXT("카드 타입 : 보조"), 23);
+
+		TextOut(hdc, 0, 490, TEXT("보조 카드는 특별한 방법으로 플레이어를 돕습니다!"), 70);
+		break;
+	}	
+}
+
 
 //패 카드 선택
 void CardManager::HandSelect(WPARAM wParam, CardManager& opponent, HWND hWnd)
