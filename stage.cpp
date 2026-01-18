@@ -7,22 +7,18 @@
 
 
 
-int Stage::Get_LargeStage() {
+int Stage::Get_LargeStage() { //튜토리얼 클래스 용
     return LargeStage;
 }
 
-int Stage::Get_SmallStage() {
+int Stage::Get_SmallStage() { //튜토리얼 클래스 용
     return SmallStage;
 }
 
-//void Stage::BindGame(MainGame* game)
-//{
-//    this->game = game;
-//}
 
 
 
-bool Stage::GameStart() {
+bool Stage::GameStart() { //수정중
     //GetStage();
     SmallStage = 1;
     LargeStage = 1;
@@ -78,7 +74,7 @@ bool Stage::IsLastBossStage() {
     }
 } //라보 스테이지 체크
 
-TCard TutorialStage::TutorialCard() {
+TCardType TutorialStage::TutorialCard() {
     if (CheckTutorial()) {
 
         if (Get_LargeStage() == 1 && Get_SmallStage() == 1)
@@ -180,3 +176,6 @@ bool Stage::GameOver(bool isPlayerLost) {
     }
 }
 
+void Stage::DrawStageClearScreen() {
+    //스테이지 클리어 화면 출력
+}
