@@ -105,6 +105,7 @@ public:
 	void DrawBG();
 	void DrawDeckCount(HDC hdc, int rtX, int rtY, int cardX, int cardY);
 	void DrawHand(bool isPlayer);
+	void DrawCardInfo(HDC hdc);
 	void HandSelect(WPARAM wParam, CardManager& opponent, HWND hWnd);
 	void StartTurn(CardManager& player, CardManager& opponent);
 	void TimeLimit(WPARAM wParam, CardManager& opponent);
