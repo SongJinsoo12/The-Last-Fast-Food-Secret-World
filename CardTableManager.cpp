@@ -96,6 +96,7 @@ Card* CardTableManager::GetCardData(ALLCARDEnum p_uid)
 vector<GameCard*> CardTableManager::GetRandomCard(int p_count)
 {
 	vector<GameCard*> outvec;
+	vector<int> noSameUid;
 
 	for (size_t i = 0; i < p_count; i++)
 	{
@@ -103,12 +104,24 @@ vector<GameCard*> CardTableManager::GetRandomCard(int p_count)
 		randomInit(0, 232);
 		randUid = cookRandom(gen);
 		Card* card = GetCardData(randUid);
+
+		//중복 확인
+		for (size_t j = 0; j < noSameUid.size(); j++)
+		{
+			if (randUid == noSameUid[j])
+			{
+				i--;
+				card == nullptr;
+				break;
+			}
+		}
 		if (card != nullptr)
 		{
 			Card* card = CardTableManager::Instance()->GetCardData(randUid);
 			GameCard* gameCard = new GameCard(card);
 
 			outvec.push_back(gameCard);
+			noSameUid.push_back(randUid);
 		}
 		else
 		{
