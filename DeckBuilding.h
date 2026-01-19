@@ -21,7 +21,8 @@ private:
 	vector<Card> myDeck;
 	//보유한 카드들
 	vector<Card> inven;
-	//덱빌딩 할때 성제한 여부 확인하기
+
+	int Star_n[3] = { 0, };//덱의 1,2,3성 카드개수
 
 public:
 	DeckBuilding()
@@ -39,16 +40,14 @@ public:
 	{
 
 	}
+	//중복이 존재하면 제거후 뒤의 카드들을 앞으로 이동
+	vector<Card> EraseDuple(vector<Card> p_cards);
 
 	//인벤토리의 사이즈 리턴
 	int GetSize();
-	void PushCard(vector<Card> p_cards)
-	{
-		for (int i = 0; i < p_cards.size(); i++)
-		{
-			inven.push_back(p_cards[i]);
-		}
-	}
+
+	//파라미터의 배열을 인벤 맨 뒤에 추가함. 중복 제거도 해줌
+	void PushCard(vector<Card> p_cards);
 
 	//인벤->덱 (덱, 마우스X, 마우스Y)
 	void ItoD(int p_mx, int p_my);
