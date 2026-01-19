@@ -59,7 +59,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
-	//뽑기 화면을 사이즈별이 아닌 뽑기종류에 따라 출력하도록 변경 / 중복카드 획득 후 인벤 저장 시 사이즈관련오류 해결하기
+	//인벤토리 정렬기능 추가하기 / 클래스마다 extern 해두기
 	//1뽑도 중복처리하기 / 상점 입장 연출 / 덱편집화면에서 카드 정보 확인 가능하게 / 덱빌딩한것을 json사용해서 저장할 수 있게
 	HDC hdc, memDC;////////////////////////
 	PAINTSTRUCT ps;
