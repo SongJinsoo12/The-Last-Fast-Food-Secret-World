@@ -14,38 +14,38 @@ void CardGacha::one(DeckBuilding& p_deck, MainGame& p_mg)
 void CardGacha::ten(DeckBuilding& p_deck, MainGame& p_mg)
 {
 	int invensize = p_deck.GetSize();
-	cout << "인벤 사이즈는 " << invensize << "\n";
-	int outsize = 10, idx = 0;
 	draw_card.resize(10);
 	for (int i = 0; i < 10; i++)
 	{
+		//카드풀에서 랜덤한 카드를 뽑음
 		int randIdx = rand() % AllCARDMAXSIZE;
 		int ID = allCard[randIdx]->GetUid();
 		draw_card[i].SetUid(ID);
+		int ATK = allCard[randIdx]->GetAtk();
+		draw_card[i].SetAtk(ATK);
 
+		//카드가 추가될때 중복카드는 뽑기결과에서 나오되, 인벤에서 제외되어야함.
 		if (isObtain[randIdx])
 		{
+			//중복 시 임시로 아이디를 음수로 변경 (기본카드의 경우는 예외를 설정할 예정)
 			cout << draw_card[i].GetUid() << "는 중복" << "\n";
-			p_mg.AddGold(100 * 4); //고정값 * 레어도별 가중치
-			--outsize;
-			--idx;
+			draw_card[i].SetUid(-1);
+			p_mg.AddGold(100 * 4); //고정값 * 레어도별 가중치 페이백
 		}
 		else
 		{
+			//신규 획득 카드는 얻었다는 표시를 설정
 			cout << draw_card[i].GetUid() << "는 신규" << "\n";
 			isObtain[randIdx] = TRUE;
-			int x = (invensize + idx) % 5, y = (invensize + idx) / 5;
-			draw_card[i].x = x * 75 + 1050, draw_card[i].y = y * 150 + 50;
-			++idx;
 		}
 	}
-	draw_card.resize(outsize);
 	p_deck.PushCard(draw_card);
 }
 
 //뽑기를 함(TRUE-1뽑 / FALSE-10뽑, 뽑은카드를 저장할 변수)
 void CardGacha::GetGacha(bool isOne, DeckBuilding& p_deck, MainGame& p_mg, Chest p_selChest)
 {
+	isOneGacha = isOne;
 	int remove_gold = p_selChest.GetPrice();
 	//분기나눠서 1차 or 10차 나누기
 	if (isOne)
@@ -68,15 +68,14 @@ void CardGacha::GetGacha(bool isOne, DeckBuilding& p_deck, MainGame& p_mg, Chest
 
 void CardGacha::InGacha()
 {
-	int size = draw_card.size();
-
-	if (size == 1)
+	//뽑기의 종류에 따라 출력방식 변경
+	if (isOneGacha)
 	{
 		draw_card[0].x = 700, draw_card[0].y = 350;
 	}
-	else if (size == 10)
+	else
 	{
-		for (int i = 0; i < size; i++)
+		for (int i = 0; i < 10; i++)
 		{
 			draw_card[i].x = (i % 5) * 250 + 200, draw_card[i].y = (i / 5) * 250 + 200;
 		}
