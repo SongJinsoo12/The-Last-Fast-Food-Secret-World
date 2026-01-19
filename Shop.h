@@ -1,5 +1,5 @@
 #pragma once
-#include "MainGame.h"
+//#include "MainGame.h"
 #include "DeckBuilding.h"
 #include "RenderManager.h"
 
@@ -81,7 +81,7 @@ public:
 	}
 	virtual ~Shop()
 	{
-		
+
 	}
 
 	//상자를 선택함
@@ -97,7 +97,7 @@ public:
 	BOOL CheckIsSelection();
 	void CancelSelection();
 
-	//이미지 로드 확인해보기
+	//이미지 로드 확인해보기 / 쿠키는 맥도날드 점원, 상자는 가게메뉴로 변경(==상점 컨셉을 맥으로)
 	void SetDrawShop()
 	{
 		//상자 보관용 선반
@@ -116,15 +116,16 @@ public:
 			g_renderManager.SetImage(L"chest.png", "chest" + to_string(i), Rect(0, 0, 1024, 1024), Rect(chest[i].x - 48, chest[i].y - 78, 128, 128));
 		}
 	}
+	//화면 전환 시 상점의 이미지들을 전부 제거
 	void ClearShop()
 	{
-		g_renderManager.RemoveIamage("shelf1");
-		g_renderManager.RemoveIamage("shelf2");
-		g_renderManager.RemoveIamage("cookie");
-		g_renderManager.RemoveIamage("textbox");
+		g_renderManager.RemoveIDIamage("shelf1");
+		g_renderManager.RemoveIDIamage("shelf2");
+		g_renderManager.RemoveIDIamage("cookie");
+		g_renderManager.RemoveIDIamage("textbox");
 		for (int i = 0; i < 6; i++)
 		{
-			g_renderManager.RemoveIamage("chest" + to_string(i));
+			g_renderManager.RemoveIDIamage("chest" + to_string(i));
 		}
 	}
 	void DrawShop(HDC p_hdc, WCHAR p_text[]);
