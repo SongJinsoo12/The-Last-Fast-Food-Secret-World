@@ -17,9 +17,45 @@ BOOL InCircle(int x, int y, int mx, int my)
 	}
 }
 
+vector<Card> DeckBuilding::EraseDuple(vector<Card> p_cards)
+{
+	//int psize = p_cards.size();
+	for (int i = 0; i < p_cards.size(); i++)
+	{
+		if (p_cards[i].GetUid() < 0)
+		{
+			p_cards.erase(p_cards.begin() + i);
+			for (int j = i; j < p_cards.size(); j++)
+			{
+				p_cards[j].x -= 75;
+				if (p_cards[j].x < 1000)
+				{
+					p_cards[j].x = 75 * 4 + 1050, p_cards[j].y -= 150;
+				}
+			}
+			--i;
+		}
+	}
+	return p_cards;
+}
+
 int DeckBuilding::GetSize()
 {
 	return this->inven.size();
+}
+
+void DeckBuilding::PushCard(vector<Card> p_cards)
+{
+	//인벤에 들어갈 자리에 맞게 좌표를 세팅함.
+	for (int i = 0; i < p_cards.size(); i++)
+	{
+		int x = (inven.size() + i) % 5, y = (inven.size() + i) / 5;
+		p_cards[i].x = x * 75 + 1050, p_cards[i].y = y * 150 + 50;
+	}
+	//좌표 세팅 후 중복을 제거하고
+	p_cards = EraseDuple(p_cards);
+	//완성된 배열을 인벤에 추가
+	inven.insert(inven.end(), p_cards.begin(), p_cards.end());
 }
 
 void DeckBuilding::ItoD(int p_mx, int p_my)
@@ -29,12 +65,33 @@ void DeckBuilding::ItoD(int p_mx, int p_my)
 		//카드가 클릭되었을경우
 		if (InCircle(inven[i].x, inven[i].y, p_mx, p_my))
 		{
-			//덱이 꽉 차면 함수종료
+			Card selectedCard = inven[i];
+			//덱이 꽉 차면 종료
 			if (myDeck.size() >= DECKMAXSIZE)
 			{
+				cout << "덱 꽉참" << "\n";
+				return;
+			}
+			//덱에 들어갈 수 있는 1성이 최대라면 종료(레어도 추가해주겠지)
+			else if ((selectedCard.GetType() != E_Magic && selectedCard.GetAtk() == 5) && Star_n[0] >= 15)
+			{
+				cout << "1성 꽉참" << "\n";
+				return;
+			}
+			//덱에 들어갈 수 있는 2성이 최대라면 종료
+			else if ((selectedCard.GetType() != E_Magic && selectedCard.GetAtk() == 10) && Star_n[1] >= 7)
+			{
+				cout << "2성 꽉참" << "\n";
+				return;
+			}
+			//덱에 들어갈 수 있는 3성이 최대라면 종료
+			else if ((selectedCard.GetType() != E_Magic && selectedCard.GetAtk() == 15) && Star_n[2] >= 3)
+			{
+				cout << "3성 꽉참" << "\n";
 				return;
 			}
 
+			++Star_n[(int)(selectedCard.GetAtk() / 5) - 1];
 			//(val * 간격 + 젤(왼 / 위)쪽으로부터의 여백)
 			//이동시킬 카드의 좌표를 변경. 출발지 배열에서 제거 후 목적지 배열 맨 뒤에 추가
 			int x = myDeck.size() % 5, y = myDeck.size() / 5;
@@ -63,6 +120,8 @@ void DeckBuilding::DtoI(int p_mx, int p_my)
 		//카드가 클릭되었을경우
 		if (InCircle(myDeck[i].x, myDeck[i].y, p_mx, p_my))
 		{
+			Card selectedCard = myDeck[i];
+			--Star_n[(int)(selectedCard.GetAtk() / 5) - 1];
 			//이동시킬 카드의 좌표를 변경. 출발지 배열에서 제거 후 목적지 배열 맨 뒤에 추가
 			int x = inven.size() % 5, y = inven.size() / 5;
 			myDeck[i].x = x * 75 + 1050, myDeck[i].y = y * 150 + 50;
@@ -75,7 +134,7 @@ void DeckBuilding::DtoI(int p_mx, int p_my)
 				myDeck[j].x -= 120;
 				if (myDeck[j].x < 400)
 				{
-					myDeck[j].x = 100 * 4 + 50, myDeck[j].y -= 150;
+					myDeck[j].x = 120 * 4 + 450, myDeck[j].y -= 150;
 				}
 			}
 			return;
@@ -104,6 +163,8 @@ void DeckBuilding::DrawInventory(HDC p_hdc, HPEN p_hpen, HPEN p_oldpen, int p_mx
 
 		wsprintf(p_text, TEXT("%d"), inven[i].GetUid());
 		TextOut(p_hdc, inven[i].x - 10, inven[i].y, p_text, lstrlen(p_text));
+		wsprintf(p_text, TEXT("%d"),(int)(inven[i].GetAtk() / 5));
+		TextOut(p_hdc, inven[i].x - 10, inven[i].y + 13, p_text, lstrlen(p_text));
 	}
 }
 
@@ -126,6 +187,8 @@ void DeckBuilding::DrawMyDeck(HDC p_hdc, HPEN p_hpen, HPEN p_oldpen, int p_mx, i
 
 		wsprintf(p_text, TEXT("%d"), myDeck[i].GetUid());
 		TextOut(p_hdc, myDeck[i].x - 10, myDeck[i].y, p_text, lstrlen(p_text));
+		wsprintf(p_text, TEXT("%d"), (int)(myDeck[i].GetAtk() / 5));
+		TextOut(p_hdc, myDeck[i].x - 10, myDeck[i].y + 13, p_text, lstrlen(p_text));
 	}
 }
 
