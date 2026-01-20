@@ -78,6 +78,24 @@ public:
 			//상자 위치 설정해줌
 			chest[i].x = 875 + (i % 3) * 150, chest[i].y = 250 + (i / 3) * 200;
 		}
+
+		//상자 보관용 선반
+		g_renderManager.SetImage(L"shelf.png", "shelf1"
+			, Rect(0, 0, 651, 101), Rect(700, 250, 651, 101), false);
+		g_renderManager.SetImage(L"shelf.png", "shelf2"
+			, Rect(0, 0, 651, 101), Rect(700, 450, 651, 101), false);
+		//상점 주인
+		g_renderManager.SetImage(L"cookie.png", "cookie"
+			, Rect(0, 0, 2500, 2500), Rect(300 - 180, 430 - 180, 360, 360), false);
+		//상자 정보 하이라이트 및 상점 주인 대사 출력용
+		g_renderManager.SetImage(L"textbox.png", "textbox"
+			, Rect(0, 0, 500, 200), Rect(50, 500, 500, 200), false);
+		//상자들 출력
+		for (int i = 0; i < 6; i++)
+		{
+			g_renderManager.SetImage(L"chest.png", "chest" + to_string(i)
+				, Rect(0, 0, 1024, 1024), Rect(chest[i].x - 48, chest[i].y - 78, 128, 128), false);
+		}
 	}
 	virtual ~Shop()
 	{
@@ -101,31 +119,31 @@ public:
 	void SetDrawShop()
 	{
 		//상자 보관용 선반
-		g_renderManager.SetImage(L"shelf.png", "shelf1", Rect(0, 0, 651, 101), Rect(700, 250, 651, 101));
-		g_renderManager.SetImage(L"shelf.png", "shelf2", Rect(0, 0, 651, 101), Rect(700, 450, 651, 101));
+		g_renderManager.ImageVisible("shelf1", true);
+		g_renderManager.ImageVisible("shelf2", true);
 
 		//상점 주인
-		g_renderManager.SetImage(L"cookie.png", "cookie", Rect(0, 0, 2500, 2500), Rect(300 - 180, 430 - 180, 360, 360));
+		g_renderManager.ImageVisible("cookie", true);
 
 		//상자 정보 하이라이트 및 상점 주인 대사 출력용
-		g_renderManager.SetImage(L"textbox.png", "textbox", Rect(0, 0, 500, 200), Rect(50, 500, 500, 200));
+		g_renderManager.ImageVisible("textbox", true);
 
 		//상자들 출력
 		for (int i = 0; i < 6; i++)
 		{
-			g_renderManager.SetImage(L"chest.png", "chest" + to_string(i), Rect(0, 0, 1024, 1024), Rect(chest[i].x - 48, chest[i].y - 78, 128, 128));
+			g_renderManager.ImageVisible("chest" + to_string(i), true);
 		}
 	}
 	//화면 전환 시 상점의 이미지들을 전부 제거
 	void ClearShop()
 	{
-		g_renderManager.RemoveIDIamage("shelf1");
-		g_renderManager.RemoveIDIamage("shelf2");
-		g_renderManager.RemoveIDIamage("cookie");
-		g_renderManager.RemoveIDIamage("textbox");
+		g_renderManager.ImageVisible("shelf1", false);
+		g_renderManager.ImageVisible("shelf2", false);
+		g_renderManager.ImageVisible("cookie", false);
+		g_renderManager.ImageVisible("textbox", false);
 		for (int i = 0; i < 6; i++)
 		{
-			g_renderManager.RemoveIDIamage("chest" + to_string(i));
+			g_renderManager.ImageVisible("chest" + to_string(i), false);
 		}
 	}
 	void DrawShop(HDC p_hdc, WCHAR p_text[]);
@@ -134,3 +152,5 @@ public:
 
 	}
 };
+
+extern Shop g_shop;
