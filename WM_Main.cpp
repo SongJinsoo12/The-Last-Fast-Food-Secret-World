@@ -7,7 +7,7 @@ LPCTSTR lpszClass = TEXT("Secret World");					// 제목 표시줄에 표시
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
-	#ifdef _DEBUG
+#ifdef _DEBUG
 	if (AllocConsole()) {
 		FILE* fp;
 		freopen_s(&fp, "CONOUT$", "w", stdout);
@@ -15,7 +15,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 		std::ios::sync_with_stdio(); // cout과 printf를 섞어 쓸 때 유용
 	}
 #endif
-	
+
 	HWND hWnd;												// 윈도우 핸들 선언
 	MSG Message;											// 메시지 구조체 변수 선언
 	WNDCLASS WndClass;										// Windows Class 구조체 변수 선언
@@ -41,23 +41,66 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 
 	ShowWindow(hWnd, nCmdShow);
 
-	while (GetMessage(&Message, NULL, 0, 0)) { //Queue에 있는 메시지 읽어들임
-		TranslateMessage(&Message); // 키보드 입력 메시지 가공
-		DispatchMessage(&Message); // 메시지 처리
+	while (true) { //Queue에 있는 메시지 읽어들임
+		if (PeekMessage(&Message, NULL, 0, 0, PM_REMOVE)) {
+			if (Message.message == WM_QUIT)
+				break;
+			TranslateMessage(&Message); // 키보드 입력 메시지 가공
+			DispatchMessage(&Message); // 메시지 처리
+		}
+		else {
+			// 0. 타이머 처리
+			// 
+			// 1. 게임의 수치들을 업데이트 (이동, 충돌 등)
+			// GameInput_M::Input::GetInstance().Update();
+			// 
+			// 
+			// Render 자리
+			//ivalide();
+			UpdateWindow(hWnd);
+			//InvalidateRect(hWnd, NULL, FALSE);
+		}
 	}
 	return (int)Message.wParam; // 탈출 코드, 프로그램 종료
 }
 
+#include "GameState.h"
+#include "RenderManager.h"
+#include "InputGame.h"
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
-	HDC hdc;
+	HDC hdc, memDC;
+	HBITMAP hOldBitmap;
 	PAINTSTRUCT ps;
+	static RECT rt;
+
+	GameInput_M::Input::GetInstance().UpdateProcess(hWnd, iMessage, wParam, lParam);
 
 	switch (iMessage) {
+	case WM_CREATE:
+		GetClientRect(hWnd, &rt);
+		GameState_M::Context::GetInstance().ChangeState(GameState_M::E_InGameState::Lobby);
+		break;
+
 	case WM_PAINT:
+	{
 		hdc = BeginPaint(hWnd, &ps);
+		memDC = CreateCompatibleDC(hdc);
+		hOldBitmap = (HBITMAP)SelectObject(memDC, CreateCompatibleBitmap(hdc, rt.right, rt.bottom));
+
+		Graphics graphics(memDC);
+		graphics.Clear(Color(255, 255, 255, 255));
+
+		GameImage_M::RenderManager::GetInstance().RenderAll(&graphics);
+
+		BitBlt(hdc, 0, 0, rt.right, rt.bottom, memDC, 0, 0, SRCCOPY);
+
+		DeleteObject(SelectObject(memDC, hOldBitmap));
+		DeleteDC(memDC);
 		EndPaint(hWnd, &ps);
 		return 0;
+	}
 
 	case WM_DESTROY: // 윈도우 종료 시(창 닫음 메시지)
 		PostQuitMessage(0); // 메시지 큐에 종료 메시지 전달
