@@ -10,7 +10,7 @@ namespace GameImage_M {
 	}
 	void RenderManager::SetImage(wstring p_path, string p_id, Rect load, Rect render, bool isVisible)
 	{
-		for (vector<shared_ptr<ImageLoad>>::iterator it = m_RenderList.begin() ; 
+		for (vector<shared_ptr<ImageLoad>>::iterator it = m_RenderList.begin();
 			it != m_RenderList.end(); )
 		{
 			if ((*it)->GetID() == p_id) {
@@ -29,7 +29,7 @@ namespace GameImage_M {
 	{
 		for (size_t i = 0; i < m_RenderList.size(); i++)
 		{
-			if(m_RenderList[i].get()->GetVisible())
+			if (m_RenderList[i].get()->GetVisible())
 			{
 				shared_ptr<ImageLoad> p_Image = m_RenderList[i];
 				if (p_Image != nullptr) {
@@ -74,5 +74,3 @@ namespace GameImage_M {
 		m_RenderList.shrink_to_fit();
 	}
 }
-
-GameImage_M::RenderManager g_renderManager;
