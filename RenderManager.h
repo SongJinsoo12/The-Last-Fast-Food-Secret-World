@@ -2,16 +2,22 @@
 
 #include "ImageLoad.h"
 #include "ImageManager.h"
+#include "Singleton.h"
 
 namespace GameImage_M {
 
-	class RenderManager
+	class RenderManager : public Singleton<RenderManager>
 	{
+		friend class Singleton<RenderManager>;
+
 	private:
 		vector<shared_ptr<ImageLoad>> m_RenderList;
 
+	//private:
+	//	virtual ~RenderManager();
+
 	public:
-		~RenderManager();
+		virtual ~RenderManager();
 
 	public:
 		void SetImage(wstring p_path, string p_id, Rect load, Rect render, bool isVisible);
@@ -23,6 +29,3 @@ namespace GameImage_M {
 		void AllRemoveImage();
 	};
 }
-
-extern GameImage_M::RenderManager g_renderManager;
-
