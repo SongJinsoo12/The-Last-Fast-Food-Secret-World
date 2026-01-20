@@ -91,7 +91,9 @@ void DeckBuilding::ItoD(int p_mx, int p_my)
 				return;
 			}
 
-			++Star_n[(int)(selectedCard.GetAtk() / 5) - 1];
+			int star = (int)(selectedCard.GetAtk() / 5);
+			if (star != 0) ++Star_n[(int)(selectedCard.GetAtk() / 5) - 1];
+
 			//(val * 간격 + 젤(왼 / 위)쪽으로부터의 여백)
 			//이동시킬 카드의 좌표를 변경. 출발지 배열에서 제거 후 목적지 배열 맨 뒤에 추가
 			int x = myDeck.size() % 5, y = myDeck.size() / 5;
@@ -121,7 +123,8 @@ void DeckBuilding::DtoI(int p_mx, int p_my)
 		if (InCircle(myDeck[i].x, myDeck[i].y, p_mx, p_my))
 		{
 			Card selectedCard = myDeck[i];
-			--Star_n[(int)(selectedCard.GetAtk() / 5) - 1];
+			int star = (int)(selectedCard.GetAtk() / 5);
+			if (star != 0) --Star_n[(int)(selectedCard.GetAtk() / 5) - 1];
 			//이동시킬 카드의 좌표를 변경. 출발지 배열에서 제거 후 목적지 배열 맨 뒤에 추가
 			int x = inven.size() % 5, y = inven.size() / 5;
 			myDeck[i].x = x * 75 + 1050, myDeck[i].y = y * 150 + 50;
@@ -163,7 +166,7 @@ void DeckBuilding::DrawInventory(HDC p_hdc, HPEN p_hpen, HPEN p_oldpen, int p_mx
 
 		wsprintf(p_text, TEXT("%d"), inven[i].GetUid());
 		TextOut(p_hdc, inven[i].x - 10, inven[i].y, p_text, lstrlen(p_text));
-		wsprintf(p_text, TEXT("%d"),(int)(inven[i].GetAtk() / 5));
+		wsprintf(p_text, TEXT("%d"), (int)(inven[i].GetAtk() / 5));
 		TextOut(p_hdc, inven[i].x - 10, inven[i].y + 13, p_text, lstrlen(p_text));
 	}
 }
