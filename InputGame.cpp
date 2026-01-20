@@ -1,25 +1,24 @@
 #include "InputGame.h"
 #include <iostream>
 
-GameInput_M::Input g_Input;
-
 namespace GameInput_M {
+	Input::Input()
+	{
+		m_MousePosX = 0; m_MousePosY = 0;
+		m_MouseHeelValue = 0;
+	}
 	int Input::isClick()
 	{
-		std::cout << "호출" << std::endl;
 		if (m_ISMouseClick[(int)GameInput_M::MouseValue::Right])
 		{
-			std::cout << "우클릭 값" << (int)GameInput_M::MouseValue::Left << std::endl;
 			return (int)GameInput_M::MouseValue::Right;
 		}
 		else if (m_ISMouseClick[(int)GameInput_M::MouseValue::Left])
 		{
-			std::cout << "좌클릭 값" << (int)GameInput_M::MouseValue::Left << std::endl;
 			return (int)GameInput_M::MouseValue::Left;
 		}
 		else if (m_ISMouseClick[(int)GameInput_M::MouseValue::Heel])
 		{
-			std::cout << "휠 값" << (int)GameInput_M::MouseValue::Left << std::endl;
 			return (int)GameInput_M::MouseValue::Heel;
 		}
 		else
@@ -29,8 +28,14 @@ namespace GameInput_M {
 	{
 		return m_MouseHeelValue;
 	}
+	bool Input::isKeyboard(int p_key)
+	{
+		if(0 > p_key || p_key >= 256)
+			return false;
+		return m_keyBoardValue[p_key];
+	}
 	void Input::UpdateProcess(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
-    {
+	{
 
 		switch (iMessage) {
 
@@ -38,7 +43,6 @@ namespace GameInput_M {
 			m_ISMouseClick[(int)GameInput_M::MouseValue::Left] = true;
 			m_MousePosX = LOWORD(lParam);
 			m_MousePosY = HIWORD(lParam);
-			std::cout << "마우스 좌클릭 누르기" << std::endl;
 			InvalidateRect(hWnd, NULL, FALSE);
 			break;
 
@@ -46,7 +50,6 @@ namespace GameInput_M {
 			m_ISMouseClick[(int)GameInput_M::MouseValue::Left] = false;
 			m_MousePosX = LOWORD(lParam);
 			m_MousePosY = HIWORD(lParam);
-			std::cout << "마우스 좌클릭 끝내기" << std::endl;
 			InvalidateRect(hWnd, NULL, FALSE);
 			break;
 
@@ -84,11 +87,20 @@ namespace GameInput_M {
 			break;
 
 		case WM_KEYDOWN:
-			switch (wParam) {
-			case VK_RIGHT:
+			m_keyBoardValue[wParam] = true;
+			InvalidateRect(hWnd, NULL, FALSE);
+			break;
 
-			}
+		case WM_KEYUP:
+			m_keyBoardValue[wParam] = false;
+			InvalidateRect(hWnd, NULL, FALSE);
+			break;
 		}
 
-    }
+	}
+	void Input::GetMousePos(int* p_x, int* p_y)
+	{
+		*p_x = this->m_MousePosX;
+		*p_y = this->m_MousePosY;
+	}
 }
