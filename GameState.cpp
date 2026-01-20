@@ -1,11 +1,7 @@
 #include "GameState.h"
 #include "RenderManager.h"
 #include "InputGame.h"
-
-//°¢ È­¸é
-#include "Shop.h"
-
-GameState_M::Context g_State;
+#include <iostream>
 
 namespace GameState_M {
 	Context::Context() {
@@ -19,7 +15,7 @@ namespace GameState_M {
 		//StateVector[(int)E_InGameState::Lobby] = make_shared<Lobby>();
 	}
 
-	// °¢ È­¸é¿¡ ¸Â´Â Update ·ÎÁ÷
+	// ï¿½ï¿½ È­ï¿½é¿¡ ï¿½Â´ï¿½ Update ï¿½ï¿½ï¿½ï¿½
 	void Context::Update(HDC p_hdc, HWND p_hwnd)
 	{
 		if (currentState == nullptr)
@@ -40,21 +36,20 @@ namespace GameState_M {
 
 	void Lobby::Enter()
 	{
-		g_renderManager.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(0, 0, 300, 300), false);
+		GameInput_M::Input::GetInstance().isClick();
 	}
 
 	void Lobby::Update(HDC p_hdc, HWND p_hwn) {
-		if (g_Input.isClick() == (int)GameInput_M::MouseValue::Left)
-			g_renderManager.ImageVisible("ID_1", true);
+		
 	}
 
 	void Lobby::Exit() {
-		g_renderManager.AllRemoveImage();
+		
 	}
 
 	void Menu::Enter()
 	{
-		g_renderManager.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(100, 0, 300, 300), true);
+	
 	}
 
 	void Menu::Update(HDC p_hdc, HWND p_hwnd)
@@ -63,7 +58,7 @@ namespace GameState_M {
 	}
 
 	void Menu::Exit() {
-		g_renderManager.RemoveIDIamage("ID_1");
+		
 	}
 
 	void DeckBuild::Enter() {
@@ -80,19 +75,19 @@ namespace GameState_M {
 
 	void Shop::Enter()
 	{
-		g_Shop.SetDrawShop();
+		//g_Shop.SetDrawShop();
 	}
 
 	void Shop::Update(HDC p_hdc, HWND p_hwnd)
 	{
-		if (g_Input.isClick() == (int)GameInput_M::MouseValue::Left)
-			g_State.ChangeState(GameState_M::E_InGameState::Lobby);
-		g_Shop.DrawShop(p_hdc, text);
+		//if (g_Input.isClick() == (int)GameInput_M::MouseValue::Left)
+		//	g_State.ChangeState(GameState_M::E_InGameState::Lobby);
+		//g_Shop.DrawShop(p_hdc, text);
 	}
 
 	void Shop::Exit()
 	{
-		g_Shop.ClearShop();
+		//g_Shop.ClearShop();
 	}
 
 	void LuckyBox::Enter()
