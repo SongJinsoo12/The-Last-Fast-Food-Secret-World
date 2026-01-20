@@ -5,10 +5,15 @@
 #include <time.h>
 #include <Windows.h>
 #include "Card.h"
-#include "Stats.h"
 #include "macroNum.h"
 
+#include <iostream>
+#include <fstream>	//파일읽기
+#include <map>		//키-키값
+#include "json.hpp"
+
 using namespace std;
+using json = nlohmann::json;
 
 #define BSIZE 25
 double LenghtPts(int x1, int y1, int x2, int y2);
@@ -27,19 +32,65 @@ private:
 public:
 	DeckBuilding()
 	{
-		//기본사이즈 세팅 후 좌표 초기화
-		//myDeck.resize(10);
-		//for (int i = 0; i < 10; i++)
-		//{
-		//	int x = i % 5, y = i / 5;		//한 화면에 가로5개, 세로5개
-		//	myDeck[i].x = x * 150 + 50, myDeck[i].y = y * 150 + 50; //(val * 간격 + 젤 (왼/위)쪽으로부터의 여백)
-		//}
+
 	}
 
 	virtual ~DeckBuilding()
 	{
 
 	}
+
+	void SaveDeck()
+	{
+		// 1. JSON 객체 생성 및 데이터 추가
+		json j;
+		j[]
+		for (int i = 0; i < myDeck.size(); i++)
+		{
+			int id = myDeck[i].GetUid();
+			j["ID" + to_string(i)] = to_string(id);
+			cout << to_string(i) << "번째 카드저장완료" << endl;
+		}
+
+		// 2. 파일 스트림 열기 (output.json 파일)
+		std::ofstream outfile("Deck.json");
+
+		// 3. JSON 객체를 파일 스트림에 출력 (직렬화)
+		if (outfile.is_open()) {
+			outfile << j << std::endl; // << 연산자로 파일에 쓰기
+			outfile.close();
+			std::cout << "JSON 데이터가 output.json 파일에 저장되었습니다." << std::endl;
+		}
+		else {
+			std::cerr << "파일 열기 실패!" << std::endl;
+		}
+	}
+
+	void LoadDeck()
+	{
+		std::ifstream file("Deck.json", std::ios::in);//같은 경로내에서 파일불러오기
+
+		//파일 불러오기확인용
+		if (!file.is_open())
+		{
+			std::cerr << "Error opening Deck.txt.\n";
+			return;
+		}
+
+		//읽어들인 파일을 json에 저장
+		json j;
+		file >> j;
+
+		//map배열에 불러온 키와 키값을 저장함
+		std::map<std::string, std::string> Card;
+		for (const auto& result : j["results"])
+			Card[result["ID"].get<std::string>()] = result["Value"].get<std::string>();
+
+		//first == 키이름, second == 키값
+		for (const auto& pair : Card)
+			std::cout << pair.first << " : " << pair.second << "\n";
+	}
+
 	//중복이 존재하면 제거후 뒤의 카드들을 앞으로 이동
 	vector<Card> EraseDuple(vector<Card> p_cards);
 
@@ -62,3 +113,5 @@ public:
 	//덱빌딩 화면 출력
 	void DrawDeckBuild(HDC p_hdc, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[]);
 };
+
+extern DeckBuilding g_DeckBuilding;
