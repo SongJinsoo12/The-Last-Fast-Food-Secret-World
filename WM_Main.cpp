@@ -6,8 +6,6 @@
 #include "MainGame.h"
 #include "Shop.h"
 #include "RenderManager.h"
-//#include "ImageManager.h"
-//#include "ImageLoad.h"
 #include "CardTableManager.h"
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -60,7 +58,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
 	//인벤토리 정렬기능 추가하기 / 클래스마다 extern 해두기
-	//1뽑도 중복처리하기 / 상점 입장 연출 / 덱편집화면에서 카드 정보 확인 가능하게 / 덱빌딩한것을 json사용해서 저장할 수 있게
+	//상점 입장 연출 / 덱편집화면에서 카드 정보 확인 가능하게 / 덱빌딩한것을 json사용해서 저장할 수 있게
 	HDC hdc, memDC;////////////////////////
 	PAINTSTRUCT ps;
 	HBITMAP hOldBitmap;
@@ -90,7 +88,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			| BS_PUSHBUTTON, 20, 50, 100, 25, hWnd, (HMENU)1, g_hInst, NULL);	//| BS_PUSHBUTTON, startx, starty, 너비, 높이, hWnd, (HMENU)wParam번호, g_hInst, NULL)
 		CreateWindow(TEXT("button"), TEXT("격자눈금"), WS_CHILD | WS_VISIBLE		//(TEXT("button"), TEXT(버튼내용), WS_CHILD | WS_VISIBLE
 			| BS_AUTOCHECKBOX, 20, 80, 100, 25, hWnd, (HMENU)2, g_hInst, NULL);	//| BS_PUSHBUTTON, startx, starty, 너비, 높이, hWnd, (HMENU)wParam번호, g_hInst, NULL)
-
+		deck.LoadDeck();
 		InvalidateRect(hWnd, &rt, FALSE);
 		return 0;
 	}
@@ -120,7 +118,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		}
 
 		InvalidateRect(hWnd, &rt, FALSE);
-
 		return 0;
 
 	case WM_LBUTTONDOWN:
@@ -213,6 +210,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		return 0;
 	}
 	case WM_DESTROY: // 윈도우 종료 시(창 닫음 메시지)
+		deck.SaveDeck();
 		PostQuitMessage(0); // 메시지 큐에 종료 메시지 전달
 		return 0;
 	}
