@@ -46,6 +46,13 @@ enum ALLCARDEnum
 	MAGICLIMIT = 233,
 };
 
+enum Star
+{
+	E_ONE = 0,
+	E_TWO,
+	E_THREE,
+};
+
 class Card
 {
 protected:
@@ -54,6 +61,7 @@ protected:
 	int def;
 	CAttribute Ait;
 	CType Type;
+	Star star;
 
 public:
 	Card();
@@ -71,6 +79,8 @@ public:
 	void SetAit(CAttribute p_Ait);
 	CType GetType();
 	void SetType(CType p_Type);
+	Star GetStar();
+	void SetStar(Star p_Star);
 
 };
 
@@ -103,9 +113,8 @@ public:
 
 	void DrawLine(HDC hdc, int startX, int startY, int lengthX, int lengthY);
 	void DrawBG();
-	void DrawDeckCount(HDC hdc, int rtX, int rtY, int cardX, int cardY);
-	void DrawHand(bool isPlayer);
-	void DrawCardInfo(HDC hdc);
+	void DrawPlayerHand();
+	void DrawOppHand();
 	void HandSelect(WPARAM wParam, CardManager& opponent, HWND hWnd);
 	void StartTurn(CardManager& player, CardManager& opponent);
 	void TimeLimit(WPARAM wParam, CardManager& opponent);
@@ -120,4 +129,5 @@ private:
 	vector<GameCard*> hand;//패 카드
 	vector<GameCard*> deck;//덱 카드
 	bool isMyTurn;//턴 확인
+	bool isSelect;//패 카드 선택 확인
 };
