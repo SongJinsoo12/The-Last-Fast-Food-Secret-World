@@ -88,7 +88,8 @@ namespace GameImage_M {
 		vector<shared_ptr<ImageLoad>>& targetVec = m_RenderList[(int)layer];
 		for (const shared_ptr<ImageLoad>& img : targetVec)
 		{
-			if (img->GetID() == p_id) return img;
+			if (img->GetID() == p_id) 
+				return img;
 		}
 
 		return nullptr;
@@ -154,4 +155,5 @@ namespace GameImage_M {
 		}
 	}
 }
+
 
