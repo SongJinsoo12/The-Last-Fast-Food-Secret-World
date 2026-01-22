@@ -24,7 +24,7 @@ void Card::Init()
 	def = 0;
 	Ait = E_BREAD;
 	Type = E_Attack;
-
+	star = E_TWO;
 	//SetImage();
 }
 
@@ -78,6 +78,16 @@ void Card::SetType(CType p_Type)
 	Type = p_Type;
 }
 
+Star Card::GetStar()
+{
+	return star;
+}
+
+void Card::SetStar(Star p_Star)
+{
+	star = p_Star;
+}
+
 void CardManager::SetImage()
 {
 	g_renderManager.SetImage(L"background_city_night.png", "City_Night",
@@ -88,12 +98,19 @@ void CardManager::SetImage()
 	g_renderManager.SetImage(L"card_zone.png", "Card_Middle_Down",
 		Gdiplus::Rect(0, 0, 88, 110), Gdiplus::Rect(0, 0, 0, 0));
 
-	g_renderManager.SetImage(L"card_back.png", "Card_Deck_Up",
+	g_renderManager.SetImage(L"card_back_2.png", "Card_Deck_Up",
 		Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0));
 	g_renderManager.SetImage(L"card_back.png", "Card_Deck_Down",
 		Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0));
 
-	
+	for (size_t i = 0; i < 30; i++)
+	{
+		string cardId = "Card_Boss_Hand_";
+		cardId = cardId + to_string(i);
+
+		g_renderManager.SetImage(L"card_back_2.png", cardId,
+			Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0));
+	}
 
 	cout << "이미지 로드 확인\n";
 }
@@ -116,7 +133,8 @@ GameCard::~GameCard()
 }
 
 
-CardManager::CardManager() : deckCount(25), handCount(0), handSelection(4), isMyTurn(false)
+CardManager::CardManager() : deckCount(25), handCount(0), handSelection(4), 
+isMyTurn(false), isSelect(false)
 {
 }
 
@@ -169,7 +187,7 @@ void CardManager::CardDraw(int drawNum)
 		handCount++;
 
 		//임시
-		hand.push_back(deck[deckCount - 1]);
+		hand.push_back(deck[deckCount]);
 	}
 
 	//패 카드 임시 확인
@@ -204,6 +222,7 @@ void CardManager::DrawBG()
 		Gdiplus::Rect(midX - cardMidX, midY - (deckY + 10), deckX, deckY));
 	g_renderManager.MoveImage("Card_Middle_Down",
 		Gdiplus::Rect(midX - cardMidX, (midY + 10), deckX, deckY));
+
 	g_renderManager.MoveImage("Card_Deck_Up",
 		Gdiplus::Rect(0, 0, deckX, deckY));
 	g_renderManager.MoveImage("Card_Deck_Down",
@@ -213,30 +232,15 @@ void CardManager::DrawBG()
 	cout << "배경 출력 확인\n";
 }
 
-//덱 장수 출력 
-void CardManager::DrawDeckCount(HDC hdc, int rtX, int rtY, int cardX, int cardY)
-{
-	SetBkMode(hdc, TRANSPARENT); //문자 배경 투명
-	SetTextColor(hdc, RGB(255, 255, 255)); //문자 색 변경
-	TCHAR buffer[56];
-	wsprintf(buffer, TEXT("%d"), this->GetDeckCount());
-	TextOut(hdc, rtX + cardX, rtY + cardY, buffer, lstrlen(buffer));
-
-	DrawCardInfo(hdc);
-}
-
-//패 출력
-void CardManager::DrawHand(bool isPlayer)
+//플레이어 패 출력
+void CardManager::DrawPlayerHand()
 {
 	//패가 없으면 리턴
 	if (handCount <= 0)
 		return;
 
 	int posY;
-	if (isPlayer) 
-		posY = 720 - 180;
-	else 
-		posY = 18;
+	posY = 720 - 180;
 
 	int midX = 1280 * 0.5;
 	int handMidX = midX - (CARDX * 2) - (CARDX * 0.5);
@@ -253,71 +257,59 @@ void CardManager::DrawHand(bool isPlayer)
 	for (size_t i = 0; i < handCount; i++)
 	{
 		int startPos = handMidX + (sliceHand * i);
-		if (i == handSelection && isPlayer)
+		if (i == handSelection)
 		{
-			g_renderManager.MoveImage(to_string(hand[i]->GetUid()), 
-				Gdiplus::Rect(startPos, posY - 10, CARDX, CARDY));
+			//카드 정보 확대 보기
+			if (isSelect)
+			{
+				g_renderManager.MoveImage(to_string(hand[handSelection]->GetUid()),
+					Gdiplus::Rect(70, 380, CARDX * 2, CARDY * 2));
+			}
+			else
+			{
+				g_renderManager.MoveImage(to_string(hand[i]->GetUid()),
+					Gdiplus::Rect(startPos, posY - 10, CARDX, CARDY));
+			}
 		}
 		else
 		{
-			g_renderManager.MoveImage(to_string(hand[i]->GetUid()), 
+			g_renderManager.MoveImage(to_string(hand[i]->GetUid()),
 				Gdiplus::Rect(startPos, posY + 10, CARDX, CARDY));
 		}
-
 	}
 }
 
-//선택 카드 정보 출력
-void CardManager::DrawCardInfo(HDC hdc)
+//보스 패 출력
+void CardManager::DrawOppHand()
 {
-	SetBkMode(hdc, TRANSPARENT); //문자 배경 투명
-	SetTextColor(hdc, RGB(0, 0, 0)); //문자 색 변경
-	TCHAR info_uid[56];
-	TCHAR info_atk_def[56];
-	wsprintf(info_uid, TEXT("카드 번호: %d"), hand[handSelection]->GetUid());
-	TextOut(hdc, 0, 400, info_uid, lstrlen(info_uid));
-	
-	switch (hand[handSelection]->GetAit())
+	//패가 없으면 리턴
+	if (handCount <= 0)
+		return;
+
+	int posY;
+	posY = 18;
+
+	int midX = 1280 * 0.5;
+	int handMidX = midX - (CARDX * 2) - (CARDX * 0.5);
+	//패 전체 길이는 임시로 카드 5장 길이로 설정
+	int sliceHand = (CARDX * 5) / handCount;
+
+	//패가 5장 보다 적을 시
+	if (handCount < 5)
 	{
-	case E_BULGOGI:
-		TextOut(hdc, 0, 430, TEXT("카드 속성 : 불고기"), 26);
-		break;
-	case E_SOURCE:
-		TextOut(hdc, 0, 430, TEXT("카드 속성 : 소스"), 23);
-		break;
-	case E_CHESSE:
-		TextOut(hdc, 0, 430, TEXT("카드 속성 : 치즈"), 23);
-		break;
-	case E_VEGAT:
-		TextOut(hdc, 0, 430, TEXT("카드 속성 : 야채"), 23);
-		break;
-	case E_BREAD:
-		TextOut(hdc, 0, 430, TEXT("카드 속성 : 빵"), 20);
-		break;
+		sliceHand = (CARDX * handCount) / handCount;
+		handMidX = midX - 200;
 	}
 
-	switch (hand[handSelection]->GetType())
+	for (size_t i = 0; i < handCount; i++)
 	{
-	case E_Attack:
-		TextOut(hdc, 0, 460, TEXT("카드 타입 : 공격"), 23);
-
-		wsprintf(info_atk_def, TEXT("카드 공격력: %d"), hand[handSelection]->GetAtk());
-		TextOut(hdc, 0, 490, info_atk_def, lstrlen(info_atk_def));
-		break;
-	case E_Deffense:
-		TextOut(hdc, 0, 460, TEXT("카드 타입 : 방어"), 23);
-
-		wsprintf(info_atk_def, TEXT("카드 방어력: %d"), hand[handSelection]->GetDef());
-		TextOut(hdc, 0, 490, info_atk_def, lstrlen(info_atk_def));
-		break;
-	case E_Magic:
-		TextOut(hdc, 0, 460, TEXT("카드 타입 : 보조"), 23);
-
-		TextOut(hdc, 0, 490, TEXT("보조 카드는 특별한 방법으로 플레이어를 돕습니다!"), 70);
-		break;
-	}	
+		int startPos = handMidX + (sliceHand * i);
+		string cardId = "Card_Boss_Hand_";
+		cardId = cardId + to_string(i);
+		g_renderManager.MoveImage(cardId,
+			Gdiplus::Rect(startPos, posY + 10, CARDX, CARDY));
+	}
 }
-
 
 //패 카드 선택
 void CardManager::HandSelect(WPARAM wParam, CardManager& opponent, HWND hWnd)
@@ -334,15 +326,21 @@ void CardManager::HandSelect(WPARAM wParam, CardManager& opponent, HWND hWnd)
 			return;
 		handSelection++;
 		break;
+		//임시 카드 정보 보기 버트
+	case VK_UP:
+		//CardInfo();
+		isSelect = true;
+		break;
+	case VK_DOWN:
+		isSelect = false;
+		break;
+
 		//임시 카드 내기 버튼
 	case VK_RETURN:
 		//자신의 턴이 아니면 행동 불가능
 		if (!isMyTurn)
 			return;
 		CardAct(opponent, hWnd);
-		break;
-		//임시 카드 드로우 버튼
-	case VK_DOWN:
 		break;
 	default:
 		break;
@@ -442,5 +440,22 @@ void CardManager::TimeLimit(WPARAM wParam, CardManager& opponent)
 //보스 / 몬스터 행동
 void CardManager::OpponentAct()
 {
+	/*
+	* 1. 카드 드로우
+	* 2. hp가 절반 이상일 경우 --> 공격 카드 서칭 --> 가장 공격력이 높은 카드 사용
+	*						--> 공격 카드가 없을 경우 --> 방어 카드 서칭 --> 가장 방어력 높은 카드 사용
+	*						--> 방어 카드 없을 경우 --> 보조 카드 사용
+	* 3. hp가 절반 이하일 경우 --> 보조 카드 중 회복 카드 서칭 --> 회복력 가장 높은 카드 사용
+	*						--> 회복 카드 없을 경우 방어 카드 서칭 --> 가장 방어력 높은 카드 사용
+	*						--> 방어 카드 없을 경우 공격 카드 서칭 --> 가장 공격력이 높은 카드 사용
+	*						--> 공격 카드 없을 경우 보조 카드 사용
+	* 
+	* 공격 카드 우선 순위 ==> 1. 공격력 2. 
+	* 방어 카드 우선 순위 ==> 1. 방어력 2. 
+	* 보조 카드 우선 순위 ==> 얘네가 진짜 ㅅㅂ럼들임 ㅇㅇ. 1. 회복 2. 
+	*/
+
 	CardDraw(1);
+
+
 }
