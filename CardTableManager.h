@@ -2,6 +2,7 @@
 #include <vector>
 
 #include "Card.h"
+#define BOSSUID 250
 
 using namespace std;
 
@@ -29,7 +30,8 @@ public:
 
 	CAttribute StrToAit(string str);
 	CType StrToType(string str);
-	void CardImageLoad(int uid, CAttribute  ait, CType type);
+	Star StrToStar(string str);
+	void CardImageLoad(int uid, CAttribute  ait, CType type, Star star);
 
 protected:
 	vector<Card*> m_AllCardDataVec;//전체 카드
