@@ -136,7 +136,7 @@ namespace GameImage_M {
 			}
 		}
 	}
-	void RenderManager::LayerMoveFoBack(string p_id)
+	void RenderManager::LayerMoveToBack(string p_id)
 	{
 		if (m_IDMap.find(p_id) == m_IDMap.end()) return;
 		LayerType layer = m_IDMap[p_id];
@@ -154,3 +154,4 @@ namespace GameImage_M {
 		}
 	}
 }
+
