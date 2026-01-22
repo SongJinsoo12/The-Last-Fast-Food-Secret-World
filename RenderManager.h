@@ -43,6 +43,7 @@ namespace GameImage_M {
 		void LayerMoveForward(string p_id);
 		void LayerMoveBackward(string p_id);
 		void LayerMoveToFont(string p_id);
-		void LayerMoveFoBack(string p_id);
+		void LayerMoveToBack(string p_id);
 	};
 }
+
