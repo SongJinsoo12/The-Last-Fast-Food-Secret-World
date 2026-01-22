@@ -126,6 +126,7 @@ GameCard::GameCard(Card* p_Card)
 	this->SetDef(p_Card->GetDef());
 	this->SetAit(p_Card->GetAit());
 	this->SetType(p_Card->GetType());
+	this->SetType(p_Card->GetStar());
 }
 
 GameCard::~GameCard()
@@ -459,3 +460,4 @@ void CardManager::OpponentAct()
 
 
 }
+
