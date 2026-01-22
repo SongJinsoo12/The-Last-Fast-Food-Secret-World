@@ -6,6 +6,8 @@
 
 #include <unordered_map>
 
+#define m_rend GameImage_M::RenderManager::GetInstance()
+
 namespace GameImage_M {
 
 	enum class LayerType {
@@ -46,4 +48,5 @@ namespace GameImage_M {
 		void LayerMoveToBack(string p_id);
 	};
 }
+
 
