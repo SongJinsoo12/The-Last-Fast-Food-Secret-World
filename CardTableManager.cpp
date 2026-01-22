@@ -58,7 +58,7 @@ void CardTableManager::Init()
 			row.push_back(cell);
 		}
 
-		if (row.size() < 5)
+		if (row.size() < 6)
 			continue;
 
 		int uid = stoi(row[0]);
@@ -66,6 +66,7 @@ void CardTableManager::Init()
 		int def = stoi(row[2]);
 		string aitStr = row[3];
 		string typeStr = row[4];
+		string starStr = row[5];
 
 
 		//카드 생성 및 데이터 세팅
@@ -74,9 +75,11 @@ void CardTableManager::Init()
 		newCard->SetDef(def);
 		newCard->SetAit(StrToAit(aitStr));
 		newCard->SetType(StrToType(typeStr));
+		newCard->SetStar(StrToStar(starStr));
 		m_AllCardDataVec[uid] = newCard;
 
-		CardImageLoad(uid, StrToAit(aitStr), StrToType(typeStr));
+		CardImageLoad(uid, StrToAit(aitStr), StrToType(typeStr), StrToStar(starStr));
+		CardImageLoad(uid + BOSSUID, StrToAit(aitStr), StrToType(typeStr), StrToStar(starStr));
 	}
 
 	file.close();
@@ -101,7 +104,7 @@ vector<GameCard*> CardTableManager::GetRandomCard(int p_count)
 	for (size_t i = 0; i < p_count; i++)
 	{
 		int randUid;
-		randomInit(0, 232);
+		randomInit(1, 232);
 		randUid = cookRandom(gen);
 		Card* card = GetCardData(randUid);
 
@@ -110,8 +113,8 @@ vector<GameCard*> CardTableManager::GetRandomCard(int p_count)
 		{
 			if (randUid == noSameUid[j])
 			{
-				i--;
-				card == nullptr;
+				--i;
+				card = nullptr;
 				break;
 			}
 		}
@@ -151,17 +154,51 @@ CType CardTableManager::StrToType(string str)
 	return E_Attack; // 기본값
 }
 
-void CardTableManager::CardImageLoad(int uid, CAttribute  ait, CType type)
+Star CardTableManager::StrToStar(string str)
+{
+	if (str == "E_ONE") return E_ONE;
+	if (str == "E_TWO") return E_TWO;
+	if (str == "E_THREE") return E_THREE;
+	return E_TWO; //기본값
+}
+
+void CardTableManager::CardImageLoad(int uid, CAttribute  ait, CType type, Star star)
 {
 	switch (type)
 	{
 	case E_Attack:
-		g_renderManager.SetImage(L"card_atk.png", to_string(uid),
-			Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0));
+		switch (star)
+		{
+		case E_ONE:
+			g_renderManager.SetImage(L"card_atk_1.png", to_string(uid),
+				Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0));
+			break;
+		case E_TWO:
+			g_renderManager.SetImage(L"card_atk_2.png", to_string(uid),
+				Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0));
+			break;
+		case E_THREE:
+			g_renderManager.SetImage(L"card_atk_3.png", to_string(uid),
+				Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0));
+			break;
+		}
 		break;
 	case E_Deffense:
-		g_renderManager.SetImage(L"card_def.png", to_string(uid),
-			Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0));
+		switch (star)
+		{
+		case E_ONE:
+			g_renderManager.SetImage(L"card_def_1.png", to_string(uid),
+				Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0));
+			break;
+		case E_TWO:
+			g_renderManager.SetImage(L"card_def_2.png", to_string(uid),
+				Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0));
+			break;
+		case E_THREE:
+			g_renderManager.SetImage(L"card_def_3.png", to_string(uid),
+				Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0));
+			break;
+		}
 		break;
 	case E_Magic:
 		g_renderManager.SetImage(L"card_magic.png", to_string(uid),
