@@ -16,7 +16,7 @@ int Stage::Get_SmallStage() { //튜토리얼 클래스 용
 }
 
 
-
+ 
 
 bool Stage::GameStart() { //수정중
     //GetStage();
@@ -179,3 +179,4 @@ bool Stage::GameOver(bool isPlayerLost) {
 void Stage::DrawStageClearScreen() {
     //스테이지 클리어 화면 출력
 }
+
