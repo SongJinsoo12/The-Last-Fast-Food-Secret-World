@@ -171,7 +171,6 @@ void SupportCard::Next_AtkCard_Damage_Up(Player& player, float mult)
 
 void SupportCard::MY_Attiravate_Change(CAttribute ait)
 {
-    // TODO: "다음 공격 카드의 속성 변경"은 카드 해석기/리졸버 단계에서 적용되어야 안전합니다.
     (void)ait;
 }
 
