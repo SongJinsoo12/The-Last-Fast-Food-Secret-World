@@ -56,4 +56,5 @@ public:
 	 
 	TCardType TutorialCard(); //튜토리얼 스테이지에 맞는 카드 반환
 	bool CheckTutorial(); //튜토리얼 스테이지 확인
-};
+}; 
+
