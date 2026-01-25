@@ -1,5 +1,4 @@
 ﻿#include "SupportCard.h"
-
 #include "Player.h"
 #include "Mob.h"
 #include "AtkCard.h"
@@ -108,6 +107,62 @@ void SupportCard::Card_Forsake_Card_Draw(Player& player)
     player.DrawCards(1);
 }
 
+void SupportCard::Same_Card(Player& player)
+{
+    if (/*최근 사용 카드가 같은 카드인지 확인*/ true)
+    {
+        player.DrawCards(2);
+    }
+}
+
+void SupportCard::Card_Draw_Enemy_Heal(Player& player, Mob& mob)
+{
+    player.DrawCards(1);
+    mob.Heal(10);
+}
+
+void SupportCard::Card_Draw_CockroachCard(Player& player)
+{
+    player.DrawCards(3);
+    player.AddCardToDeck((int)CardId::Cockroach, true);
+}
+
+void SupportCard::Hp_Down_Card_Draw(Player& player)
+{
+    player.Heal(-10);
+    player.DrawCards(1);
+}
+
+void SupportCard::Card_Draw_Damage_Doun(Player& player, float dmg)
+{
+    player.DrawCards(2);
+    player.SetNextAtkMultiplier(dmg);
+}
+
+void SupportCard::Card_Draw_Disarray(Player& player)
+{
+
+}
+
+void SupportCard::Card_Forsake_Heal_Atk_Change(Player& player, Mob& enemy)
+{
+    if (player.GetHandSize() <= 0)
+    {
+        return;
+    }
+    if (!player.DiscardHandCardAt(player.ChooseCardIndex()))
+    {
+        player.DiscardRandomHandCards(1);
+    }
+    player.AddHealToDamageTurns(1); // 몹으로 변겅
+}
+
+void SupportCard::TwoCard_Get_Enemy_Card_Get(Player& player, Mob& mob)
+{
+    player.DrawCards(2);
+    mob.DrawCards(1);
+}
+
 void SupportCard::Next_AtkCard_Damage_Up(Player& player, float mult)
 {
     if (mult <= 0.0f) mult = 1.0f;
@@ -118,6 +173,36 @@ void SupportCard::MY_Attiravate_Change(CAttribute ait)
 {
     // TODO: "다음 공격 카드의 속성 변경"은 카드 해석기/리졸버 단계에서 적용되어야 안전합니다.
     (void)ait;
+}
+
+void SupportCard::Card_Forsake_Damage_up(Player& player, float dmg)
+{
+    // 내 패 2장 버리고
+    if (!player.DiscardRandomHandCards(2))
+        return;
+    if (dmg <= 0.0f) dmg = 2.0f;
+    player.SetNextAtkMultiplier(dmg);
+}
+
+void SupportCard::Atk_Or_Def(Player* player, Mob* mob)
+{
+    Card* playerLastCard = player->getLastUsedCard();
+
+    if (playerLastCard != nullptr)
+    {
+        CType lastType = playerLastCard->getType();
+
+        if (lastType == CType::E_Attack)
+        {
+            int lastDamage = player->getLastdamageTaken();
+            int reflect = lastDamage / 2;
+            player->takeDamage(reflect);
+        }
+        else if (lastType == CType::E_Deffence)
+        {
+            player->boostNextAttack(20);
+        }
+    }
 }
 
 void SupportCard::Three_Turn_After_Three_Card(Player& player)
@@ -133,6 +218,21 @@ void SupportCard::Used_TwoCard_But_Drow_Prohibition(Player& player)
 
     // 다음 2턴 동안 일반 드로우 불가
     player.AddNoDrawTurns(2);
+}
+
+void SupportCard::AtkCard_Forsake_Used_TwoCard(Player& player, CardManager& cm)
+{
+    if (!cm.DiscardFirstAttackCard())
+        return;
+    player.AddExtraPlaysThisTurn(2);
+}
+
+void SupportCard::Instant_Turn_Card(Player& player)
+{
+    if (true)
+    {
+        player.AddDelayedHeal(1, heal);
+    }
 }
 
 void SupportCard::Two_Turn_Heal(Player& player)
