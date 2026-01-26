@@ -2,10 +2,30 @@
 
 void CardGacha::one(DeckBuilding& p_deck, MainGame& p_mg)
 {
-	int invensize = p_deck.GetSize();
-	int randID = allCard[rand() % AllCARDMAXSIZE]->GetUid();
+	int invensize = p_deck.GetSize();//카드풀에서 랜덤한 카드를 뽑음
 	draw_card.resize(1);
-	draw_card[0].SetUid(randID);
+	int randIdx = rand() % AllCARDMAXSIZE;
+	int ID = allCard[randIdx]->GetUid();
+	draw_card[0].SetUid(ID);
+	Star STAR = allCard[randIdx]->GetStar();
+	draw_card[0].SetStar(STAR);
+	CType TYPE = allCard[randIdx]->GetType();
+	draw_card[0].SetType(TYPE);
+
+	//카드가 추가될때 중복카드는 뽑기결과에서 나오되, 인벤에서 제외되어야함.
+	if (isObtain[randIdx])
+	{
+		//중복 시 임시로 아이디를 음수로 변경 (기본카드의 경우는 예외를 설정할 예정)
+		cout << draw_card[0].GetUid() << "는 중복" << "\n";
+		draw_card[0].SetUid(-1);
+		p_mg.AddGold(100 * 4); //고정값 * 레어도별 가중치 페이백
+	}
+	else
+	{
+		//신규 획득 카드는 얻었다는 표시를 설정
+		cout << draw_card[0].GetUid() << "는 신규" << "\n";
+		isObtain[randIdx] = TRUE;
+	}
 	int x = invensize % 5, y = invensize / 5;
 	draw_card[0].x = x * 75 + 1050, draw_card[0].y = y * 150 + 50;
 	p_deck.PushCard(draw_card);
@@ -21,8 +41,10 @@ void CardGacha::ten(DeckBuilding& p_deck, MainGame& p_mg)
 		int randIdx = rand() % AllCARDMAXSIZE;
 		int ID = allCard[randIdx]->GetUid();
 		draw_card[i].SetUid(ID);
-		int ATK = allCard[randIdx]->GetAtk();
-		draw_card[i].SetAtk(ATK);
+		Star STAR = allCard[randIdx]->GetStar();
+		draw_card[i].SetStar(STAR);
+		CType TYPE = allCard[randIdx]->GetType();
+		draw_card[i].SetType(TYPE);
 
 		//카드가 추가될때 중복카드는 뽑기결과에서 나오되, 인벤에서 제외되어야함.
 		if (isObtain[randIdx])
