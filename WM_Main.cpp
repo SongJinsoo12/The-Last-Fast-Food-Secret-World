@@ -57,8 +57,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
-	//인벤토리 정렬기능 추가하기 / 클래스마다 extern 해두기
-	//상점 입장 연출 / 덱편집화면에서 카드 정보 확인 가능하게 / 덱빌딩한것을 json사용해서 저장할 수 있게
+	//인벤토리 정렬기능 추가하기 / 덱페이지넘김후 좌표문제 해결하기
+	//상점 입장 연출완성하기(이동중에는 용량큰사진 비활성해두기) / 
+	//save/load 요소 전부 찾기(카드획득여부 등, 리셋할때는 파일내용 null로 만들기)
 	HDC hdc, memDC;////////////////////////
 	PAINTSTRUCT ps;
 	HBITMAP hOldBitmap;
@@ -93,25 +94,44 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		return 0;
 	}
 	case WM_TIMER:
+		if (wParam == 1)
+		{
+			if (shop.DrawEnterShop())
+			{
+				KillTimer(hWnd, 1);
+			}
+		}
+
+		InvalidateRect(hWnd, &rt, FALSE);
 		return 0;
 
 	case WM_COMMAND:
-		shop.ClearShop();
-		shop.CancelSelection();	//화면전환시 상자선택을 FALSE로 변경함
+		KillTimer(hWnd, 1);//shop.exit시 넣을것
+		shop.ExitShop();
+		deck.ExitDeckBuild();
+
 		switch (LOWORD(wParam))		//버튼의 wParam
 		{
 		case 0:
 			ShowWindow(b, SW_SHOW);
+			deck.EnterDeckBuild();
 			screen = 0;
 			break;
 		case 1:
 			ShowWindow(b, SW_SHOW);
+			SetTimer(hWnd, 1, 8, NULL);
 			shop.SetDrawShop();
 			screen = 1;
 			break;
 		case 2:
 			if (isGrad) isGrad = FALSE;
 			else isGrad = TRUE;
+			break;
+		case 10:
+			deck.PageBuff(false);
+			break;
+		case 11:
+			deck.PageBuff(true);
 			break;
 		default:
 			break;
@@ -120,10 +140,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		InvalidateRect(hWnd, &rt, FALSE);
 		return 0;
 
+
 	case WM_LBUTTONDOWN:
 		if (screen == 0)
 		{
-			deck.DeckBuild(mg.mx, mg.my);
+			deck.DeckBuild(mg.mx, mg.my, 'L');
 		}
 		else if (screen == 1)
 		{
@@ -134,17 +155,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				{
 					gacha.GetGacha(TRUE, deck, mg, shop.GetSelectedChest());
 					screen = 2;
-					shop.ClearShop();
+					shop.ExitShop();
 				}
 				else if (InCircle(1200, 635, mg.mx, mg.my))
 				{
 					gacha.GetGacha(FALSE, deck, mg, shop.GetSelectedChest());
 					screen = 2;
-					shop.ClearShop();
+					shop.ExitShop();
 				}
 			}
 		}
 
+		InvalidateRect(hWnd, &rt, FALSE);
+		return 0;
+
+	case WM_RBUTTONDOWN:
+		if (screen == 0)
+		{
+			deck.DeckBuild(mg.mx, mg.my, 'R');
+		}
 		InvalidateRect(hWnd, &rt, FALSE);
 		return 0;
 
@@ -163,7 +192,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		Graphics graphics(memDC);
 		graphics.Clear(Color(255, 255, 255, 255));
 
-		g_renderManager.RenderAll(&graphics);
+		m_rend.RenderAll(&graphics);
 
 		BitBlt(hdc, 0, 0, rt.right, rt.bottom, memDC, 0, 0, SRCCOPY);
 		DeleteObject(SelectObject(memDC, hOldBitmap));
@@ -171,7 +200,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 		if (screen == 0)
 		{
-			deck.DrawDeckBuild(hdc, hPen, oldPen, mg.mx, mg.my, print);
+			deck.DrawDeckBuild(hdc, print);
 		}
 		else if (screen == 1)
 		{
