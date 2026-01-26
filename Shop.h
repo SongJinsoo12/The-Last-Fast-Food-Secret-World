@@ -62,13 +62,15 @@ private:
 	Chest chest[6];					//전체 상자
 	Chest selectedChest;			//선택된 상자
 	BOOL isSelect = FALSE;			//하이라이트될 상자를 선택했는가
+
+	int mov_sel = 1400, del = 700;
 public:
 	Shop()
 	{
 		srand(time(NULL));
 		for (int i = 0; i < 6; i++)//0 1 2 3 4 5
 		{
-			//테스트용 랜덤확률지정
+			//테스트용 랜덤확률지정 / 확정되면 지울예정
 			int hund = 101, v1 = 0, v2 = 0, v3 = 0, v4 = 0;
 			v1 = rand() % hund, hund -= v1;	//v1 = 0~100 -> 12, hund = 88
 			v2 = rand() % hund, hund -= v2;//v2 = 0~88 -> 20, hund = 68
@@ -80,21 +82,21 @@ public:
 		}
 
 		//상자 보관용 선반
-		g_renderManager.SetImage(L"shelf.png", "shelf1"
-			, Rect(0, 0, 651, 101), Rect(700, 250, 651, 101), false);
-		g_renderManager.SetImage(L"shelf.png", "shelf2"
-			, Rect(0, 0, 651, 101), Rect(700, 450, 651, 101), false);
+		m_rend.SetImage(L"shelf.png", "shelf1"
+			, Rect(0, 0, 651, 101), Rect(mov_sel, 250, 651, 101), false, GameImage_M::LayerType::Background);
+		m_rend.SetImage(L"shelf.png", "shelf2"
+			, Rect(0, 0, 651, 101), Rect(mov_sel, 450, 651, 101), false, GameImage_M::LayerType::Background);
 		//상점 주인
-		g_renderManager.SetImage(L"cookie.png", "cookie"
-			, Rect(0, 0, 2500, 2500), Rect(300 - 180, 430 - 180, 360, 360), false);
-		//상자 정보 하이라이트 및 상점 주인 대사 출력용
-		g_renderManager.SetImage(L"textbox.png", "textbox"
-			, Rect(0, 0, 500, 200), Rect(50, 500, 500, 200), false);
-		//상자들 출력
+		m_rend.SetImage(L"cookie1.png", "cookie"
+			, Rect(0, 0, 250, 250), Rect(300 - 180, 430 - 180, 360, 360), false, GameImage_M::LayerType::Background);
+		//상자 정보 및 상점 주인 대사 출력용
+		m_rend.SetImage(L"textbox.png", "textbox"
+			, Rect(0, 0, 500, 200), Rect(50, 500, 500, 200), false, GameImage_M::LayerType::Background);
+		//상자 출력
 		for (int i = 0; i < 6; i++)
 		{
-			g_renderManager.SetImage(L"chest.png", "chest" + to_string(i)
-				, Rect(0, 0, 1024, 1024), Rect(chest[i].x - 48, chest[i].y - 78, 128, 128), false);
+			m_rend.SetImage(L"chest.png", "chest" + to_string(i)
+				, Rect(0, 0, 1024, 1024), Rect(chest[i].x - 48, chest[i].y - 78, 128, 128), false, GameImage_M::LayerType::Background);
 		}
 	}
 	virtual ~Shop()
@@ -118,39 +120,37 @@ public:
 	//이미지 로드 확인해보기 / 쿠키는 맥도날드 점원, 상자는 가게메뉴로 변경(==상점 컨셉을 맥으로)
 	void SetDrawShop()
 	{
-		//상자 보관용 선반
-		g_renderManager.ImageVisible("shelf1", true);
-		g_renderManager.ImageVisible("shelf2", true);
+		m_rend.ImageVisible("shelf1", true);//상자 보관용 선반1
+		m_rend.ImageVisible("shelf2", true);//상자 보관용 선반2
 
-		//상점 주인
-		g_renderManager.ImageVisible("cookie", true);
-
-		//상자 정보 하이라이트 및 상점 주인 대사 출력용
-		g_renderManager.ImageVisible("textbox", true);
-
-		//상자들 출력
-		for (int i = 0; i < 6; i++)
-		{
-			g_renderManager.ImageVisible("chest" + to_string(i), true);
-		}
+		//상자 정보 및 상점 주인 대사 출력용
+		m_rend.ImageVisible("textbox", true);
 	}
-	//화면 전환 시 상점의 이미지들을 전부 제거
-	void ClearShop()
+	//화면 전환 시 상점의 이미지들을 전부 비활성화
+	void ExitShop()
 	{
-		g_renderManager.ImageVisible("shelf1", false);
-		g_renderManager.ImageVisible("shelf2", false);
-		g_renderManager.ImageVisible("cookie", false);
-		g_renderManager.ImageVisible("textbox", false);
-		for (int i = 0; i < 6; i++)
-		{
-			g_renderManager.ImageVisible("chest" + to_string(i), false);
-		}
+		m_rend.ImageVisible("shelf1", false);
+		m_rend.ImageVisible("shelf2", false);
+		m_rend.ImageVisible("cookie", false);
+		m_rend.ImageVisible("textbox", false);
+		for (int i = 0; i < 6; i++) m_rend.ImageVisible("chest" + to_string(i), false);
+		mov_sel = 1400;
+		this->CancelSelection();
 	}
 	void DrawShop(HDC p_hdc, WCHAR p_text[]);
-	void DrawEnterShop()
+	bool DrawEnterShop()
 	{
+		m_rend.MoveImage("shelf1", Rect(mov_sel - 10, 250, 651, 101));
+		m_rend.MoveImage("shelf2", Rect(mov_sel - 10, 450, 651, 101));
+		m_rend.MoveImage("textbox", Rect((700 - mov_sel) + 50 + 10, 500, 500, 200));
 
+		mov_sel -= (int)((mov_sel - del) / 10);
+		if (mov_sel <= 710)//입장 애니메이션이 끝난 후 나머지 이미지 활성화
+		{
+			m_rend.ImageVisible("cookie", true);// 상점 주인
+			for (int i = 0; i < 6; i++) m_rend.ImageVisible("chest" + to_string(i), true);//상자 출력
+			return true;
+		}
+		else return false;
 	}
 };
-
-extern Shop g_shop;
