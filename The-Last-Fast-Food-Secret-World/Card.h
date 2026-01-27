@@ -55,12 +55,12 @@ enum Star
 class Card
 {
 protected:
-	int uid;
-	int atk;
-	int def;
-	CAttribute Ait;
-	CType Type;
-	Star star;
+	int m_Uid;
+	int m_Atk;
+	int m_Def;
+	CAttribute m_Ait;
+	CType m_Type;
+	Star m_Star;
 
 public:
 	Card();

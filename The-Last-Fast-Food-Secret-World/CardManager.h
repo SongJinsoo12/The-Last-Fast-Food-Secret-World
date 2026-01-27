@@ -34,11 +34,11 @@ public:
 	void SetImage();
 
 private:
-	int deckCount;//덱 장수
-	int handCount;//패 장수
-	int handSelection;//패 카드 선택
-	vector<GameCard*> hand;//패 카드
-	vector<GameCard*> deck;//덱 카드
-	bool isMyTurn;//턴 확인
-	bool isSelect;//패 카드 선택 확인
+	int m_DeckCount;//덱 장수
+	int m_HandCount;//패 장수
+	int m_HandSelection;//패 카드 선택
+	vector<GameCard*> m_Hand;//패 카드
+	vector<GameCard*> m_Deck;//덱 카드
+	bool m_IsMyTurn;//턴 확인
+	bool m_IsSelect;//패 카드 선택 확인
 };
