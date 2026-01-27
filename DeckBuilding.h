@@ -9,7 +9,7 @@
 #include "RenderManager.h"
 
 #include <iostream>
-#include <fstream>	//íŒŒì¼ì½ê¸°
+#include <fstream>	//ÆÄÀÏÀĞ±â
 #include "json.hpp"
 
 using namespace std;
@@ -22,19 +22,24 @@ BOOL InCircle(int x, int y, int mx, int my);
 class DeckBuilding
 {
 private:
-	//í˜„ì¬ ë±
+	//ÇöÀç µ¦
 	vector<Card> myDeck;
-	//ë³´ìœ í•œ ì¹´ë“œë“¤
+	//º¸À¯ÇÑ Ä«µåµé
 	vector<Card> inven;
-	Card* SelectedCard;//ë±í¸ì§‘í™”ë©´ì—ì„œ ìœ ì €ê°€ ì •ë³´ë¥¼ í™•ì¸í•  ì¹´ë“œë³€ìˆ˜ / exitì‹œ ì„ íƒí•´ì œí• ê²ƒ
+	vector<Card> atkCards;
+	vector<Card> defCards;
+	vector<Card> magicCards;
+	Card* SelectedCard;//µ¦ÆíÁıÈ­¸é¿¡¼­ À¯Àú°¡ Á¤º¸¸¦ È®ÀÎÇÒ Ä«µåº¯¼ö / exit½Ã ¼±ÅÃÇØÁ¦ÇÒ°Í
 
-	int Star_n[3] = { 0, };//ë±ì˜ 1,2,3ì„± ì¹´ë“œê°œìˆ˜
+	int filter = 0;//ÇÊÅÍ¿ë º¯¼ö 0ÀÌ¸é ÇÊÅÍx
+	int Star_n[3] = { 0, };//µ¦ÀÇ 1,2,3¼º Ä«µå°³¼ö
 	int i_page = 0, max_page = 0;
+	bool isShowHelper = false;
 
 public:
 	DeckBuilding()
 	{
-		
+
 	}
 	virtual ~DeckBuilding()
 	{
@@ -58,37 +63,102 @@ public:
 		cout << i_page << " / " << max_page << endl;
 		return;
 	}
-	//ì¤‘ë³µì´ ì¡´ì¬í•˜ë©´ ì œê±°í›„ ë’¤ì˜ ì¹´ë“œë“¤ì„ ì•ìœ¼ë¡œ ì´ë™
+	//Áßº¹ÀÌ Á¸ÀçÇÏ¸é Á¦°ÅÈÄ µÚÀÇ Ä«µåµéÀ» ¾ÕÀ¸·Î ÀÌµ¿
 	vector<Card> EraseDuple(vector<Card> p_cards);
 
-	//ì¸ë²¤í† ë¦¬ì˜ ì‚¬ì´ì¦ˆ ë¦¬í„´
+	//ÀÎº¥Åä¸®ÀÇ »çÀÌÁî ¸®ÅÏ
 	int GetSize();
+	void ChangeFilter()
+	{
+		++filter;
+		if (filter > 3) filter = 0;
+		cout << "filter : " << filter << endl;
+	}
 
-	//íŒŒë¼ë¯¸í„°ì˜ ë°°ì—´ì„ ì¸ë²¤ ë§¨ ë’¤ì— ì¶”ê°€í•¨. ì¤‘ë³µ ì œê±°ë„ í•´ì¤Œ
+	//ÆÄ¶ó¹ÌÅÍÀÇ ¹è¿­À» ÀÎº¥ ¸Ç µÚ¿¡ Ãß°¡ÇÔ. Áßº¹ Á¦°Åµµ ÇØÁÜ
 	void PushCard(vector<Card> p_cards);
+	vector<Card> SetPos(vector<Card> p_cards)
+	{
+		//ÀÎº¥¿¡ µé¾î°¥ ÀÚ¸®¿¡ ¸Â°Ô ÁÂÇ¥¸¦ ¼¼ÆÃÇÔ.
+		for (int i = 0; i < p_cards.size(); i++)
+		{
+			int x = ((i) % 25) % 5, y = ((i) % 25) / 5;
+			p_cards[i].x = x * 82 + 1050, p_cards[i].y = y * 120 + 130;
+			cout << p_cards[i].GetUid() << ": " << p_cards[i].x << " , " << p_cards[i].y << endl;
+		}
+		return p_cards;
+	}
+	vector<Card> SortCards(vector<Card> p_cards)
+	{
+		for (int i = 0; i < p_cards.size() - 1; i++)
+		{
+			for (int j = i + 1; j < p_cards.size(); j++)
+			{
+				if (p_cards[i].GetUid() > p_cards[j].GetUid())
+				{
+					swap(p_cards[i], p_cards[j]);
+				}
+			}
+		}
+		return p_cards;
+	}
 
-	//ì¸ë²¤->ë± (ë±, ë§ˆìš°ìŠ¤X, ë§ˆìš°ìŠ¤Y)
+	void pushTypeCard(Card p_card)
+	{
+		CType type = p_card.GetType();
+		switch (type)
+		{
+		case E_Attack:
+			atkCards.push_back(p_card);
+			break;
+		case E_Deffense:
+			defCards.push_back(p_card);
+			break;
+		case E_Magic:
+			magicCards.push_back(p_card);
+			break;
+		}
+	}
+
+	//ÀÎº¥->µ¦ (µ¦, ¸¶¿ì½ºX, ¸¶¿ì½ºY)
 	void ItoD(int p_mx, int p_my);
-	//ë±->ì¸ë²¤ (ë±, ë§ˆìš°ìŠ¤X, ë§ˆìš°ìŠ¤Y)
+	//µ¦->ÀÎº¥ (µ¦, ¸¶¿ì½ºX, ¸¶¿ì½ºY)
 	void DtoI(int p_mx, int p_my);
 	void SelectCard(int p_mx, int p_my);
-	void DeckBuild(int p_mx, int p_my, char click_m);//click_m == ì¢Œ/ìš°í´ë¦­ í™•ì¸ìš©, ì¢Œ-ì¹´ë“œí•˜ì´ë¼ì´íŠ¸/ìš°-ì¹´ë“œì´ë™
-
-	//ì¸ë²¤í† ë¦¬ ì¶œë ¥
-	void DrawInventory(HDC p_hdc, WCHAR p_text[]);
-	//ë§ˆì´ë± ì¶œë ¥
-	void DrawMyDeck(HDC p_hdc, WCHAR p_text[]);
-	//ë±ë¹Œë”© í™”ë©´ ì¶œë ¥
-	void DrawDeckBuild(HDC p_hdc, WCHAR p_text[]);
+	void DeckBuild(int p_mx, int p_my, char click_m);//click_m == ÁÂ/¿ìÅ¬¸¯ È®ÀÎ¿ë, ÁÂ-Ä«µåÇÏÀÌ¶óÀÌÆ®/¿ì-Ä«µåÀÌµ¿
 
 	void EnterDeckBuild()
 	{
+		filter = 0;
+		for (int i = 0; i < inven.size(); i++)
+		{
+			pushTypeCard(inven[i]);
+		}
+
+		atkCards = SetPos(atkCards);
+		defCards = SetPos(defCards);
+		magicCards = SetPos(magicCards);
+
 		max_page = (inven.size() / 25);
 		cout << "maxpage : " << max_page << endl;
 	}
-
 	void ExitDeckBuild()
 	{
+		filter = 0;
+		for (int i = 0; i < inven.size(); i++) m_rend.RemoveIDIamage("inven_card" + to_string(i));
+		for (int i = 0; i < myDeck.size(); i++) m_rend.RemoveIDIamage("deck_card" + to_string(i));
+		m_rend.RemoveIDIamage("s_card");
+	}
 
+	//ÀÎº¥Åä¸® Ãâ·Â
+	void DrawInventory(HDC p_hdc, WCHAR p_text[], vector<Card> p_cardType);
+	//¸¶ÀÌµ¦ Ãâ·Â
+	void DrawMyDeck(HDC p_hdc, WCHAR p_text[]);
+	//µ¦ºôµù È­¸é Ãâ·Â
+	void DrawDeckBuild(HDC p_hdc, WCHAR p_text[]);
+	void DrawHelp()
+	{
+		if (isShowHelper) m_rend.ImageVisible("helper", true);
+		else m_rend.ImageVisible("helper", false);
 	}
 };

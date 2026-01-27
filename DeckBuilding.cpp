@@ -1,8 +1,13 @@
-#include "DeckBuilding.h"
+ï»¿#include "DeckBuilding.h"
 
 double LenghtPts(int x1, int y1, int x2, int y2)
 {
 	return sqrt((float)((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)));
+}
+
+double LenghtPtsSqrt(int x1, int y1, int x2, int y2)
+{
+	return (float)((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
 }
 
 BOOL InCircle(int x, int y, int mx, int my)
@@ -20,19 +25,19 @@ BOOL InCircle(int x, int y, int mx, int my)
 void DeckBuilding::SaveDeck()//iscolleted::array
 {
 	{
-		// 1. JSON °´Ã¼ »ı¼º ¹× µ¥ÀÌÅÍ Ãß°¡
-		json j;//j["Å°"] = "Å°°ª"
+		// 1. JSON ê°ì²´ ìƒì„± ë° ë°ì´í„° ì¶”ê°€
+		json j;//j["í‚¤"] = "í‚¤ê°’"
 		j["Star_n"] = { Star_n[0], Star_n[1], Star_n[2] };
 
-		//¹è¿­ÇüÅÂ·Î "Cards_D"Å° »ı¼º
+		//ë°°ì—´í˜•íƒœë¡œ "Cards_D"í‚¤ ìƒì„±
 		j["Cards_D"] = json::array();
 		for (int i = 0; i < myDeck.size(); i++)
 		{
-			//"uid"Å°¿¡ Uid°ªÀ» ¿¬°áÇÏ°í "Cards_D"Å° ¹è¿­ ¸ÇµÚ¿¡ ÀúÀå
+			//"uid"í‚¤ì— Uidê°’ì„ ì—°ê²°í•˜ê³  "Cards_D"í‚¤ ë°°ì—´ ë§¨ë’¤ì— ì €ì¥
 			json card;
 			card["uid"] = myDeck[i].GetUid();
 			j["Cards_D"].push_back(card);
-			cout << to_string(i) << "¹øÂ° Ä«µåÀúÀå¿Ï·á" << endl;
+			cout << to_string(i) << "ë²ˆì§¸ ì¹´ë“œì €ì¥ì™„ë£Œ" << endl;
 		}
 
 		j["Cards_I"] = json::array();
@@ -41,22 +46,22 @@ void DeckBuilding::SaveDeck()//iscolleted::array
 			json card;
 			card["uid"] = inven[i].GetUid();
 			j["Cards_I"].push_back(card);
-			cout << to_string(i) << "¹øÂ° Ä«µåÀúÀå¿Ï·á" << endl;
+			cout << to_string(i) << "ë²ˆì§¸ ì¹´ë“œì €ì¥ì™„ë£Œ" << endl;
 		}
 
-		// 2. ÆÄÀÏ ½ºÆ®¸² ¿­±â (output.json ÆÄÀÏ)
+		// 2. íŒŒì¼ ìŠ¤íŠ¸ë¦¼ ì—´ê¸° (output.json íŒŒì¼)
 		std::ofstream outfile("Deck.json");
 
-		// 3. JSON °´Ã¼¸¦ ÆÄÀÏ ½ºÆ®¸²¿¡ Ãâ·Â (Á÷·ÄÈ­)
+		// 3. JSON ê°ì²´ë¥¼ íŒŒì¼ ìŠ¤íŠ¸ë¦¼ì— ì¶œë ¥ (ì§ë ¬í™”)
 		if (outfile.is_open())
 		{
-			outfile << j.dump(4) << endl; // << ¿¬»êÀÚ·Î ÆÄÀÏ¿¡ ¾²±â
+			outfile << j.dump(4) << endl; // << ì—°ì‚°ìë¡œ íŒŒì¼ì— ì“°ê¸°
 			outfile.close();
-			std::cout << "JSON µ¥ÀÌÅÍ°¡ output.json ÆÄÀÏ¿¡ ÀúÀåµÇ¾ú½À´Ï´Ù." << std::endl;
+			std::cout << "JSON ë°ì´í„°ê°€ output.json íŒŒì¼ì— ì €ì¥ë˜ì—ˆìŠµë‹ˆë‹¤." << std::endl;
 		}
 		else
 		{
-			std::cerr << "ÆÄÀÏ ¿­±â ½ÇÆĞ!" << std::endl;
+			std::cerr << "íŒŒì¼ ì—´ê¸° ì‹¤íŒ¨!" << std::endl;
 			return;
 		}
 	}
@@ -65,16 +70,16 @@ void DeckBuilding::SaveDeck()//iscolleted::array
 void DeckBuilding::LoadDeck()
 {
 
-	std::ifstream file("Deck.json", std::ios::in);//°°Àº °æ·Î³»¿¡¼­ ÆÄÀÏºÒ·¯¿À±â
+	std::ifstream file("Deck.json", std::ios::in);//ê°™ì€ ê²½ë¡œë‚´ì—ì„œ íŒŒì¼ë¶ˆëŸ¬ì˜¤ê¸°
 
-	//ÆÄÀÏ ºÒ·¯¿À±âÈ®ÀÎ¿ë
+	//íŒŒì¼ ë¶ˆëŸ¬ì˜¤ê¸°í™•ì¸ìš©
 	if (!file.is_open())
 	{
 		std::cerr << "Error opening Deck.json.\n";
 		return;
 	}
 
-	//ÀĞ¾îµéÀÎ ÆÄÀÏÀ» json¿¡ ÀúÀå
+	//ì½ì–´ë“¤ì¸ íŒŒì¼ì„ jsonì— ì €ì¥
 	json j;
 	try
 	{
@@ -86,7 +91,7 @@ void DeckBuilding::LoadDeck()
 		return;
 	}
 
-	//"Star_n"Å°¿¡ °ªÀÌ Á¸ÀçÇÒ°æ¿ì ºÒ·¯¿À±â
+	//"Star_n"í‚¤ì— ê°’ì´ ì¡´ì¬í• ê²½ìš° ë¶ˆëŸ¬ì˜¤ê¸°
 	if (j.contains("Star_n") && j["Star_n"].is_array() && j["Star_n"].size() >= 3)
 	{
 		for (int i = 0; i < 3; i++) Star_n[i] = j["Star_n"][i].get<int>();
@@ -101,11 +106,11 @@ void DeckBuilding::LoadDeck()
 	if (j.contains("Cards_D") && j["Cards_D"].is_array())
 	{
 		int index = 0;
-		//"Cards_D" ¹è¿­ÀÌ ³¡³¯¶§±îÁö ¹İº¹
+		//"Cards_D" ë°°ì—´ì´ ëë‚ ë•Œê¹Œì§€ ë°˜ë³µ
 		for (const auto& card : j["Cards_D"])
 		{
 			int uid = -1;
-			//uidÅ°¿¡ °ªÀÌ Á¸ÀçÇÏ¸é int·Î ¹Ş¾Æ¿È
+			//uidí‚¤ì— ê°’ì´ ì¡´ì¬í•˜ë©´ intë¡œ ë°›ì•„ì˜´
 			if (card.contains("uid"))
 			{
 				try { uid = card["uid"].get<int>(); }
@@ -116,7 +121,7 @@ void DeckBuilding::LoadDeck()
 			if (uid >= 0) c = Card(uid);
 			else c = Card();
 
-			// ÁÂÇ¥ º¹¿ø: ÀÎ°ÔÀÓ¿¡¼­ »ç¿ëÇÏ´Â À§Ä¡ ±ÔÄ¢°ú µ¿ÀÏÇÏ°Ô ¼¼ÆÃ
+			// ì¢Œí‘œ ë³µì›: ì¸ê²Œì„ì—ì„œ ì‚¬ìš©í•˜ëŠ” ìœ„ì¹˜ ê·œì¹™ê³¼ ë™ì¼í•˜ê²Œ ì„¸íŒ…
 			int x = index % 5, y = index / 5;
 			c.x = x * 120 + 460, c.y = y * 140 + 80;
 
@@ -125,7 +130,7 @@ void DeckBuilding::LoadDeck()
 		}
 	}
 
-	//Å°¿¡ °ªÀÌ Á¸ÀçÇÏ°í && 
+	//í‚¤ì— ê°’ì´ ì¡´ì¬í•˜ê³  && 
 	inven.clear();
 	if (j.contains("Cards_I") && j["Cards_I"].is_array())
 	{
@@ -143,7 +148,7 @@ void DeckBuilding::LoadDeck()
 			if (uid >= 0) c = Card(uid);
 			else c = Card();
 
-			// ÁÂÇ¥ º¹¿ø: ÀÎ°ÔÀÓ¿¡¼­ »ç¿ëÇÏ´Â À§Ä¡ ±ÔÄ¢°ú µ¿ÀÏÇÏ°Ô ¼¼ÆÃ
+			// ì¢Œí‘œ ë³µì›: ì¸ê²Œì„ì—ì„œ ì‚¬ìš©í•˜ëŠ” ìœ„ì¹˜ ê·œì¹™ê³¼ ë™ì¼í•˜ê²Œ ì„¸íŒ…
 			int x = (index % 25) % 5, y = (index % 25) / 5;
 			c.x = x * 82 + 1050, c.y = y * 120 + 130;
 
@@ -152,14 +157,13 @@ void DeckBuilding::LoadDeck()
 		}
 	}
 
-	std::cout << "Deck.json ·Îµå ¿Ï·á. Star_n: "
+	std::cout << "Deck.json ë¡œë“œ ì™„ë£Œ. Star_n: "
 		<< Star_n[0] << "," << Star_n[1] << "," << Star_n[2] << " Cards_D: " << myDeck.size() << "\n";
 
 }
 
 vector<Card> DeckBuilding::EraseDuple(vector<Card> p_cards)
 {
-	//int psize = p_cards.size();
 	for (int i = 0; i < p_cards.size(); i++)
 	{
 		if (p_cards[i].GetUid() < 0)
@@ -170,7 +174,11 @@ vector<Card> DeckBuilding::EraseDuple(vector<Card> p_cards)
 				p_cards[j].x -= 82;
 				if (p_cards[j].x < 1000)
 				{
-					p_cards[j].x = 82 * 4 + 1050, p_cards[j].y -= 130;
+					p_cards[j].x = 82 * 4 + 1050, p_cards[j].y -= 120;
+					if (p_cards[j].y < 120)
+					{
+						p_cards[j].x = 82 * 4 + 1050, p_cards[j].y = 120 * 4 + 130;
+					}
 				}
 			}
 			--i;
@@ -186,48 +194,44 @@ int DeckBuilding::GetSize()
 
 void DeckBuilding::PushCard(vector<Card> p_cards)
 {
-	//ÀÎº¥¿¡ µé¾î°¥ ÀÚ¸®¿¡ ¸Â°Ô ÁÂÇ¥¸¦ ¼¼ÆÃÇÔ.
-	for (int i = 0; i < p_cards.size(); i++)
-	{
-		int x = (inven.size() + i) % 5, y = (inven.size() + i) / 5;
-		p_cards[i].x = x * 82 + 1050, p_cards[i].y = y * 120 + 130;
-	}
-	//ÁÂÇ¥ ¼¼ÆÃ ÈÄ Áßº¹À» Á¦°ÅÇÏ°í
-	p_cards = EraseDuple(p_cards);
-	//¿Ï¼ºµÈ ¹è¿­À» ÀÎº¥¿¡ Ãß°¡
+	//ì™„ì„±ëœ ë°°ì—´ì„ ì¸ë²¤ì— ì¶”ê°€
 	inven.insert(inven.end(), p_cards.begin(), p_cards.end());
+	inven = SortCards(inven);
+	inven = SetPos(inven);
+	//ì¢Œí‘œ ì„¸íŒ… í›„ ì¤‘ë³µì„ ì œê±°í•˜ê³ 
+	inven = EraseDuple(inven);
 }
 
 void DeckBuilding::ItoD(int p_mx, int p_my)
 {
 	for (int i = 0; i < inven.size(); i++)
 	{
-		//Ä«µå°¡ Å¬¸¯µÇ¾úÀ»°æ¿ì
+		//ì¹´ë“œê°€ í´ë¦­ë˜ì—ˆì„ê²½ìš°
 		if (InCircle(inven[i].x, inven[i].y, p_mx, p_my))
 		{
 			Card selectedCard = inven[i];
-			//µ¦ÀÌ ²Ë Â÷¸é Á¾·á
+			//ë±ì´ ê½‰ ì°¨ë©´ ì¢…ë£Œ
 			if (myDeck.size() >= DECKMAXSIZE)
 			{
-				cout << "µ¦ ²ËÂü" << "\n";
+				cout << "ë± ê½‰ì°¸" << "\n";
 				return;
 			}
-			////µ¦¿¡ µé¾î°¥ ¼ö ÀÖ´Â 1¼ºÀÌ ÃÖ´ë¶ó¸é Á¾·á
+			////ë±ì— ë“¤ì–´ê°ˆ ìˆ˜ ìˆëŠ” 1ì„±ì´ ìµœëŒ€ë¼ë©´ ì¢…ë£Œ
 			//else if (Star_n[0] >= 15)
 			//{
-			//	cout << "1¼º ²ËÂü" << "\n";
+			//	cout << "1ì„± ê½‰ì°¸" << "\n";
 			//	return;
 			//}
-			////µ¦¿¡ µé¾î°¥ ¼ö ÀÖ´Â 2¼ºÀÌ ÃÖ´ë¶ó¸é Á¾·á
+			////ë±ì— ë“¤ì–´ê°ˆ ìˆ˜ ìˆëŠ” 2ì„±ì´ ìµœëŒ€ë¼ë©´ ì¢…ë£Œ
 			//else if (Star_n[1] >= 7)
 			//{
-			//	cout << "2¼º ²ËÂü" << "\n";
+			//	cout << "2ì„± ê½‰ì°¸" << "\n";
 			//	return;
 			//}
-			////µ¦¿¡ µé¾î°¥ ¼ö ÀÖ´Â 3¼ºÀÌ ÃÖ´ë¶ó¸é Á¾·á
+			////ë±ì— ë“¤ì–´ê°ˆ ìˆ˜ ìˆëŠ” 3ì„±ì´ ìµœëŒ€ë¼ë©´ ì¢…ë£Œ
 			//else if (Star_n[2] >= 3)
 			//{
-			//	cout << "3¼º ²ËÂü" << "\n";
+			//	cout << "3ì„± ê½‰ì°¸" << "\n";
 			//	return;
 			//}
 
@@ -235,21 +239,22 @@ void DeckBuilding::ItoD(int p_mx, int p_my)
 			++Star_n[star];
 			cout << Star_n[0] << Star_n[1] << Star_n[2] << endl;
 
-			//(val * °£°İ + Á©(¿Ş / À§)ÂÊÀ¸·ÎºÎÅÍÀÇ ¿©¹é)
-			//ÀÌµ¿½ÃÅ³ Ä«µåÀÇ ÁÂÇ¥¸¦ º¯°æ. Ãâ¹ßÁö ¹è¿­¿¡¼­ Á¦°Å ÈÄ ¸ñÀûÁö ¹è¿­ ¸Ç µÚ¿¡ Ãß°¡
+			//(val * ê°„ê²© + ì ¤(ì™¼ / ìœ„)ìª½ìœ¼ë¡œë¶€í„°ì˜ ì—¬ë°±)
+			//ì´ë™ì‹œí‚¬ ì¹´ë“œì˜ ì¢Œí‘œë¥¼ ë³€ê²½. ì¶œë°œì§€ ë°°ì—´ì—ì„œ ì œê±° í›„ ëª©ì ì§€ ë°°ì—´ ë§¨ ë’¤ì— ì¶”ê°€
 			int x = myDeck.size() % 5, y = myDeck.size() / 5;
 			inven[i].x = x * 120 + 460, inven[i].y = y * 140 + 80;
 			myDeck.push_back(inven[i]);
 			inven.erase(inven.begin() + i);
 			SelectedCard = &myDeck[myDeck.size() - 1];
 
-			//ÀÌµ¿µÈ Ä«µåÀÇ µÚÂÊ Ä«µåµéÀ» ¾ÕÀ¸·Î ÇÑÄ­¾¿ ÁÂÇ¥¸¦ º¯°æ
+			//ì´ë™ëœ ì¹´ë“œì˜ ë’¤ìª½ ì¹´ë“œë“¤ì„ ì•ìœ¼ë¡œ í•œì¹¸ì”© ì¢Œí‘œë¥¼ ë³€ê²½
 			for (int j = i; j < inven.size(); j++)
 			{
 				inven[j].x -= 82;
 				if (inven[j].x < 1000)
 				{
 					inven[j].x = 82 * 4 + 1050, inven[j].y -= 130;
+					if (inven[j].y < 120) inven[j].x = 82 * 4 + 1050, inven[j].y = 120 * 4 + 130;
 				}
 			}
 			return;
@@ -261,7 +266,7 @@ void DeckBuilding::DtoI(int p_mx, int p_my)
 {
 	for (int i = 0; i < myDeck.size(); i++)
 	{
-		//Ä«µå°¡ Å¬¸¯µÇ¾úÀ»°æ¿ì
+		//ì¹´ë“œê°€ í´ë¦­ë˜ì—ˆì„ê²½ìš°
 		if (InCircle(myDeck[i].x, myDeck[i].y, p_mx, p_my))
 		{
 			Card selectedCard = myDeck[i];
@@ -269,14 +274,14 @@ void DeckBuilding::DtoI(int p_mx, int p_my)
 			--Star_n[star];
 			cout << Star_n[0] << Star_n[1] << Star_n[2] << endl;
 
-			//ÀÌµ¿½ÃÅ³ Ä«µåÀÇ ÁÂÇ¥¸¦ º¯°æ. Ãâ¹ßÁö ¹è¿­¿¡¼­ Á¦°Å ÈÄ ¸ñÀûÁö ¹è¿­ ¸Ç µÚ¿¡ Ãß°¡
-			int x = inven.size() % 5, y = inven.size() / 5;
+			//ì´ë™ì‹œí‚¬ ì¹´ë“œì˜ ì¢Œí‘œë¥¼ ë³€ê²½. ì¶œë°œì§€ ë°°ì—´ì—ì„œ ì œê±° í›„ ëª©ì ì§€ ë°°ì—´ ë§¨ ë’¤ì— ì¶”ê°€
+			int x = (inven.size() % 25) % 5, y = (inven.size() % 25) / 5;
 			myDeck[i].x = x * 82 + 1050, myDeck[i].y = y * 120 + 130;
 			inven.push_back(myDeck[i]);
 			myDeck.erase(myDeck.begin() + i);
 			SelectedCard = &inven[inven.size() - 1];
 
-			//ÀÌµ¿µÈ Ä«µåÀÇ µÚÂÊ Ä«µåµéÀ» ¾ÕÀ¸·Î ÇÑÄ­¾¿ ÁÂÇ¥¸¦ º¯°æ
+			//ì´ë™ëœ ì¹´ë“œì˜ ë’¤ìª½ ì¹´ë“œë“¤ì„ ì•ìœ¼ë¡œ í•œì¹¸ì”© ì¢Œí‘œë¥¼ ë³€ê²½
 			for (int j = i; j < myDeck.size(); j++)
 			{
 				myDeck[j].x -= 120;
@@ -292,7 +297,7 @@ void DeckBuilding::DtoI(int p_mx, int p_my)
 
 void DeckBuilding::SelectCard(int p_mx, int p_my)
 {
-	//¹è¿­À» ÀÏÀÏÀÌ È®ÀÎÇÏ´Âµ¥ ´õ ÁÁÀº¹æ¹ıÀÌ ¾ø´Â°¡
+	//ë°°ì—´ì„ ì¼ì¼ì´ í™•ì¸í•˜ëŠ”ë° ë” ì¢‹ì€ë°©ë²•ì´ ì—†ëŠ”ê°€
 	for (int i = 0; i < inven.size(); i++)
 	{
 		if (InCircle(inven[i].x, inven[i].y, p_mx, p_my))
@@ -315,52 +320,57 @@ void DeckBuilding::DeckBuild(int p_mx, int p_my, char click_m)
 {
 	if (click_m == 'R')
 	{
-		this->ItoD(p_mx, p_my);	//ÀÎº¥->¸¶ÀÌµ¦
-		this->DtoI(p_mx, p_my);	//¸¶ÀÌµ¦->ÀÎº¥
+		this->ItoD(p_mx, p_my);	//ì¸ë²¤->ë§ˆì´ë±
+		this->DtoI(p_mx, p_my);	//ë§ˆì´ë±->ì¸ë²¤
 	}
 	else if (click_m == 'L')
 	{
 		this->SelectCard(p_mx, p_my);
 		if (InCircle(1085, 690, p_mx, p_my)) this->PageBuff(false);
 		else if (InCircle(1345, 690, p_mx, p_my)) this->PageBuff(true);
+		else if (InCircle(1065, 45, p_mx, p_my)) this->ChangeFilter();
 	}
 }
 
-void DeckBuilding::DrawInventory(HDC p_hdc, WCHAR p_text[])
+void DeckBuilding::DrawInventory(HDC p_hdc, WCHAR p_text[], vector<Card> p_cardType)
 {
-	for (int i = 0; i < inven.size() + 1; i++)
+	for (int i = 0; i < 25; i++)
 	{
-		//¸¶Áö¸·Ä«µåÀÌµ¿½Ã ¹è¿­¿¡¼­ »ç¶óÁøÄ«µåÀÌ¹Ç·Î ¿¹¿ÜÃ³¸®
+		//ë§ˆì§€ë§‰ì¹´ë“œì´ë™ì‹œ ë°°ì—´ì—ì„œ ì‚¬ë¼ì§„ì¹´ë“œì´ë¯€ë¡œ ì˜ˆì™¸ì²˜ë¦¬
 		m_rend.RemoveIDIamage("inven_card" + to_string(i));
 	}
 	for (int i = 0; i < 25; i++)
 	{
-		if (i + i_page * 25 >= inven.size()) return;
+		int index = i + i_page * 25;
+		if (index >= p_cardType.size()) return;
 		m_rend.RemoveIDIamage("inven_card" + to_string(i));
 
 		wstring image_path = L"card";
 		wstring image_type;
-		wstring image_star = to_wstring((int)inven[i + i_page * 25].GetStar() + 1);
-		if (inven[i + i_page * 25].GetType() == E_Attack) image_type = L"_atk_";
-		else if (inven[i + i_page * 25].GetType() == E_Deffense) image_type = L"_def_";//1040+82-30,50+140-30 -> x==1032+82,y==30+140
+		wstring image_star = to_wstring((int)p_cardType[index].GetStar() + 1);
+		if (p_cardType[index].GetType() == E_Attack) image_type = L"_atk_";
+		else if (p_cardType[index].GetType() == E_Deffense) image_type = L"_def_";//1040+82-30,50+140-30 -> x==1032+82,y==30+140
 		image_path += image_type + image_star + L".png";				//1040-30,50-30 -> x-38,y-50 / x==1032,y==30
 
 		m_rend.SetImage(image_path, "inven_card" + to_string(i), Rect(0, 0, 100, 132)
-			, Rect(inven[i + i_page * 25].x - 38, inven[i + i_page * 25].y - 50, (int)(100 * 0.75f), (int)(132 * 0.75f))
+			, Rect(p_cardType[index].x - 38, p_cardType[index].y - 50, (int)(100 * 0.75f), (int)(132 * 0.75f))
 			, true, GameImage_M::LayerType::Background);
 
-		wsprintf(p_text, TEXT("%d"), inven[i + i_page * 25].GetUid());
-		TextOut(p_hdc, inven[i].x - 10, inven[i + i_page * 25].y, p_text, lstrlen(p_text));
+		wsprintf(p_text, TEXT("%d, %d"), p_cardType[index].GetUid(), index);
+		TextOut(p_hdc, p_cardType[i].x - 10, p_cardType[index].y, p_text, lstrlen(p_text));
 	}
 }
 
 void DeckBuilding::DrawMyDeck(HDC p_hdc, WCHAR p_text[])
 {
-	//¸¶Áö¸·Ä«µåÀÌµ¿½Ã ¹è¿­¿¡¼­ »ç¶óÁøÄ«µåÀÌ¹Ç·Î ¿¹¿ÜÃ³¸®
+	//ë§ˆì§€ë§‰ì¹´ë“œì´ë™ì‹œ ë°°ì—´ì—ì„œ ì‚¬ë¼ì§„ì¹´ë“œì´ë¯€ë¡œ ì˜ˆì™¸ì²˜ë¦¬
 	m_rend.RemoveIDIamage("deck_card" + to_string(myDeck.size()));
 	for (int i = 0; i < myDeck.size(); i++)
 	{
-		m_rend.RemoveIDIamage("deck_card" + to_string(i));
+		m_rend.MoveImage(to_string(myDeck[i].GetUid()), Rect(myDeck[i].x - 50, myDeck[i].y - 66, 100, 132));
+		m_rend.ImageVisible(to_string(myDeck[i].GetUid()), true);
+
+		/*m_rend.RemoveIDIamage("deck_card" + to_string(i));
 
 		wstring image_path = L"card";
 		wstring image_type;
@@ -370,7 +380,7 @@ void DeckBuilding::DrawMyDeck(HDC p_hdc, WCHAR p_text[])
 		image_path += image_type + image_star + L".png";
 
 		m_rend.SetImage(image_path, "deck_card" + to_string(i), Rect(0, 0, 100, 132)
-			, Rect(myDeck[i].x - 50, myDeck[i].y - 66, 100, 132), true, GameImage_M::LayerType::Background);
+			, Rect(myDeck[i].x - 50, myDeck[i].y - 66, 100, 132), true, GameImage_M::LayerType::Background);*/
 
 		wsprintf(p_text, TEXT("%d"), myDeck[i].GetUid());
 		TextOut(p_hdc, myDeck[i].x - 10, myDeck[i].y, p_text, lstrlen(p_text));
@@ -379,8 +389,22 @@ void DeckBuilding::DrawMyDeck(HDC p_hdc, WCHAR p_text[])
 
 void DeckBuilding::DrawDeckBuild(HDC p_hdc, WCHAR p_text[])
 {
-	DrawInventory(p_hdc, p_text);	//ÀÎº¥
-	DrawMyDeck(p_hdc, p_text);	//¸¶ÀÌµ¦
+	switch (filter)
+	{
+	case 0:
+		DrawInventory(p_hdc, p_text, inven);	//ì¸ë²¤
+		break;
+	case 1:
+		DrawInventory(p_hdc, p_text, atkCards);	//atk
+		break;
+	case 2:
+		DrawInventory(p_hdc, p_text, defCards);	//def
+		break;
+	case 3:
+		DrawInventory(p_hdc, p_text, magicCards);	//mag
+		break;
+	}
+	DrawMyDeck(p_hdc, p_text);	//ë§ˆì´ë±
 
 	m_rend.RemoveIDIamage("s_card");
 	if (SelectedCard)
@@ -396,14 +420,28 @@ void DeckBuilding::DrawDeckBuild(HDC p_hdc, WCHAR p_text[])
 		TextOut(p_hdc, 200, 350, p_text, lstrlen(p_text));
 	}
 
-	Rectangle(p_hdc, 1020, 670, 1150, 710);//ÀÎº¥ÁÂ·ÎÀÌµ¿
-	Rectangle(p_hdc, 1280, 670, 1410, 710);//ÀÎº¥¿ì·ÎÀÌµ¿
+	Rectangle(p_hdc, 1020, 670, 1150, 710);//ì¸ë²¤ì¢Œë¡œì´ë™
+	Rectangle(p_hdc, 1280, 670, 1410, 710);//ì¸ë²¤ìš°ë¡œì´ë™
+	wsprintf(p_text, TEXT("â†"));
+	TextOut(p_hdc, 1085, 680, p_text, lstrlen(p_text));
+	wsprintf(p_text, TEXT("â†’"));
+	TextOut(p_hdc, 1345, 680, p_text, lstrlen(p_text));
+	wsprintf(p_text, TEXT("%d / %d"), i_page + 1, max_page + 1);
+	TextOut(p_hdc, 1205, 680, p_text, lstrlen(p_text));
 
-	//Ä«µå¼³¸íÈ­¸é
+	//ì¹´ë“œì„¤ëª…í™”ë©´
 	MoveToEx(p_hdc, 400, 0, NULL);
 	LineTo(p_hdc, 400, 720);
-	//¸¶ÀÌµ¦
+	//ë§ˆì´ë±
 	MoveToEx(p_hdc, 1000, 0, NULL);
 	LineTo(p_hdc, 1000, 720);
-	//ÀÎº¥Åä¸®
+	//ì¸ë²¤í† ë¦¬
+
+	Rectangle(p_hdc, 1015, 20, 1115, 70);
+	wsprintf(p_text, TEXT("ì¹´ë“œíƒ€ì… : %d"), filter);
+	TextOut(p_hdc, 1025, 40, p_text, lstrlen(p_text));
+	Rectangle(p_hdc, 1015 + 150, 20, 1115 + 150, 70);
+	Rectangle(p_hdc, 1015 + 300, 20, 1115 + 300, 70);
+	wsprintf(p_text, TEXT("?"));
+	TextOut(p_hdc, 1060 + 300, 40, p_text, lstrlen(p_text));
 }

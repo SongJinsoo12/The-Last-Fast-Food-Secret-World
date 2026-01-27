@@ -1,6 +1,6 @@
 #include "Shop.h"
 
-//ìƒìë¥¼ ì„ íƒí•¨
+//»óÀÚ¸¦ ¼±ÅÃÇÔ
 void Shop::SelectChest(int p_mx, int p_my)
 {
 	for (int i = 0; i < 6; i++)
@@ -8,8 +8,8 @@ void Shop::SelectChest(int p_mx, int p_my)
 		if (InCircle(chest[i].x, chest[i].y, p_mx, p_my))
 		{
 			this->isSelect = TRUE;
-			this->selectedChest = chest[i];	//ì¢Œí‘œê°’ì— ë”°ë¼ ìƒìì„ íƒí•˜ê¸°
-			printf("%dë²ˆ ìƒì ì„ íƒ\n", selectedChest.GetChestID());
+			this->selectedChest = chest[i];	//ÁÂÇ¥°ª¿¡ µû¶ó »óÀÚ¼±ÅÃÇÏ±â
+			printf("%d¹ø »óÀÚ ¼±ÅÃ\n", selectedChest.GetChestID());
 			return;
 		}
 	}
@@ -32,10 +32,10 @@ void Shop::DrawShop(HDC p_hdc, WCHAR p_text[])
 	{
 		for (int i = 0; i < 4; i++)
 		{
-			wsprintf(p_text, TEXT("%dì„± - %d%%"), i + 1, selectedChest.GetProb(i));
+			wsprintf(p_text, TEXT("%d¼º - %d%%"), i + 1, selectedChest.GetProb(i));
 			if (i == 3)
 			{
-				wsprintf(p_text, TEXT("ë§ˆë²• - %d%%"), selectedChest.GetProb(i));
+				wsprintf(p_text, TEXT("¸¶¹ı - %d%%"), selectedChest.GetProb(i));
 			}
 			TextOut(p_hdc, 100 + i * 100, 675, p_text, lstrlen(p_text));
 		}

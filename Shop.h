@@ -63,12 +63,12 @@ private:
 	Chest selectedChest;			//선택된 상자
 	BOOL isSelect = FALSE;			//하이라이트될 상자를 선택했는가
 
-	int mov_sel = 1400, del = 700;
+	int mov_sel = 1400;
 public:
 	Shop()
 	{
 		srand(time(NULL));
-		for (int i = 0; i < 6; i++)//0 1 2 3 4 5
+		for (int i = 0; i < 3; i++)//0 1 2 3 4 5
 		{
 			//테스트용 랜덤확률지정 / 확정되면 지울예정
 			int hund = 101, v1 = 0, v2 = 0, v3 = 0, v4 = 0;
@@ -87,13 +87,13 @@ public:
 		m_rend.SetImage(L"shelf.png", "shelf2"
 			, Rect(0, 0, 651, 101), Rect(mov_sel, 450, 651, 101), false, GameImage_M::LayerType::Background);
 		//상점 주인
-		m_rend.SetImage(L"cookie1.png", "cookie"
-			, Rect(0, 0, 250, 250), Rect(300 - 180, 430 - 180, 360, 360), false, GameImage_M::LayerType::Background);
+		m_rend.SetImage(L"cookie.png", "cookie"
+			, Rect(0, 0, 2500, 2500), Rect(300 - 180, 430 - 180, 360, 360), false, GameImage_M::LayerType::Background);
 		//상자 정보 및 상점 주인 대사 출력용
 		m_rend.SetImage(L"textbox.png", "textbox"
 			, Rect(0, 0, 500, 200), Rect(50, 500, 500, 200), false, GameImage_M::LayerType::Background);
 		//상자 출력
-		for (int i = 0; i < 6; i++)
+		for (int i = 0; i < 3; i++)
 		{
 			m_rend.SetImage(L"chest.png", "chest" + to_string(i)
 				, Rect(0, 0, 1024, 1024), Rect(chest[i].x - 48, chest[i].y - 78, 128, 128), false, GameImage_M::LayerType::Background);
@@ -140,11 +140,14 @@ public:
 	void DrawShop(HDC p_hdc, WCHAR p_text[]);
 	bool DrawEnterShop()
 	{
+
+		//MoveImageTween("shelf1", Rect(), 3).OnComplete( EndFN );
+
 		m_rend.MoveImage("shelf1", Rect(mov_sel - 10, 250, 651, 101));
 		m_rend.MoveImage("shelf2", Rect(mov_sel - 10, 450, 651, 101));
 		m_rend.MoveImage("textbox", Rect((700 - mov_sel) + 50 + 10, 500, 500, 200));
 
-		mov_sel -= (int)((mov_sel - del) / 10);
+		mov_sel -= (int)((mov_sel - 700) / 10);
 		if (mov_sel <= 710)//입장 애니메이션이 끝난 후 나머지 이미지 활성화
 		{
 			m_rend.ImageVisible("cookie", true);// 상점 주인

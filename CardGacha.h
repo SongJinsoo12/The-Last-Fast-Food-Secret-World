@@ -13,13 +13,13 @@ private:
 	bool isGachaFailed = false;
 	bool isOneGacha;
 	int index = 0;
-	//ì „ì²´ì¹´ë“œí’€
+	//ÀüÃ¼Ä«µåÇ®
 	GameCard* allCard[AllCARDMAXSIZE];
 	BOOL isObtain[AllCARDMAXSIZE] = { FALSE, };
 public:
 	CardGacha()
 	{
-		//ì¹´ë“œ idì–»ì–´ì˜¤ê¸°
+		//Ä«µå id¾ò¾î¿À±â
 		for (int i = BASEATK + 1; i < ATKLIMIT; i++)
 		{
 			Card* card = CardTableManager::Instance()->GetCardData(i);
@@ -41,13 +41,15 @@ public:
 
 	}
 
-	void one(DeckBuilding& p_deck, MainGame& p_mg);//ì „ì²´ì¹´ë“œ ì¤‘ 1ì¥ì„ ì¸ë²¤ì—ì €ì¥
-	void ten(DeckBuilding& p_deck, MainGame& p_mg);//ì „ì²´ì¹´ë“œ ì¤‘ 10ì¥ì„ ì¸ë²¤ì—ì €ì¥
-	void GetGacha(bool isOne, DeckBuilding& p_deck, MainGame& p_mg, Chest p_selChest);//ë½‘ê¸°ë¥¼ ì‹¤í–‰(T-1/F-10)
-	void InGacha();//ë½‘ê¸°í™”ë©´ ì† ë¡œì§
+	void one(DeckBuilding& p_deck, MainGame& p_mg);//ÀüÃ¼Ä«µå Áß 1ÀåÀ» ÀÎº¥¿¡ÀúÀå
+	void ten(DeckBuilding& p_deck, MainGame& p_mg);//ÀüÃ¼Ä«µå Áß 10ÀåÀ» ÀÎº¥¿¡ÀúÀå
+	void GetGacha(bool isOne, DeckBuilding& p_deck, MainGame& p_mg, Chest p_selChest);//»Ì±â¸¦ ½ÇÇà(T-1/F-10)
+	void InGacha();//»Ì±âÈ­¸é ¼Ó ·ÎÁ÷
 
-	//ìƒì ì— ë½‘ê¸°ë²„íŠ¼ì„ ì¶œë ¥, ë²„íŠ¼ í´ë¦­ ì‹œ ë½‘ê¸°ë¥¼ ì‹¤í–‰
+	//»óÁ¡¿¡ »Ì±â¹öÆ°À» Ãâ·Â, ¹öÆ° Å¬¸¯ ½Ã »Ì±â¸¦ ½ÇÇà
 	void DrawGachaButton(HDC p_hdc, DeckBuilding p_deck, Chest p_selChest, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[]);
-	//ë½‘ê¸°í™”ë©´ì„ ì¶œë ¥
+	//»Ì±âÈ­¸éÀ» Ãâ·Â
 	void DrawGacha(HDC p_hdc, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[]);
 };
+
+extern CardGacha g_CardGacha;
