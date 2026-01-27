@@ -282,10 +282,10 @@ void CardManager::CardAct(CardManager& opponent, HWND hWnd)
 	switch (hand[handSelection]->GetType())
 	{
 	case E_Attack:
-		cout << "공격 카드 사용!!\n";
+		cout << "공격 카드 사용!! " << hand[handSelection]->GetAtk() << "데미지!!\n";
 		break;
 	case E_Deffense:
-		cout << "방어 카드 사용!!\n";
+		cout << "방어 카드 사용!!" << hand[handSelection]->GetDef() << "방어!!\n";
 		break;
 	case E_Magic:
 		cout << "보조 카드 사용!!\n";
@@ -376,7 +376,7 @@ void CardManager::OpponentAct()
 	*
 	* 공격 카드 우선 순위 ==> 1. 공격력 2.
 	* 방어 카드 우선 순위 ==> 1. 방어력 2.
-	* 보조 카드 우선 순위 ==> 얘네가 진짜 ㅅㅂ럼들임 ㅇㅇ. 1. 회복 2.
+	* 보조 카드 우선 순위 ==> 1. 회복 2.
 	*/
 
 	CardDraw(1);
