@@ -57,7 +57,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
-	//인벤토리 정렬기능 추가하기 / 덱페이지넘김후 좌표문제 해결하기
 	//상점 입장 연출완성하기(이동중에는 용량큰사진 비활성해두기) / 
 	//save/load 요소 전부 찾기(카드획득여부 등, 리셋할때는 파일내용 null로 만들기)
 	HDC hdc, memDC;////////////////////////
