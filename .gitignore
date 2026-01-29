@@ -399,20 +399,6 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-# Image
-*.png
-*.jpg
-
-#Zip
-*.7z
-*.zip
-*.csv
-*.hpp
-*.json
-
-#Data File
-
-
 ### VisualStudio Patch ###
 # Additional files built by Visual Studio
 

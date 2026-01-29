@@ -122,7 +122,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			SetTimer(hWnd, 1, 8, NULL);
 			shop.SetDrawShop();
 			screen = 1;
-			break;
+			break;ㅁㄴㅇㄹ
 		case 2:
 			if (isGrad) isGrad = FALSE;
 			else isGrad = TRUE;
