@@ -1,11 +1,11 @@
 #include <windows.h>										// 헤더
+#include "BossAI.h"
 #include "Card.h"
 #include "CardManager.h"
 #include "CardTableManager.h"
 #include "RenderManager.h"
 #include "ImageLoad.h"
 #include "ImageManager.h"
-
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 HINSTANCE g_hInst;											// 인스턴스 핸들
@@ -68,6 +68,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	switch (iMessage) {
 	case WM_CREATE:
 	{
+
 		GetClientRect(hWnd, &rt);
 		g_player.SetImage();
 		g_player.DrawBG();
@@ -88,7 +89,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			g_player.SetDeck();
 			g_enemy.SetDeck();
 
-			g_player.StartTurn(g_player, g_enemy);
+			g_player.StartTurn(g_player, g_enemy, hWnd);
 			g_player.DrawPlayerHand();
 			g_enemy.DrawOppHand();
 			SetTimer(hWnd, TURNTIME, 7000, NULL);
@@ -96,12 +97,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			break;
 		}
 
-		g_player.TimeLimit(wParam, g_enemy);
+		g_player.TimeLimit(wParam, hWnd, g_player, g_enemy);
 		InvalidateRect(hWnd, NULL, TRUE);
 		return 0;
 
 	case WM_KEYDOWN:
-		g_player.HandSelect(wParam, g_enemy, hWnd);
+		g_player.HandSelect(wParam, g_player, g_enemy, hWnd);
 		g_player.DrawPlayerHand();
 		g_enemy.DrawOppHand();
 		InvalidateRect(hWnd, NULL, TRUE);
