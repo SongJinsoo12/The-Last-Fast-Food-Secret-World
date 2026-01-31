@@ -3,6 +3,8 @@
 #include <memory>
 #include <vector>
 
+//#define m_State GameState_M::Context::Get
+
 using namespace std;
 
 namespace GameState_M {
