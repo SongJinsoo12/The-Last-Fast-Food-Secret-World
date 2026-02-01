@@ -57,7 +57,7 @@ void CardTableManager::Init()
 			row.push_back(cell);
 		}
 
-		if (row.size() < 6)
+		if (row.size() < 7)
 			continue;
 
 		int uid = stoi(row[0]);
@@ -66,6 +66,7 @@ void CardTableManager::Init()
 		string aitStr = row[3];
 		string typeStr = row[4];
 		string starStr = row[5];
+		string info = row[6];
 
 
 		//카드 생성 및 데이터 세팅
@@ -75,6 +76,7 @@ void CardTableManager::Init()
 		newCard->SetAit(StrToAit(aitStr));
 		newCard->SetType(StrToType(typeStr));
 		newCard->SetStar(StrToStar(starStr));
+		newCard->SetInfo(info);
 		m_AllCardDataVec[uid] = newCard;
 
 		CardImageLoad(uid, StrToAit(aitStr), StrToType(typeStr), StrToStar(starStr));

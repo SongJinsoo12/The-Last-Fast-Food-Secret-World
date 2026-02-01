@@ -1,5 +1,5 @@
 #include <windows.h>										// Çì´õ
-#include "BossAI.h"
+//#include "BossAI.h"
 #include "Card.h"
 #include "CardManager.h"
 #include "CardTableManager.h"

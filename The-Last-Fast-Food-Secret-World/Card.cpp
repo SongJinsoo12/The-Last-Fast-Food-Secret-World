@@ -20,7 +20,7 @@ void Card::Init()
 	m_Ait = E_BREAD;
 	m_Type = E_Attack;
 	m_Star = E_TWO;
-	//SetImage();
+	m_info = "";
 }
 
 int Card::GetUid()
@@ -83,6 +83,16 @@ void Card::SetStar(Star p_Star)
 	m_Star = p_Star;
 }
 
+string Card::GetInfo()
+{
+	return m_info;
+}
+
+void Card::SetInfo(string p_info)
+{
+	m_info = p_info;
+}
+
 GameCard::GameCard()
 {
 }
@@ -95,6 +105,7 @@ GameCard::GameCard(Card* p_Card)
 	this->SetAit(p_Card->GetAit());
 	this->SetType(p_Card->GetType());
 	this->SetStar(p_Card->GetStar());
+	this->SetInfo(p_Card->GetInfo());
 }
 
 GameCard::~GameCard()

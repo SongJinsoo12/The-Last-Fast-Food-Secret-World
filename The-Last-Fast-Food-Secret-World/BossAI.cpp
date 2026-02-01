@@ -8,7 +8,7 @@ using json = nlohmann::json;
 
 AI::AI()
 {
-    m_ApiKey = "Put_Your_API_Key!";
+    m_ApiKey = "AIzaSyDGhlQ5jdV7WAVdzY5kIHZ69iydsgujLwM";
 }
 
 AI::~AI()

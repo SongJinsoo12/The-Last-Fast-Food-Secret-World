@@ -31,6 +31,7 @@ public:
 	void StartTurn(CardManager& player, CardManager& opponent, HWND hWnd);
 	void TimeLimit(WPARAM wParam, HWND hWnd, CardManager& player, CardManager& opponent);
 	void OpponentAct(CardManager& player, CardManager& opponent, HWND hWnd);
+	void BossCardAct(CardManager& player, HWND hWnd);
 
 	void SetImage();
 
@@ -42,5 +43,5 @@ private:
 	vector<GameCard*> m_Deck;//덱 카드
 	bool m_IsMyTurn;//턴 확인
 	bool m_IsSelect;//패 카드 선택 확인
-	AI m_boss;//보스 ai
+	//AI m_boss;//보스 ai
 };

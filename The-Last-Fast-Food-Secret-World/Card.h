@@ -61,6 +61,7 @@ protected:
 	CAttribute m_Ait;
 	CType m_Type;
 	Star m_Star;
+	string m_info;
 
 public:
 	Card();
@@ -80,6 +81,8 @@ public:
 	void SetType(CType p_Type);
 	Star GetStar();
 	void SetStar(Star p_Star);
+	string GetInfo();
+	void SetInfo(string p_info);
 
 };
 

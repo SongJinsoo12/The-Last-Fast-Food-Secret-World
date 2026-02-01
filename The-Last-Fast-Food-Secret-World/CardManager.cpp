@@ -305,10 +305,8 @@ void CardManager::CardAct(CardManager& player ,CardManager& opponent, HWND hWnd)
 	player.m_IsMyTurn = !player.m_IsMyTurn;
 	opponent.m_IsMyTurn = !opponent.m_IsMyTurn;
 	SetTimer(hWnd, TURNTIME, 7000, NULL);
+	opponent.OpponentAct(player, opponent, hWnd);
 	cout << "턴 교체.\n";
-
-	if (opponent.m_IsMyTurn)
-		opponent.OpponentAct(player, opponent, hWnd);
 }
 
 //시작 턴 정하기
@@ -343,7 +341,7 @@ void CardManager::TimeLimit(WPARAM wParam, HWND hWnd, CardManager& player, CardM
 		opponent.m_IsMyTurn = !opponent.m_IsMyTurn;
 
 		//자신의 차례면 드로우
-		if (this->m_IsMyTurn)
+		if (player.m_IsMyTurn)
 		{
 			CardDraw(1);
 			cout << "자신의 턴\n";
@@ -386,12 +384,55 @@ void CardManager::OpponentAct(CardManager& player, CardManager& opponent, HWND h
 	{
 		info += (to_string(i) + "번째 카드 정보: ");
 		info += (to_string(m_Hand[i]->GetStar() + 1) + "성. 공격력 " + to_string(m_Hand[i]->GetAtk())
-			+ ". 방어력 " + to_string(m_Hand[i]->GetDef()) + ".\n");
+			+ ". 방어력 " + to_string(m_Hand[i]->GetDef()) + ".");
+		info += m_Hand[i]->GetInfo() + "\n";
 	}
-	m_HandSelection = m_boss.GetBossCardIndex(info);
+	//m_HandSelection = m_boss.GetBossCardIndex(info);
 
 	cout << info << endl;
-	cout << m_HandSelection << endl;
+	
+	m_HandSelection = 1; //임시
 
-	CardAct(player, opponent, hWnd);
+
+	BossCardAct(player, hWnd);
+}
+
+void CardManager::BossCardAct(CardManager& player, HWND hWnd)
+{
+	//패에 카드가 없으면 리턴
+	if (m_HandCount <= 0)
+		return;
+	//선택 중이지 않으면 리턴
+	if (m_HandSelection < 0)
+		return;
+
+	switch (m_Hand[m_HandSelection]->GetType())
+	{
+	case E_Attack:
+		cout << "공격 카드 사용!! " << m_Hand[m_HandSelection]->GetAtk() << "데미지!!\n";
+		break;
+	case E_Deffense:
+		cout << "방어 카드 사용!!" << m_Hand[m_HandSelection]->GetDef() << "방어!!\n";
+		break;
+	case E_Magic:
+		cout << "보조 카드 사용!!\n";
+		break;
+	}
+
+	//이미지 안보이기
+	m_rend.ImageVisible(to_string(m_Hand[m_HandSelection]->GetUid() + BOSSUID), false);
+
+	m_Hand.erase(m_Hand.begin() + m_HandSelection);
+	m_HandCount--;
+	//사용한 카드가 패의 가장 오른쪽 카드이면 왼쪽 카드 선택
+	if (m_HandSelection >= m_HandCount && m_HandSelection != 0)
+		m_HandSelection--;
+
+	//턴 엔드
+	player.m_IsMyTurn = !player.m_IsMyTurn;
+	m_IsMyTurn = !m_IsMyTurn;
+	SetTimer(hWnd, TURNTIME, 7000, NULL);
+	player.CardDraw(1);
+	cout << "턴 교체.\n";
+
 }
