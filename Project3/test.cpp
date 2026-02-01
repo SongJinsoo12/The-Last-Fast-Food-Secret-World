@@ -1,9 +1,15 @@
 #include <windows.h>
 #include <iostream>// 헤더
+#include "tweeny.h"
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 HINSTANCE g_hInst;											// 인스턴스 핸들
 LPCTSTR lpszClass = TEXT("윤찬_25311014");					// 제목 표시줄에 표시
+
+auto tween = tweeny::from(50).to(500).during(2000).via(tweeny::easing::exponentialOut);
+
+LARGE_INTEGER frequency, t1, t2;
+double deltaTime = 0;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
@@ -51,13 +57,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 		else {
 			// 0. 타이머 처리
 			// 
+			QueryPerformanceCounter(&t2);
+			deltaTime = (double)(t2.QuadPart - t1.QuadPart) / frequency.QuadPart;
+			t1 = t2;
 			// 1. 게임의 수치들을 업데이트 (이동, 충돌 등)
 			// GameInput_M::Input::GetInstance().Update();
 			// 
 			// 
 			// Render 자리
 			//ivalide();
-			UpdateWindow(hWnd);
+			InvalidateRect(hWnd, NULL, FALSE);
 			//InvalidateRect(hWnd, NULL, FALSE);
 		}
 	}
