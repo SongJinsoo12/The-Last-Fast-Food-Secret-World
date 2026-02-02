@@ -17,6 +17,10 @@ void MainGame::RemoveGold(int v) {
 		Coin = 0;
 }
 
-int MainGame::GetStage() {
-	return LargeStage, SmallStage;
+int MainGame::GetLargeStage() {
+	return LargeStage;
+}
+
+int MainGame::GetSmallStage() {
+	return SmallStage;
 }

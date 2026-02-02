@@ -1,6 +1,10 @@
 #pragma once
-#include "Card.h"
+#include <iostream>
 #include "MainGame.h"
+
+#include "RenderManager.h"
+#include "ImageManager.h"
+
 using namespace std;
 
 enum StageState
@@ -12,31 +16,36 @@ enum StageState
 	E_STAGE_GAMECLEAR
 };
 
+enum StageName
+{
+	//hmmmmm
+};
+
+
 class Stage : MainGame
 {
 protected:
-	
-	
+
+
 public:
-	int StageState; //ìŠ¤í…Œì´ì§€ ìƒíƒœ
-	bool IsBossStage(); //ë³´ìŠ¤ ìŠ¤í…Œì´ì§€ í™•ì¸
-	bool IsLastBossStage(); //ë§‰ë³´ ìŠ¤í…Œì´ì§€ í™•ì¸
+	int StageState; //½ºÅ×ÀÌÁö »óÅÂ
+	bool IsBossStage(); //º¸½º ½ºÅ×ÀÌÁö È®ÀÎ
+	bool IsLastBossStage(); //¸·º¸ ½ºÅ×ÀÌÁö È®ÀÎ
 
-	bool GameStart(); //ê²Œì„ ì‹œì‘
-	bool GameOver(bool isPlayerLost); //ê²Œì„ ì˜¤ë²„
+	//bool GameStart(); //°ÔÀÓ ½ÃÀÛ
+	bool GameOver(bool isPlayerLost); //°ÔÀÓ ¿À¹ö
 
-	//bool CheckTutorial();
-	bool StageStart(); //ìŠ¤í…Œì´ì§€ ì‹œì‘
-	int StageClear(bool isMonsterLost); //ìŠ¤í…Œì´ì§€ í´ë¦¬ì–´
+	bool StageStart(); //½ºÅ×ÀÌÁö ½ÃÀÛ
+	int StageClear(bool isMonsterLost); //½ºÅ×ÀÌÁö Å¬¸®¾î
 
-	bool IsGameClear(); //ê²Œì„ í´ë¦¬ì–´ í™•ì¸
-	int NextStage(); //ë‹¤ìŒ ìŠ¤í…Œì´ì§€ 
-	
-	int Get_LargeStage(); //íŠœí† ë¦¬ì–¼ í´ë˜ìŠ¤ìš©
-	int Get_SmallStage(); //íŠœí† ë¦¬ì–¼ í´ë˜ìŠ¤ìš©
-	int setgold(); //ìŠ¤í…Œì´ì§€ì— ë”°ë¼ ê³¨ë“œ ì„¤ì •
-	void DropCard(/* */); //ìŠ¤í…Œì´ì§€ í´ë¦¬ì–´ í›„ ì¹´ë“œ ë“œë
-	//void Draw StageClearScreen(); //ìŠ¤í…Œì´ì§€ í´ë¦¬ì–´ í™”ë©´ ì¶œë ¥
+	bool IsGameClear(); //°ÔÀÓ Å¬¸®¾î È®ÀÎ
+	int NextStage(); //´ÙÀ½ ½ºÅ×ÀÌÁö 
+
+	int Get_LargeStage(); //Æ©Åä¸®¾ó Å¬·¡½º¿ë
+	int Get_SmallStage(); //Æ©Åä¸®¾ó Å¬·¡½º¿ë
+	int DropReward(); //½ºÅ×ÀÌÁö¿¡ µû¶ó °ñµå ¼³Á¤
+	void LoadStageClearScreen(); //½ºÅ×ÀÌÁö Å¬¸®¾î È­¸é Ãâ·Â
+	void SetImage(); //½ºÅ×ÀÌÁö Å¬¸®¾î ÀÌ¹ÌÁö 
 
 };
 
@@ -53,8 +62,7 @@ private:
 	bool IsTutorial;
 
 public:
-	 
-	TCardType TutorialCard(); //íŠœí† ë¦¬ì–¼ ìŠ¤í…Œì´ì§€ì— ë§ëŠ” ì¹´ë“œ ë°˜í™˜
-	bool CheckTutorial(); //íŠœí† ë¦¬ì–¼ ìŠ¤í…Œì´ì§€ í™•ì¸
-}; 
 
+	TCardType TutorialCard(); //Æ©Åä¸®¾ó ½ºÅ×ÀÌÁö¿¡ ¸Â´Â Ä«µå ¹İÈ¯
+	bool CheckTutorial(); //Æ©Åä¸®¾ó ½ºÅ×ÀÌÁö È®ÀÎ
+};

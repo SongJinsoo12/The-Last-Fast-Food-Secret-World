@@ -11,7 +11,12 @@ enum State {
 
 class MainGame
 {
-private:
+	//private:
+	//	int Coin;
+	//	int CardBox;
+	//	int LargeStage;
+	//	int SmallStage;
+protected:
 	int Coin;
 	int CardBox;
 	int LargeStage;
@@ -24,7 +29,6 @@ public:
 	MainGame();
 	void AddGold(int v);
 	void RemoveGold(int v);
-
-	int GetStage();
+	int GetLargeStage();
+	int GetSmallStage();
 };
-

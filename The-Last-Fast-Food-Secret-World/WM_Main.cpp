@@ -5,6 +5,8 @@
 #include "RenderManager.h"
 #include "ImageLoad.h"
 #include "ImageManager.h"
+#include "stage.h"
+#include "ButtonManager.h"
 
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -57,6 +59,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 
 
 CardManager g_player, g_enemy;
+Stage stage;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
@@ -68,16 +71,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	switch (iMessage) {
 	case WM_CREATE:
 	{
+		
 		GetClientRect(hWnd, &rt);
 		g_player.SetImage();
 		g_player.DrawBG();
-
+		stage.SetImage();
 		//임시 덱 로드
 		CardTableManager::Instance();
 
 		cout << "로딩 중...\n";
 		SetTimer(hWnd, 404, 3000, NULL);
-
+		stage.DropReward();
+		cout << stage.DropReward() << endl;
 		return 0;
 	}
 
@@ -125,6 +130,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		g_enemy.DrawOppHand();*/
 
 		m_rend.RenderAll(&graphics);
+		btnManager.DrawAll();
 
 		BitBlt(hdc, 0, 0, rt.right, rt.bottom, memDC, 0, 0, SRCCOPY);
 

@@ -1,78 +1,91 @@
 #include "stage.h"
-
+#include "RenderManager.h"
 #include "MainGame.h"
+#include "ButtonManager.h"
 
 
 
 
 
 
-int Stage::Get_LargeStage() { //íŠœí† ë¦¬ì–¼ í´ë˜ìŠ¤ ìš©
+int Stage::Get_LargeStage() { //Æ©Åä¸®¾ó Å¬·¡½º ¿ë
     return LargeStage;
 }
 
-int Stage::Get_SmallStage() { //íŠœí† ë¦¬ì–¼ í´ë˜ìŠ¤ ìš©
+int Stage::Get_SmallStage() { //Æ©Åä¸®¾ó Å¬·¡½º ¿ë
     return SmallStage;
 }
 
 
- 
 
-bool Stage::GameStart() { //ìˆ˜ì •ì¤‘
-    //GetStage();
-    SmallStage = 1;
-    LargeStage = 1;
-    StageState = E_STAGE_TUTORIAL;
-    GameState = E_PVP;
-    return true;
-}
+
+//bool Stage::GameStart() { 
+//    
+//    SmallStage = 1;
+//    LargeStage = 1;
+//    StageState = E_STAGE_TUTORIAL;
+//    GameState = E_PVP;
+//    return true;
+//}
 bool TutorialStage::CheckTutorial() {
-    if ( Get_LargeStage() <= 3 && Get_SmallStage() <= 3)
+    if (Get_LargeStage() <= 1 && Get_SmallStage() <= 3)
     {
         StageState = E_STAGE_TUTORIAL;
         return IsTutorial = true;
+        cout << "Æ©Åä¸®¾ó ¼ÓÇà" << endl;
     }
     else
     {
         StageState = E_STAGE_NORMAL;
         return IsTutorial = false;
+        cout << "Æ©Åä¸®¾ó Á¾·á" << endl;
     }
+    
 }
 
-int Stage::setgold() {
+int Stage::DropReward() {
+    
     if (SmallStage % 5 == 0)
-        return LargeStage * SmallStage * 100; //ë³´ìŠ¤
-    return LargeStage * SmallStage * 50; // ì¡ëª¹
+    {
+        //ÆÑ »Ì±â È½¼ö º¯¼ö?
+        cout << "°ñµå, Ä«µå¹Ú½º µå·ÓµÊ" << endl;
+        return LargeStage * SmallStage * 100; //º¸½º
+
+    }
+
+    return LargeStage * SmallStage * 50; // Àâ¸÷
+    cout << "°ñµå µå·ÓµÊ" << endl;
 }
 
-//
-//{
-// ì¹´ë“œë°•ìŠ¤ ë“œë¡­ í•¨ìˆ˜?
-//}
 
 bool Stage::IsBossStage() {
     if (SmallStage == 5)
     {
         if (IsLastBossStage())
+        {
+            
             return true;
+        }
+            
         StageState = E_STAGE_BOSS;
         return true;
-    }    
+    }
     else
     {
         StageState = E_STAGE_NORMAL;
         return false;
     }
-        
+
 }
 
-bool Stage::IsLastBossStage() { 
+bool Stage::IsLastBossStage() {
     if (LargeStage == 6 && SmallStage == 5)
     {
         StageState = E_STAGE_LASTBOSS;
         return true;
     }
-} //ë¼ë³´ ìŠ¤í…Œì´ì§€ ì²´í¬
+    return false;
+} //¶óº¸ ½ºÅ×ÀÌÁö Ã¼Å©
 
 TCardType TutorialStage::TutorialCard() {
     if (CheckTutorial()) {
@@ -86,8 +99,8 @@ TCardType TutorialStage::TutorialCard() {
         if (Get_LargeStage() == 1 && Get_SmallStage() == 3)
             return E_TUTORIAL_MAGIC;
     }
-    
-    // ì¹´ë“œ.h enum
+
+    // Ä«µå.h enum
 }
 
 bool Stage::StageStart() {
@@ -112,71 +125,84 @@ int Stage::StageClear(bool isMonsterLost) {
         StageState = E_STAGE_GAMECLEAR;
 
 
-    if (!isMonsterLost) //ëª¬ìŠ¤í„° hp = 0 ë˜ëŠ” ëª¬ìŠ¤í„° ë¹„í™œì„±í™”ì¼ë–„ else ì½”ë“œ ì‹¤í–‰
+    if (!isMonsterLost) //¸ó½ºÅÍ hp = 0 ¶Ç´Â ¸ó½ºÅÍ ºñÈ°¼ºÈ­ÀÏ‹š else ÄÚµå ½ÇÇà
     {
+        
         GameState = E_PVP;
         return GameState;
     }
     else
     {
-        GameState = E_STAGE_CLEAR; 
-    
+        GameState = E_STAGE_CLEAR;
+
     }
 
-    AddGold(setgold());
-    DropCard();
-    //if (
-    //ë³´ìƒ í™”ë©´ì¶œë ¥ í•¨ìˆ˜?
+    AddGold(DropReward());
+    
+    
+    
     //GameState = E_MENU;
-    return GameState; 
+    return GameState;
 
 }
 
 int Stage::NextStage() {
-    /*if (IsGameClear() == 7)
-        return false;*/
-
-    if (StageClear(/* ? */) == E_MENU) {
-        
-            
-
-            if (SmallStage != 5)
-            {
-                SmallStage++;
-                
-            }
-            else
-            {
-                LargeStage++;
-                SmallStage = 1;
-               
-            }
+    
+    if (GameState == E_MENU) {
+        if (SmallStage != 5)
+        {
+            SmallStage++;
+        }
+        else
+        {
+            LargeStage++;
+            SmallStage = 1;
+        }
         GameState = E_PVP;
-        return GameState;
     }
+    IsBossStage();
+    return GameState;
 }
 
 bool Stage::IsGameClear() {
-    if (StageClear(/* ? */) == E_STAGE_GAMECLEAR) {
-        return true;
-    }
+    return StageState == E_STAGE_GAMECLEAR;
 }
 
-bool Stage::GameOver(bool isPlayerLost) {
+bool Stage::GameOver(bool isPlayerLost/* player.h  IsAlive()*/) {
 
-    if (!isPlayerLost) { //í”Œë ˆì´ì–´ hp = 0
+    if (!isPlayerLost) {
+
         GameState = E_PVP;
         return false;
     }
     else
     {
         GameState = E_GAMEOVER;
-        
+
         return true;
     }
 }
 
-void Stage::DrawStageClearScreen() {
-    //ìŠ¤í…Œì´ì§€ í´ë¦¬ì–´ í™”ë©´ ì¶œë ¥
+void Stage::SetImage() {
+    m_rend.SetImage(L"StageClear.png", "StageClear",
+        Rect(0, 0, 1024, 1024), Rect(0, 0, 1280, 720), true, GameImage_M::LayerType::UI);
+    m_rend.SetImage(L"StageClearBnt_1.png", "StageClearBtn_1",
+        Rect(0, 0, 1200, 1200), Rect(0, 0, 1280, 720), true, GameImage_M::LayerType::UI);
+    cout << "½ºÅ×ÀÌÁö Å¬¸®¾î È­¸é ·Îµå È®ÀÎ\n";
+
+}
+
+void Stage::LoadStageClearScreen() {
+
+    m_rend.MoveImage("StageClear",
+        Gdiplus::Rect(0, 0, 500, 500));
+    btnManager.AddButton(make_shared<RectButton>( "StageClearBtn_1", Rect(390, 500, 500, 100), true));
+	cout << "½ºÅ×ÀÌÁö Å¬¸®¾î È­¸é Ãâ·Â È®ÀÎ" << endl;
+    //while?
+    if (btnManager.HandleClick(mg.mx, mg.my) && btnManager.HandleClick(mg.mx, mg.my) -> GetId() == "StageClearBtn_1")
+    {
+        GameState = E_MENU;
+    }
+    
 }
 
