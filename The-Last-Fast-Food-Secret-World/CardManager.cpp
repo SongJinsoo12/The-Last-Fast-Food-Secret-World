@@ -4,6 +4,8 @@
 #include "ImageLoad.h"
 #include "ImageManager.h"
 #include "CardTableManager.h"
+#include "Boss.h"
+#include "Player.h"
 
 void CardManager::SetImage()
 {
@@ -361,24 +363,12 @@ void CardManager::TimeLimit(WPARAM wParam, HWND hWnd, CardManager& player, CardM
 }
 
 //보스 / 몬스터 행동
-void CardManager::OpponentAct(CardManager& player, CardManager& opponent, HWND hWnd)
+void CardManager::OpponentAct(Player& p_player, Boss& p_boss, CardManager& player, CardManager& opponent, HWND hWnd)
 {
-	/*
-	* 1. 카드 드로우
-	* 2. hp가 절반 이상일 경우 --> 공격 카드 서칭 --> 가장 공격력이 높은 카드 사용
-	*						--> 공격 카드가 없을 경우 --> 방어 카드 서칭 --> 가장 방어력 높은 카드 사용
-	*						--> 방어 카드 없을 경우 --> 보조 카드 사용
-	* 3. hp가 절반 이하일 경우 --> 보조 카드 중 회복 카드 서칭 --> 회복력 가장 높은 카드 사용
-	*						--> 회복 카드 없을 경우 방어 카드 서칭 --> 가장 방어력 높은 카드 사용
-	*						--> 방어 카드 없을 경우 공격 카드 서칭 --> 가장 공격력이 높은 카드 사용
-	*						--> 공격 카드 없을 경우 보조 카드 사용
-	*
-	* 공격 카드 우선 순위 ==> 1. 공격력 2.
-	* 방어 카드 우선 순위 ==> 1. 방어력 2.
-	* 보조 카드 우선 순위 ==> 1. 회복 2.
-	*/
-
+	//드로우 
 	CardDraw(1);
+
+	//임시 정보 표출
 	string info;
 	for (size_t i = 0; i < m_HandCount; i++)
 	{
@@ -387,11 +377,23 @@ void CardManager::OpponentAct(CardManager& player, CardManager& opponent, HWND h
 			+ ". 방어력 " + to_string(m_Hand[i]->GetDef()) + ".");
 		info += m_Hand[i]->GetInfo() + "\n";
 	}
-	//m_HandSelection = m_boss.GetBossCardIndex(info);
-
 	cout << info << endl;
 	
-	m_HandSelection = 1; //임시
+	//공격 카드로 플레이어를 죽일 수 있다면 1순위 액트
+	for (size_t i = 0; i < m_HandCount; i++)
+	{
+		if (m_Hand[i]->GetType() == E_Attack)
+		{
+			if (m_Hand[i]->GetAtk() >= p_player.GetHP())
+			{
+				m_HandSelection = i;
+				break;
+			}
+		}
+	}
+
+	
+	
 
 
 	BossCardAct(player, hWnd);
