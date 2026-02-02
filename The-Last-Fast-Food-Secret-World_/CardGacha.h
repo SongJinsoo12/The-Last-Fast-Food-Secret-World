@@ -51,5 +51,3 @@ public:
 	//뽑기화면을 출력
 	void DrawGacha(HDC p_hdc, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[]);
 };
-
-extern CardGacha g_CardGacha;

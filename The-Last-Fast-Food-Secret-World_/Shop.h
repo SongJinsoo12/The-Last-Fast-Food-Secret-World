@@ -2,6 +2,7 @@
 //#include "MainGame.h"
 #include "DeckBuilding.h"
 #include "RenderManager.h"
+#include "ButtonManager.h"
 
 //상자의 정보를 담음(확률, 좌표)
 class Chest

@@ -7,6 +7,7 @@
 #include "Shop.h"
 #include "RenderManager.h"
 #include "CardTableManager.h"
+#include "ButtonManager.h"
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 HINSTANCE g_hInst;											// 인스턴스 핸들
@@ -89,6 +90,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		CreateWindow(TEXT("button"), TEXT("격자눈금"), WS_CHILD | WS_VISIBLE		//(TEXT("button"), TEXT(버튼내용), WS_CHILD | WS_VISIBLE
 			| BS_AUTOCHECKBOX, 20, 80, 100, 25, hWnd, (HMENU)2, g_hInst, NULL);	//| BS_PUSHBUTTON, startx, starty, 너비, 높이, hWnd, (HMENU)wParam번호, g_hInst, NULL)
 		deck.LoadDeck();
+		m_rend.SetImage(L"cookie.png", "cookie1"
+			, Rect(0, 0, 250, 250), Rect(0, 0, 0, 0), true, GameImage_M::LayerType::Background);
+		btnManager.AddButton(make_shared<CircleButton>("cookie1", 100, 100, 100));
 		InvalidateRect(hWnd, &rt, FALSE);
 		return 0;
 	}
@@ -141,6 +145,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 
 	case WM_LBUTTONDOWN:
+		if (btnManager.HandleClick(mg.mx, mg.my) && btnManager.HandleClick(mg.mx, mg.my)->GetId() == "cookie1")
+		{
+			SetTimer(hWnd, 1, 8, NULL);
+			shop.SetDrawShop();
+			screen = 1;
+			return 0;
+		}
 		if (screen == 0)
 		{
 			deck.DeckBuild(mg.mx, mg.my, 'L');
@@ -184,7 +195,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	case WM_PAINT://더블 버퍼링
 	{
 		hdc = BeginPaint(hWnd, &ps);
-
+		
 		memDC = CreateCompatibleDC(hdc);
 		hOldBitmap = (HBITMAP)SelectObject(memDC, CreateCompatibleBitmap(hdc, rt.right, rt.bottom));
 
@@ -192,7 +203,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		graphics.Clear(Color(255, 255, 255, 255));
 
 		m_rend.RenderAll(&graphics);
-
+		btnManager.DrawAll();
 		BitBlt(hdc, 0, 0, rt.right, rt.bottom, memDC, 0, 0, SRCCOPY);
 		DeleteObject(SelectObject(memDC, hOldBitmap));
 		DeleteDC(memDC);
