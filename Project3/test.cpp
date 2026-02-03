@@ -99,7 +99,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	switch (iMessage) {
 	case WM_CREATE:
 		GetClientRect(hWnd, &rt);
-		m_State.ChangeState(GameState_M::E_InGameState::Lobby);
+		M_STATE.ChangeState(GameState_M::E_InGameState::Lobby);
 		//SetTimer(hWnd, 1, 500, NULL);
 		break;
 
@@ -116,7 +116,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		graphics.Clear(Color(255, 255, 255, 255)); // 배경 지우기
 
 		// 3. 모든 이미지 그리기
-		m_State.Update(hdc, hWnd);
+		M_STATE.Update(hdc, hWnd);
 		GameImage_M::RenderManager::GetInstance().RenderAll(&graphics);
 
 		// 4. 메모리에 그린 내용을 실제 화면으로 한 번에 복사 (깜빡임 방지)

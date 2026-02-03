@@ -4,7 +4,7 @@
 #include <vector>
 #include "Singleton.h"
 
-#define m_State GameState_M::Context::GetInstance()
+#define M_STATE GameState_M::Context::GetInstance()
 
 using namespace std;
 
