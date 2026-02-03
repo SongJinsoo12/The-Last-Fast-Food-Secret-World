@@ -4,20 +4,16 @@
 namespace GameInput_M {
 	int Input::isClick()
 	{
-		std::cout << "호출" << std::endl;
 		if (m_ISMouseClick[(int)GameInput_M::MouseValue::Right])
 		{
-			std::cout << "우클릭 값" << (int)GameInput_M::MouseValue::Left << std::endl;
 			return (int)GameInput_M::MouseValue::Right;
 		}
 		else if (m_ISMouseClick[(int)GameInput_M::MouseValue::Left])
 		{
-			std::cout << "좌클릭 값" << (int)GameInput_M::MouseValue::Left << std::endl;
 			return (int)GameInput_M::MouseValue::Left;
 		}
 		else if (m_ISMouseClick[(int)GameInput_M::MouseValue::Heel])
 		{
-			std::cout << "휠 값" << (int)GameInput_M::MouseValue::Left << std::endl;
 			return (int)GameInput_M::MouseValue::Heel;
 		}
 		else

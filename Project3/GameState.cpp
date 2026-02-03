@@ -3,7 +3,7 @@
 #include "InputGame.h"
 
 //°¢ È­¸é
-#include "Shop.h"
+//#include "Shop.h"
 
 namespace GameState_M {
 	Context::Context() {
@@ -43,7 +43,7 @@ namespace GameState_M {
 	}
 
 	void Lobby::Update(HDC p_hdc, HWND p_hwn) {
-		if (g_Input.isClick() == (int)GameInput_M::MouseValue::Left)
+		if (GameInput_M::Input::GetInstance().isClick() == (int)GameInput_M::MouseValue::Left)
 			m_rend.ImageVisible("ID_1", true);
 	}
 
@@ -79,19 +79,19 @@ namespace GameState_M {
 
 	void Shop::Enter()
 	{
-		g_Shop.SetDrawShop();
+		//g_Shop.SetDrawShop();
 	}
 
 	void Shop::Update(HDC p_hdc, HWND p_hwnd)
 	{
-		if (g_Input.isClick() == (int)GameInput_M::MouseValue::Left)
-			g_State.ChangeState(GameState_M::E_InGameState::Lobby);
-		g_Shop.DrawShop(p_hdc, text);
+		//if (GameInput_M::Input::GetInstance().isClick() == (int)GameInput_M::MouseValue::Left)
+		//	m_State.ChangeState(GameState_M::E_InGameState::Lobby);
+		//g_Shop.DrawShop(p_hdc, text);
 	}
 
 	void Shop::Exit()
 	{
-		g_Shop.ClearShop();
+		//g_Shop.ClearShop();
 	}
 
 	void LuckyBox::Enter()
