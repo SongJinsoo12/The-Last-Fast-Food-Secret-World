@@ -2,7 +2,7 @@
 #include <windows.h>
 #include "Singleton.h"
 
-#define M_INPUT GameInput_M::Input::GetInstance()
+#define INPUT GameInput_M::Input::GetInstance()
 
 namespace GameInput_M {
 	enum class MouseValue {
