@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 #include <vector>
-#include "BossAI.h"
+
 
 using namespace std;
 class GameCard;
@@ -30,7 +30,7 @@ public:
 	void HandSelect(WPARAM wParam, CardManager& player, CardManager& opponent, HWND hWnd);
 	void StartTurn(CardManager& player, CardManager& opponent, HWND hWnd);
 	void TimeLimit(WPARAM wParam, HWND hWnd, CardManager& player, CardManager& opponent);
-	void OpponentAct(Player& p_player, Boss& p_boss, CardManager& player, CardManager& opponent, HWND hWnd);
+	//void OpponentAct(Player& p_player, Boss& p_boss, CardManager& player, CardManager& opponent, HWND hWnd);
 	void BossCardAct(CardManager& player, HWND hWnd);
 
 	void SetImage();

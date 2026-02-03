@@ -1,29 +1,29 @@
 #include "Status.h"
 
-Status::Status() : hp(50), isActAval(true)
+CardPlayerStatus::CardPlayerStatus() : hp(50), isActAval(true)
 {
 }
 
-Status::~Status()
+CardPlayerStatus::~CardPlayerStatus()
 {
 }
 
-int Status::GetHP()
+int CardPlayerStatus::GetHP()
 {
     return hp;
 }
 
-void Status::SetHP(int p_hp)
+void CardPlayerStatus::SetHP(int p_hp)
 {
 	hp = p_hp;
 }
 
-bool Status::GetIsActAval()
+bool CardPlayerStatus::GetIsActAval()
 {
 	return isActAval;
 }
 
-void Status::SetIsActAval(bool p_isActAval)
+void CardPlayerStatus::SetIsActAval(bool p_isActAval)
 {
 	isActAval = p_isActAval;
 }
