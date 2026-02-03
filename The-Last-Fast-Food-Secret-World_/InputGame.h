@@ -2,6 +2,8 @@
 #include <windows.h>
 #include "Singleton.h"
 
+#define m_Input GameInput_M::Input::GetInstance()
+
 namespace GameInput_M {
 	enum class MouseValue {
 		Left = 1,

@@ -32,3 +32,5 @@ public:
 	int GetStage();
 };
 
+extern MainGame g_MainGame;
+

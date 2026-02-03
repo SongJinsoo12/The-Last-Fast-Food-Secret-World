@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 //#include "MainGame.h"
 #include "DeckBuilding.h"
 #include "RenderManager.h"
@@ -158,3 +158,5 @@ public:
 		else return false;
 	}
 };
+
+extern Shop g_Shop;

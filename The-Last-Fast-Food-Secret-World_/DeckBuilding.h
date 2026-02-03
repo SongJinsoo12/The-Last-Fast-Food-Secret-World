@@ -9,7 +9,7 @@
 #include "RenderManager.h"
 
 #include <iostream>
-#include <fstream>	//ÆÄÀÏÀĞ±â
+#include <fstream>	//íŒŒì¼ì½ê¸°
 #include "json.hpp"
 
 using namespace std;
@@ -22,17 +22,17 @@ BOOL InCircle(int x, int y, int mx, int my);
 class DeckBuilding
 {
 private:
-	//ÇöÀç µ¦
+	//í˜„ì¬ ë±
 	vector<Card> myDeck;
-	//º¸À¯ÇÑ Ä«µåµé
+	//ë³´ìœ í•œ ì¹´ë“œë“¤
 	vector<Card> inven;
 	vector<Card> atkCards;
 	vector<Card> defCards;
 	vector<Card> magicCards;
-	Card* SelectedCard;//µ¦ÆíÁıÈ­¸é¿¡¼­ À¯Àú°¡ Á¤º¸¸¦ È®ÀÎÇÒ Ä«µåº¯¼ö / exit½Ã ¼±ÅÃÇØÁ¦ÇÒ°Í
+	Card* SelectedCard;//ë±í¸ì§‘í™”ë©´ì—ì„œ ìœ ì €ê°€ ì •ë³´ë¥¼ í™•ì¸í•  ì¹´ë“œë³€ìˆ˜ / exitì‹œ ì„ íƒí•´ì œí• ê²ƒ
 
-	int filter = 0;//ÇÊÅÍ¿ë º¯¼ö 0ÀÌ¸é ÇÊÅÍx
-	int Star_n[3] = { 0, };//µ¦ÀÇ 1,2,3¼º Ä«µå°³¼ö
+	int filter = 0;//í•„í„°ìš© ë³€ìˆ˜ 0ì´ë©´ í•„í„°x
+	int Star_n[3] = { 0, };//ë±ì˜ 1,2,3ì„± ì¹´ë“œê°œìˆ˜
 	int i_page = 0, max_page = 0;
 	bool isShowHelper = false;
 
@@ -63,10 +63,10 @@ public:
 		cout << i_page << " / " << max_page << endl;
 		return;
 	}
-	//Áßº¹ÀÌ Á¸ÀçÇÏ¸é Á¦°ÅÈÄ µÚÀÇ Ä«µåµéÀ» ¾ÕÀ¸·Î ÀÌµ¿
+	//ì¤‘ë³µì´ ì¡´ì¬í•˜ë©´ ì œê±°í›„ ë’¤ì˜ ì¹´ë“œë“¤ì„ ì•ìœ¼ë¡œ ì´ë™
 	vector<Card> EraseDuple(vector<Card> p_cards);
 
-	//ÀÎº¥Åä¸®ÀÇ »çÀÌÁî ¸®ÅÏ
+	//ì¸ë²¤í† ë¦¬ì˜ ì‚¬ì´ì¦ˆ ë¦¬í„´
 	int GetSize();
 	void ChangeFilter()
 	{
@@ -75,11 +75,11 @@ public:
 		cout << "filter : " << filter << endl;
 	}
 
-	//ÆÄ¶ó¹ÌÅÍÀÇ ¹è¿­À» ÀÎº¥ ¸Ç µÚ¿¡ Ãß°¡ÇÔ. Áßº¹ Á¦°Åµµ ÇØÁÜ
+	//íŒŒë¼ë¯¸í„°ì˜ ë°°ì—´ì„ ì¸ë²¤ ë§¨ ë’¤ì— ì¶”ê°€í•¨. ì¤‘ë³µ ì œê±°ë„ í•´ì¤Œ
 	void PushCard(vector<Card> p_cards);
 	vector<Card> SetPos(vector<Card> p_cards)
 	{
-		//ÀÎº¥¿¡ µé¾î°¥ ÀÚ¸®¿¡ ¸Â°Ô ÁÂÇ¥¸¦ ¼¼ÆÃÇÔ.
+		//ì¸ë²¤ì— ë“¤ì–´ê°ˆ ìë¦¬ì— ë§ê²Œ ì¢Œí‘œë¥¼ ì„¸íŒ…í•¨.
 		for (int i = 0; i < p_cards.size(); i++)
 		{
 			int x = ((i) % 25) % 5, y = ((i) % 25) / 5;
@@ -120,12 +120,12 @@ public:
 		}
 	}
 
-	//ÀÎº¥->µ¦ (µ¦, ¸¶¿ì½ºX, ¸¶¿ì½ºY)
+	//ì¸ë²¤->ë± (ë±, ë§ˆìš°ìŠ¤X, ë§ˆìš°ìŠ¤Y)
 	void ItoD(int p_mx, int p_my);
-	//µ¦->ÀÎº¥ (µ¦, ¸¶¿ì½ºX, ¸¶¿ì½ºY)
+	//ë±->ì¸ë²¤ (ë±, ë§ˆìš°ìŠ¤X, ë§ˆìš°ìŠ¤Y)
 	void DtoI(int p_mx, int p_my);
 	void SelectCard(int p_mx, int p_my);
-	void DeckBuild(int p_mx, int p_my, char click_m);//click_m == ÁÂ/¿ìÅ¬¸¯ È®ÀÎ¿ë, ÁÂ-Ä«µåÇÏÀÌ¶óÀÌÆ®/¿ì-Ä«µåÀÌµ¿
+	void DeckBuild(int p_mx, int p_my, char click_m);//click_m == ì¢Œ/ìš°í´ë¦­ í™•ì¸ìš©, ì¢Œ-ì¹´ë“œí•˜ì´ë¼ì´íŠ¸/ìš°-ì¹´ë“œì´ë™
 
 	void EnterDeckBuild()
 	{
@@ -150,11 +150,11 @@ public:
 		m_rend.RemoveIDIamage("s_card");
 	}
 
-	//ÀÎº¥Åä¸® Ãâ·Â
+	//ì¸ë²¤í† ë¦¬ ì¶œë ¥
 	void DrawInventory(HDC p_hdc, WCHAR p_text[], vector<Card> p_cardType);
-	//¸¶ÀÌµ¦ Ãâ·Â
+	//ë§ˆì´ë± ì¶œë ¥
 	void DrawMyDeck(HDC p_hdc, WCHAR p_text[]);
-	//µ¦ºôµù È­¸é Ãâ·Â
+	//ë±ë¹Œë”© í™”ë©´ ì¶œë ¥
 	void DrawDeckBuild(HDC p_hdc, WCHAR p_text[]);
 	void DrawHelp()
 	{
@@ -162,3 +162,5 @@ public:
 		else m_rend.ImageVisible("helper", false);
 	}
 };
+
+extern DeckBuilding g_DeckBuild;
