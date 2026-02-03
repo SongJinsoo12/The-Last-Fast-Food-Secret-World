@@ -45,23 +45,24 @@ namespace GameState_M {
 
 	void Lobby::Enter()
 	{
-		//m_rend.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(0, 0, 300, 300)
+		g_DeckBuild.LoadDeck();//세이브는 소멸자에
+		//RENDER.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(0, 0, 300, 300)
 			//, false, GameImage_M::LayerType::Field);
 	}
 
 	void Lobby::Update(HDC p_hdc, HWND p_hwn) {
 
 		if (GameInput_M::Input::GetInstance().isClick() == (int)GameInput_M::MouseValue::Left)
-			m_State.ChangeState(GameState_M::E_InGameState::Shop);
+			STATE.ChangeState(GameState_M::E_InGameState::Shop);
 	}
 
 	void Lobby::Exit() {
-		//m_rend.AllRemoveImage();
+		//RENDER.AllRemoveImage();
 	}
 
 	void Menu::Enter()
 	{
-		//m_rend.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(100, 0, 300, 300), true, GameImage_M::LayerType::Field);
+		//RENDER.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(100, 0, 300, 300), true, GameImage_M::LayerType::Field);
 	}
 
 	void Menu::Update(HDC p_hdc, HWND p_hwnd)
@@ -70,7 +71,7 @@ namespace GameState_M {
 	}
 
 	void Menu::Exit() {
-		//m_rend.RemoveIDIamage("ID_1");
+		//RENDER.RemoveIDIamage("ID_1");
 	}
 
 	void DeckBuild::Enter() {
@@ -80,10 +81,16 @@ namespace GameState_M {
 	void DeckBuild::Update(HDC p_hdc, HWND p_hwnd) {
 		WCHAR text[256] = L"";
 
-		if (m_Input.isClick() == (int)GameInput_M::MouseValue::Left)
+		if (INPUT.isClick() == (int)GameInput_M::MouseValue::Left)
+		{
+			INPUT.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
 			g_DeckBuild.DeckBuild(g_MainGame.mx, g_MainGame.my, 'L');
-		else if (m_Input.isClick() == (int)GameInput_M::MouseValue::Right)
+		}
+		else if (INPUT.isClick() == (int)GameInput_M::MouseValue::Right)
+		{
+			INPUT.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
 			g_DeckBuild.DeckBuild(g_MainGame.mx, g_MainGame.my, 'R');
+		}
 
 		g_DeckBuild.DrawDeckBuild(p_hdc, text);
 	}
@@ -110,31 +117,36 @@ namespace GameState_M {
 	{
 		WCHAR text[256] = L"";
 		cout << "Shop Update" << endl;
-		if (m_Input.isClick() == (int)GameInput_M::MouseValue::Left)
+		if (INPUT.isClick() == (int)GameInput_M::MouseValue::Left)
 		{
-			m_Input.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
+			INPUT.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
 			g_Shop.SelectChest(g_MainGame.mx, g_MainGame.my);
 		}
 
-		//if (g_Shop.CheckIsSelection())
-		//{
-		//	if (m_Input.isClick() == (int)GameInput_M::MouseValue::Left)
-		//	{
-		//		/*if (InCircle(850, 635, GameInput_M::Input::GetInstance().getMouseX()
-		//			, GameInput_M::Input::GetInstance().getMouseY()))
-		//			g_Gacha.GetGacha(TRUE, g_DeckBuild, g_MainGame, g_Shop.GetSelectedChest());
-		//		else if (InCircle(1200, 635, g_MainGame.mx, g_MainGame.my))
-		//			g_Gacha.GetGacha(FALSE, g_DeckBuild, g_MainGame, g_Shop.GetSelectedChest());*/
+		if (g_Shop.CheckIsSelection())
+		{
+			if (INPUT.isClick() == (int)GameInput_M::MouseValue::Left)
+			{
+				if (InCircle(850, 635, g_MainGame.mx, g_MainGame.my))
+				{
+					g_Gacha.GetGacha(TRUE, g_DeckBuild, g_MainGame, g_Shop.GetSelectedChest());
+					STATE.ChangeState(GameState_M::E_InGameState::LuckyBox);
+				}
+				else if (InCircle(1200, 635, g_MainGame.mx, g_MainGame.my))
+				{
+					g_Gacha.GetGacha(FALSE, g_DeckBuild, g_MainGame, g_Shop.GetSelectedChest());
+					STATE.ChangeState(GameState_M::E_InGameState::LuckyBox);
+				}
 
-		//		m_State.ChangeState(GameState_M::E_InGameState::LuckyBox);
-		//	}
-		//	g_Gacha.DrawGachaButton(p_hdc, g_DeckBuild, g_Shop.GetSelectedChest(), g_MainGame.mx, g_MainGame.my, text);
-		//}
+				//
+			}
+			g_Gacha.DrawGachaButton(p_hdc, g_DeckBuild, g_Shop.GetSelectedChest(), g_MainGame.mx, g_MainGame.my, text);
+		}
 
 		g_Shop.DrawShop(p_hdc, text);
 
 		if (GameInput_M::Input::GetInstance().isClick() == (int)GameInput_M::MouseValue::Right)
-			m_State.ChangeState(GameState_M::E_InGameState::DeckBuild);
+			STATE.ChangeState(GameState_M::E_InGameState::DeckBuild);
 	}
 
 	void Shop::Exit()
@@ -149,8 +161,13 @@ namespace GameState_M {
 	void LuckyBox::Update(HDC p_hdc, HWND p_hwnd)
 	{
 		WCHAR text[256] = L"";
-		if(m_Input.isClick())
-			m_Input.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
+		if (INPUT.isClick() == (int)GameInput_M::MouseValue::Left)
+		{
+			INPUT.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
+		}
+
+		if (InCircle(100, 100, g_MainGame.mx, g_MainGame.my))
+			STATE.ChangeState(GameState_M::E_InGameState::Shop);
 		g_Gacha.InGacha();
 		g_Gacha.DrawGacha(p_hdc, g_MainGame.mx, g_MainGame.my, text);
 	}

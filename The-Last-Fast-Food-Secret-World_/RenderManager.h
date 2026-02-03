@@ -1,13 +1,12 @@
 #pragma once
 
+#define RENDER GameImage_M::RenderManager::GetInstance()
+
 #include "ImageLoad.h"
 #include "ImageManager.h"
 #include "Singleton.h"
 
 #include <unordered_map>
-
-#define m_rend GameImage_M::RenderManager::GetInstance()
-#define RENDINSTANCE GameImage_M::RenderManager::GetInstance()
 
 namespace GameImage_M {
 
@@ -16,7 +15,7 @@ namespace GameImage_M {
 		Field,
 		Card,
 		UI,
-		Max,
+		Max
 	};
 
 	class RenderManager : public Singleton<RenderManager>
@@ -24,7 +23,7 @@ namespace GameImage_M {
 		friend class Singleton<RenderManager>;
 
 	private:
-		vector<vector<shared_ptr<ImageLoad>>> m_RenderList;
+		vector<vector<shared_ptr<ImageLoad>>> RENDERerList;
 		unordered_map<string, LayerType> m_IDMap;
 
 	public:
@@ -49,4 +48,3 @@ namespace GameImage_M {
 		void LayerMoveToBack(string p_id);
 	};
 }
-

@@ -1,5 +1,7 @@
 #include "MainGame.h"
 
+MainGame g_MainGame;
+
 MainGame::MainGame() {
 	Coin = 4000;
 	LargeStage = 1;

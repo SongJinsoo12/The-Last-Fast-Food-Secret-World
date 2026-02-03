@@ -145,9 +145,9 @@ public:
 	void ExitDeckBuild()
 	{
 		filter = 0;
-		for (int i = 0; i < inven.size(); i++) m_rend.RemoveIDIamage("inven_card" + to_string(i));
-		for (int i = 0; i < myDeck.size(); i++) m_rend.RemoveIDIamage("deck_card" + to_string(i));
-		m_rend.RemoveIDIamage("s_card");
+		for (int i = 0; i < inven.size(); i++) RENDER.RemoveIDIamage("inven_card" + to_string(i));
+		for (int i = 0; i < myDeck.size(); i++) RENDER.RemoveIDIamage("deck_card" + to_string(i));
+		RENDER.RemoveIDIamage("s_card");
 	}
 
 	//인벤토리 출력
@@ -158,8 +158,8 @@ public:
 	void DrawDeckBuild(HDC p_hdc, WCHAR p_text[]);
 	void DrawHelp()
 	{
-		if (isShowHelper) m_rend.ImageVisible("helper", true);
-		else m_rend.ImageVisible("helper", false);
+		if (isShowHelper) RENDER.ImageVisible("helper", true);
+		else RENDER.ImageVisible("helper", false);
 	}
 };
 

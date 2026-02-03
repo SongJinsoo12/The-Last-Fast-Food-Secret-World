@@ -1,4 +1,6 @@
-﻿#include "Shop.h"
+#include "Shop.h"
+
+Shop g_Shop;
 
 //상자를 선택함
 void Shop::SelectChest(int p_mx, int p_my)

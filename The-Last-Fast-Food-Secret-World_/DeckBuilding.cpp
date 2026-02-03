@@ -1,4 +1,6 @@
-﻿#include "DeckBuilding.h"
+#include "DeckBuilding.h"
+
+DeckBuilding g_DeckBuild;
 
 double LenghtPts(int x1, int y1, int x2, int y2)
 {
@@ -37,7 +39,7 @@ void DeckBuilding::SaveDeck()//iscolleted::array
 			json card;
 			card["uid"] = myDeck[i].GetUid();
 			j["Cards_D"].push_back(card);
-			cout << to_string(i) << "번째 카드저장완료" << endl;
+			//cout << to_string(i) << "번째 카드저장완료" << endl;
 		}
 
 		j["Cards_I"] = json::array();
@@ -46,7 +48,7 @@ void DeckBuilding::SaveDeck()//iscolleted::array
 			json card;
 			card["uid"] = inven[i].GetUid();
 			j["Cards_I"].push_back(card);
-			cout << to_string(i) << "번째 카드저장완료" << endl;
+			//cout << to_string(i) << "번째 카드저장완료" << endl;
 		}
 
 		// 2. 파일 스트림 열기 (output.json 파일)
@@ -337,13 +339,13 @@ void DeckBuilding::DrawInventory(HDC p_hdc, WCHAR p_text[], vector<Card> p_cardT
 	for (int i = 0; i < 25; i++)
 	{
 		//마지막카드이동시 배열에서 사라진카드이므로 예외처리
-		m_rend.RemoveIDIamage("inven_card" + to_string(i));
+		RENDER.RemoveIDIamage("inven_card" + to_string(i));
 	}
 	for (int i = 0; i < 25; i++)
 	{
 		int index = i + i_page * 25;
 		if (index >= p_cardType.size()) return;
-		m_rend.RemoveIDIamage("inven_card" + to_string(i));
+		RENDER.RemoveIDIamage("inven_card" + to_string(i));
 
 		wstring image_path = L"card";
 		wstring image_type;
@@ -352,7 +354,7 @@ void DeckBuilding::DrawInventory(HDC p_hdc, WCHAR p_text[], vector<Card> p_cardT
 		else if (p_cardType[index].GetType() == E_Deffense) image_type = L"_def_";//1040+82-30,50+140-30 -> x==1032+82,y==30+140
 		image_path += image_type + image_star + L".png";				//1040-30,50-30 -> x-38,y-50 / x==1032,y==30
 
-		m_rend.SetImage(image_path, "inven_card" + to_string(i), Rect(0, 0, 100, 132)
+		RENDER.SetImage(image_path, "inven_card" + to_string(i), Rect(0, 0, 100, 132)
 			, Rect(p_cardType[index].x - 38, p_cardType[index].y - 50, (int)(100 * 0.75f), (int)(132 * 0.75f))
 			, true, GameImage_M::LayerType::Background);
 
@@ -364,13 +366,13 @@ void DeckBuilding::DrawInventory(HDC p_hdc, WCHAR p_text[], vector<Card> p_cardT
 void DeckBuilding::DrawMyDeck(HDC p_hdc, WCHAR p_text[])
 {
 	//마지막카드이동시 배열에서 사라진카드이므로 예외처리
-	m_rend.RemoveIDIamage("deck_card" + to_string(myDeck.size()));
+	RENDER.RemoveIDIamage("deck_card" + to_string(myDeck.size()));
 	for (int i = 0; i < myDeck.size(); i++)
 	{
-		m_rend.MoveImage(to_string(myDeck[i].GetUid()), Rect(myDeck[i].x - 50, myDeck[i].y - 66, 100, 132));
-		m_rend.ImageVisible(to_string(myDeck[i].GetUid()), true);
+		RENDER.MoveImage(to_string(myDeck[i].GetUid()), Rect(myDeck[i].x - 50, myDeck[i].y - 66, 100, 132));
+		RENDER.ImageVisible(to_string(myDeck[i].GetUid()), true);
 
-		/*m_rend.RemoveIDIamage("deck_card" + to_string(i));
+		/*RENDER.RemoveIDIamage("deck_card" + to_string(i));
 
 		wstring image_path = L"card";
 		wstring image_type;
@@ -379,7 +381,7 @@ void DeckBuilding::DrawMyDeck(HDC p_hdc, WCHAR p_text[])
 		else if (myDeck[i].GetType() == E_Deffense) image_type = L"_def_";
 		image_path += image_type + image_star + L".png";
 
-		m_rend.SetImage(image_path, "deck_card" + to_string(i), Rect(0, 0, 100, 132)
+		RENDER.SetImage(image_path, "deck_card" + to_string(i), Rect(0, 0, 100, 132)
 			, Rect(myDeck[i].x - 50, myDeck[i].y - 66, 100, 132), true, GameImage_M::LayerType::Background);*/
 
 		wsprintf(p_text, TEXT("%d"), myDeck[i].GetUid());
@@ -406,25 +408,25 @@ void DeckBuilding::DrawDeckBuild(HDC p_hdc, WCHAR p_text[])
 	}
 	DrawMyDeck(p_hdc, p_text);	//마이덱
 
-	m_rend.RemoveIDIamage("s_card");
+	RENDER.RemoveIDIamage("s_card");
 	if (SelectedCard)
 	{
 		wstring path = L"card";
 		if (SelectedCard->GetType() == E_Attack) path += L"_atk_";
 		else if (SelectedCard->GetType() == E_Deffense) path += L"_def_";
 		path += to_wstring(SelectedCard->GetStar() + 1) + L".png";
-		m_rend.SetImage(path, "s_card", Rect(0, 0, 100, 132), Rect(25, 100, 100 * 3.5f, 132 * 3.5f)
+		RENDER.SetImage(path, "s_card", Rect(0, 0, 100, 132), Rect(25, 100, 100 * 3.5f, 132 * 3.5f)
 			, true, GameImage_M::LayerType::Background);
-		m_rend.MoveImage("s_card", Rect(25, 100, 100 * 3.5f, 132 * 3.5f));
+		RENDER.MoveImage("s_card", Rect(25, 100, 100 * 3.5f, 132 * 3.5f));
 		wsprintf(p_text, TEXT("%d"), SelectedCard->GetUid());
 		TextOut(p_hdc, 200, 350, p_text, lstrlen(p_text));
 	}
 
 	Rectangle(p_hdc, 1020, 670, 1150, 710);//인벤좌로이동
 	Rectangle(p_hdc, 1280, 670, 1410, 710);//인벤우로이동
-	wsprintf(p_text, TEXT("←"));
+	//wsprintf(p_text, TEXT("←"));
 	TextOut(p_hdc, 1085, 680, p_text, lstrlen(p_text));
-	wsprintf(p_text, TEXT("→"));
+	//wsprintf(p_text, TEXT("→"));
 	TextOut(p_hdc, 1345, 680, p_text, lstrlen(p_text));
 	wsprintf(p_text, TEXT("%d / %d"), i_page + 1, max_page + 1);
 	TextOut(p_hdc, 1205, 680, p_text, lstrlen(p_text));
@@ -444,4 +446,5 @@ void DeckBuilding::DrawDeckBuild(HDC p_hdc, WCHAR p_text[])
 	Rectangle(p_hdc, 1015 + 300, 20, 1115 + 300, 70);
 	wsprintf(p_text, TEXT("?"));
 	TextOut(p_hdc, 1060 + 300, 40, p_text, lstrlen(p_text));
+
 }

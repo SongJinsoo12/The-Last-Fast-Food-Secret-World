@@ -83,20 +83,20 @@ public:
 		}
 
 		//상자 보관용 선반
-		m_rend.SetImage(L"shelf.png", "shelf1"
+		RENDER.SetImage(L"shelf.png", "shelf1"
 			, Rect(0, 0, 651, 101), Rect(mov_sel, 250, 651, 101), false, GameImage_M::LayerType::Background);
-		m_rend.SetImage(L"shelf.png", "shelf2"
+		RENDER.SetImage(L"shelf.png", "shelf2"
 			, Rect(0, 0, 651, 101), Rect(mov_sel, 450, 651, 101), false, GameImage_M::LayerType::Background);
 		//상점 주인
-		m_rend.SetImage(L"cookie.png", "cookie"
+		RENDER.SetImage(L"cookie.png", "cookie"
 			, Rect(0, 0, 250, 250), Rect(300 - 180, 430 - 180, 360, 360), false, GameImage_M::LayerType::Background);
 		//상자 정보 및 상점 주인 대사 출력용
-		m_rend.SetImage(L"textbox.png", "textbox"
+		RENDER.SetImage(L"textbox.png", "textbox"
 			, Rect(0, 0, 500, 200), Rect(50, 500, 500, 200), false, GameImage_M::LayerType::Background);
 		//상자 출력
 		for (int i = 0; i < 3; i++)
 		{
-			m_rend.SetImage(L"chest.png", "chest" + to_string(i)
+			RENDER.SetImage(L"chest.png", "chest" + to_string(i)
 				, Rect(0, 0, 1024, 1024), Rect(chest[i].x - 48, chest[i].y - 78, 128, 128), false, GameImage_M::LayerType::Background);
 		}
 	}
@@ -121,20 +121,20 @@ public:
 	//이미지 로드 확인해보기 / 쿠키는 맥도날드 점원, 상자는 가게메뉴로 변경(==상점 컨셉을 맥으로)
 	void SetDrawShop()
 	{
-		m_rend.ImageVisible("shelf1", true);//상자 보관용 선반1
-		m_rend.ImageVisible("shelf2", true);//상자 보관용 선반2
+		RENDER.ImageVisible("shelf1", true);//상자 보관용 선반1
+		RENDER.ImageVisible("shelf2", true);//상자 보관용 선반2
 
 		//상자 정보 및 상점 주인 대사 출력용
-		m_rend.ImageVisible("textbox", true);
+		RENDER.ImageVisible("textbox", true);
 	}
 	//화면 전환 시 상점의 이미지들을 전부 비활성화
 	void ExitShop()
 	{
-		m_rend.ImageVisible("shelf1", false);
-		m_rend.ImageVisible("shelf2", false);
-		m_rend.ImageVisible("cookie", false);
-		m_rend.ImageVisible("textbox", false);
-		for (int i = 0; i < 6; i++) m_rend.ImageVisible("chest" + to_string(i), false);
+		RENDER.ImageVisible("shelf1", false);
+		RENDER.ImageVisible("shelf2", false);
+		RENDER.ImageVisible("cookie", false);
+		RENDER.ImageVisible("textbox", false);
+		for (int i = 0; i < 6; i++) RENDER.ImageVisible("chest" + to_string(i), false);
 		mov_sel = 1400;
 		this->CancelSelection();
 	}
@@ -144,15 +144,15 @@ public:
 
 		//MoveImageTween("shelf1", Rect(), 3).OnComplete( EndFN );
 
-		m_rend.MoveImage("shelf1", Rect(mov_sel - 10, 250, 651, 101));
-		m_rend.MoveImage("shelf2", Rect(mov_sel - 10, 450, 651, 101));
-		m_rend.MoveImage("textbox", Rect((700 - mov_sel) + 50 + 10, 500, 500, 200));
+		RENDER.MoveImage("shelf1", Rect(mov_sel - 10, 250, 651, 101));
+		RENDER.MoveImage("shelf2", Rect(mov_sel - 10, 450, 651, 101));
+		RENDER.MoveImage("textbox", Rect((700 - mov_sel) + 50 + 10, 500, 500, 200));
 
 		mov_sel -= (int)((mov_sel - 700) / 10);
 		if (mov_sel <= 710)//입장 애니메이션이 끝난 후 나머지 이미지 활성화
 		{
-			m_rend.ImageVisible("cookie", true);// 상점 주인
-			for (int i = 0; i < 6; i++) m_rend.ImageVisible("chest" + to_string(i), true);//상자 출력
+			RENDER.ImageVisible("cookie", true);// 상점 주인
+			for (int i = 0; i < 6; i++) RENDER.ImageVisible("chest" + to_string(i), true);//상자 출력
 			return true;
 		}
 		else return false;

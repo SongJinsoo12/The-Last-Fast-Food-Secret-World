@@ -1,4 +1,4 @@
-﻿#include <windows.h>										// 헤더
+#include <windows.h>										// 헤더
 #include <iostream>
 #include <memory>
 #include "DeckBuilding.h"
@@ -90,7 +90,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		CreateWindow(TEXT("button"), TEXT("격자눈금"), WS_CHILD | WS_VISIBLE		//(TEXT("button"), TEXT(버튼내용), WS_CHILD | WS_VISIBLE
 			| BS_AUTOCHECKBOX, 20, 80, 100, 25, hWnd, (HMENU)2, g_hInst, NULL);	//| BS_PUSHBUTTON, startx, starty, 너비, 높이, hWnd, (HMENU)wParam번호, g_hInst, NULL)
 		deck.LoadDeck();
-		m_rend.SetImage(L"cookie.png", "cookie1"
+		RENDER.SetImage(L"cookie.png", "cookie1"
 			, Rect(0, 0, 250, 250), Rect(0, 0, 0, 0), true, GameImage_M::LayerType::Background);
 		btnManager.AddButton(make_shared<CircleButton>("cookie1", 100, 100, 100));
 		InvalidateRect(hWnd, &rt, FALSE);
@@ -202,7 +202,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		Graphics graphics(memDC);
 		graphics.Clear(Color(255, 255, 255, 255));
 
-		m_rend.RenderAll(&graphics);
+		RENDER.RenderAll(&graphics);
 		btnManager.DrawAll();
 		BitBlt(hdc, 0, 0, rt.right, rt.bottom, memDC, 0, 0, SRCCOPY);
 		DeleteObject(SelectObject(memDC, hOldBitmap));
@@ -217,13 +217,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			shop.DrawShop(hdc, print);
 			if (shop.CheckIsSelection())
 			{
-				gacha.DrawGachaButton(hdc, deck, shop.GetSelectedChest(), hPen, oldPen, mg.mx, mg.my, print);
+				gacha.DrawGachaButton(hdc, deck, shop.GetSelectedChest(), mg.mx, mg.my, print);
 			}
 		}
 		else if (screen == 2)
 		{
 			gacha.InGacha();
-			gacha.DrawGacha(hdc, hPen, oldPen, mg.mx, mg.my, print);
+			gacha.DrawGacha(hdc, mg.mx, mg.my, print);
 		}
 
 		//변수 확인용

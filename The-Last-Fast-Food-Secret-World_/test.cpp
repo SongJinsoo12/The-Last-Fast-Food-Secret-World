@@ -7,9 +7,9 @@ HINSTANCE g_hInst;											// 인스턴스 핸들
 LPCTSTR lpszClass = TEXT("윤찬_25311014");					// 제목 표시줄에 표시
 
 //auto tween = tweeny::from(50).to(500).during(2000).via(tweeny::easing::exponentialOut);
-
-LARGE_INTEGER frequency, t1, t2;
-double deltaTime = 0;
+//
+//LARGE_INTEGER frequency, t1, t2;
+//double deltaTime = 0;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
@@ -57,9 +57,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 		else {
 			// 0. 타이머 처리
 			// 
-			QueryPerformanceCounter(&t2);
-			deltaTime = (double)(t2.QuadPart - t1.QuadPart) / frequency.QuadPart;
-			t1 = t2;
+			//QueryPerformanceCounter(&t2);
+			//deltaTime = (double)(t2.QuadPart - t1.QuadPart) / frequency.QuadPart;
+			//t1 = t2;
 			// 1. 게임의 수치들을 업데이트 (이동, 충돌 등)
 			// GameInput_M::Input::GetInstance().Update();
 			// 
@@ -99,14 +99,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	switch (iMessage) {
 	case WM_CREATE:
 		GetClientRect(hWnd, &rt);
-		m_State.ChangeState(GameState_M::E_InGameState::Lobby);
+		STATE.ChangeState(GameState_M::E_InGameState::Lobby);
 		//SetTimer(hWnd, 1, 500, NULL);
 		break;
 
 	case WM_PAINT:
 	{
 		hdc = BeginPaint(hWnd, &ps);
-
 
 		// 1. 메모리 DC와 비트맵 생성 (더블 버퍼링용)
 		memDC = CreateCompatibleDC(hdc);
@@ -117,7 +116,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		graphics.Clear(Color(255, 255, 255, 255)); // 배경 지우기
 
 		// 3. 모든 이미지 그리기
-		m_State.Update(hdc, hWnd);
+		STATE.Update(hdc, hWnd);
 		GameImage_M::RenderManager::GetInstance().RenderAll(&graphics);
 
 		// 4. 메모리에 그린 내용을 실제 화면으로 한 번에 복사 (깜빡임 방지)

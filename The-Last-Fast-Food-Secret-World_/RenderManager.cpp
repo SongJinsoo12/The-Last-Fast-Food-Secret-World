@@ -1,11 +1,11 @@
-﻿#include "RenderManager.h"
+#include "RenderManager.h"
 #include <iostream>
 
 namespace GameImage_M {
 	RenderManager::RenderManager()
 	{
 		// 사이즈 설정
-		m_RenderList.resize(static_cast<int>(LayerType::Max));
+		RENDERerList.resize(static_cast<int>(LayerType::Max));
 	}
 	RenderManager::~RenderManager()
 	{
@@ -21,7 +21,7 @@ namespace GameImage_M {
 		shared_ptr<ImageLoad> newImage = make_shared<ImageLoad>();
 		newImage->LoadI(p_path, p_id, load, render, isVisible);
 
-		m_RenderList[(int)p_layer].push_back(newImage);
+		RENDERerList[(int)p_layer].push_back(newImage);
 		m_IDMap[p_id] = p_layer;
 	}
 
@@ -29,7 +29,7 @@ namespace GameImage_M {
 	{
 		for (int i = 0; i < (int)LayerType::Max; i++)
 		{
-			vector<shared_ptr<ImageLoad>>& currentLayer = m_RenderList[i];
+			vector<shared_ptr<ImageLoad>>& currentLayer = RENDERerList[i];
 			for (int j = 0; j < (int)currentLayer.size(); j++)
 			{
 				if (currentLayer[j]->GetVisible()) {
@@ -56,7 +56,7 @@ namespace GameImage_M {
 		if (m_IDMap.find(p_id) == m_IDMap.end()) return;
 
 		LayerType layer = m_IDMap[p_id];
-		vector<shared_ptr<ImageLoad>>& targetVec = m_RenderList[(int)layer];
+		vector<shared_ptr<ImageLoad>>& targetVec = RENDERerList[(int)layer];
 
 		for (vector<shared_ptr<ImageLoad>>::iterator it = targetVec.begin();
 			it != targetVec.end(); it++)
@@ -73,10 +73,10 @@ namespace GameImage_M {
 	{
 		for (int i = 0; i < (int)LayerType::Max; i++)
 		{
-			m_RenderList[i].clear();
+			RENDERerList[i].clear();
 		}
-		m_RenderList.clear();
-		m_RenderList.shrink_to_fit();
+		RENDERerList.clear();
+		RENDERerList.shrink_to_fit();
 		m_IDMap.clear();
 	}
 
@@ -85,7 +85,7 @@ namespace GameImage_M {
 		if (m_IDMap.find(p_id) == m_IDMap.end()) return nullptr;
 
 		LayerType layer = m_IDMap[p_id];
-		vector<shared_ptr<ImageLoad>>& targetVec = m_RenderList[(int)layer];
+		vector<shared_ptr<ImageLoad>>& targetVec = RENDERerList[(int)layer];
 		for (const shared_ptr<ImageLoad>& img : targetVec)
 		{
 			if (img->GetID() == p_id)
@@ -97,7 +97,7 @@ namespace GameImage_M {
 	void RenderManager::LayerMoveForward(string p_id)
 	{
 		if (m_IDMap.find(p_id) == m_IDMap.end()) return;
-		vector<shared_ptr<ImageLoad>>& targetVec = m_RenderList[(int)m_IDMap[p_id]];
+		vector<shared_ptr<ImageLoad>>& targetVec = RENDERerList[(int)m_IDMap[p_id]];
 
 		for (int i = 0; i < (int)targetVec.size() - 1; i++)
 		{
@@ -110,7 +110,7 @@ namespace GameImage_M {
 	void RenderManager::LayerMoveBackward(string p_id)
 	{
 		if (m_IDMap.find(p_id) == m_IDMap.end()) return;
-		vector<shared_ptr<ImageLoad>>& targetVec = m_RenderList[(int)m_IDMap[p_id]];
+		vector<shared_ptr<ImageLoad>>& targetVec = RENDERerList[(int)m_IDMap[p_id]];
 
 		for (int i = 0; i < (int)targetVec.size() - 1; i++)
 		{
@@ -124,7 +124,7 @@ namespace GameImage_M {
 	{
 		if (m_IDMap.find(p_id) == m_IDMap.end()) return;
 		LayerType layer = m_IDMap[p_id];
-		vector<shared_ptr<ImageLoad>>& targetVec = m_RenderList[(int)layer];
+		vector<shared_ptr<ImageLoad>>& targetVec = RENDERerList[(int)layer];
 
 		for (vector<shared_ptr<ImageLoad>>::iterator it = targetVec.begin();
 			it != targetVec.end(); it++)
@@ -141,7 +141,7 @@ namespace GameImage_M {
 	{
 		if (m_IDMap.find(p_id) == m_IDMap.end()) return;
 		LayerType layer = m_IDMap[p_id];
-		vector<shared_ptr<ImageLoad>>& targetVec = m_RenderList[(int)layer];
+		vector<shared_ptr<ImageLoad>>& targetVec = RENDERerList[(int)layer];
 
 		for (vector<shared_ptr<ImageLoad>>::iterator it = targetVec.begin();
 			it != targetVec.end(); it++)

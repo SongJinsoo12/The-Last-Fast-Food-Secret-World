@@ -169,17 +169,17 @@ void CardTableManager::CardImageLoad(int uid, CAttribute  ait, CType type, Star 
 		switch (star)
 		{
 		case E_ONE:
-			m_rend.SetImage(L"card_atk_1.png", to_string(uid),
+			RENDER.SetImage(L"card_atk_1.png", to_string(uid),
 				Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
 				GameImage_M::LayerType::Card);
 			break;
 		case E_TWO:
-			m_rend.SetImage(L"card_atk_2.png", to_string(uid),
+			RENDER.SetImage(L"card_atk_2.png", to_string(uid),
 				Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
 				GameImage_M::LayerType::Card);
 			break;
 		case E_THREE:
-			m_rend.SetImage(L"card_atk_3.png", to_string(uid),
+			RENDER.SetImage(L"card_atk_3.png", to_string(uid),
 				Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
 				GameImage_M::LayerType::Card);
 			break;
@@ -189,24 +189,24 @@ void CardTableManager::CardImageLoad(int uid, CAttribute  ait, CType type, Star 
 		switch (star)
 		{
 		case E_ONE:
-			m_rend.SetImage(L"card_def_1.png", to_string(uid),
+			RENDER.SetImage(L"card_def_1.png", to_string(uid),
 				Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
 				GameImage_M::LayerType::Card);
 			break;
 		case E_TWO:
-			m_rend.SetImage(L"card_def_2.png", to_string(uid),
+			RENDER.SetImage(L"card_def_2.png", to_string(uid),
 				Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
 				GameImage_M::LayerType::Card);
 			break;
 		case E_THREE:
-			m_rend.SetImage(L"card_def_3.png", to_string(uid),
+			RENDER.SetImage(L"card_def_3.png", to_string(uid),
 				Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
 				GameImage_M::LayerType::Card);
 			break;
 		}
 		break;
 	case E_Magic:
-		m_rend.SetImage(L"card_magic.png", to_string(uid),
+		RENDER.SetImage(L"card_magic.png", to_string(uid),
 			Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
 			GameImage_M::LayerType::Card);
 		break;

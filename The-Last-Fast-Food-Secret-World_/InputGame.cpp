@@ -2,11 +2,6 @@
 #include <iostream>
 
 namespace GameInput_M {
-	Input::Input()
-	{
-		m_MousePosX = 0; m_MousePosY = 0;
-		m_MouseHeelValue = 0;
-	}
 	int Input::isClick()
 	{
 		if (m_ISMouseClick[(int)GameInput_M::MouseValue::Right])
@@ -24,18 +19,27 @@ namespace GameInput_M {
 		else
 			return 0;
 	}
+
 	int Input::isHeel()
 	{
-		return m_MouseHeelValue;
+		return m_MouseHeelDelta;
 	}
+
 	bool Input::isKeyboard(int p_key)
 	{
-		if(0 > p_key || p_key >= 256)
+		if (0 > p_key || p_key >= 256)
 			return false;
-		return m_keyBoardValue[p_key];
+		return m_KeyBoardValue[p_key];
 	}
-	void Input::UpdateProcess(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
+
+	void Input::GetMousePos(int* p_x, int* p_y)
 	{
+		*p_x = this->m_MousePosX;
+		*p_y = this->m_MousePosY;
+	}
+
+	void Input::UpdateProcess(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
+    {
 
 		switch (iMessage) {
 
@@ -43,64 +47,53 @@ namespace GameInput_M {
 			m_ISMouseClick[(int)GameInput_M::MouseValue::Left] = true;
 			m_MousePosX = LOWORD(lParam);
 			m_MousePosY = HIWORD(lParam);
-			InvalidateRect(hWnd, NULL, FALSE);
+			std::cout << "마우스 좌클릭 누르기" << std::endl;
 			break;
 
 		case WM_LBUTTONUP:
 			m_ISMouseClick[(int)GameInput_M::MouseValue::Left] = false;
 			m_MousePosX = LOWORD(lParam);
 			m_MousePosY = HIWORD(lParam);
-			InvalidateRect(hWnd, NULL, FALSE);
+			std::cout << "마우스 좌클릭 끝내기" << std::endl;
 			break;
 
 		case WM_RBUTTONDOWN:
 			m_ISMouseClick[(int)GameInput_M::MouseValue::Right] = true;
 			m_MousePosX = LOWORD(lParam);
 			m_MousePosY = HIWORD(lParam);
-			InvalidateRect(hWnd, NULL, FALSE);
 			break;
 
 		case WM_RBUTTONUP:
 			m_ISMouseClick[(int)GameInput_M::MouseValue::Right] = false;
 			m_MousePosX = LOWORD(lParam);
 			m_MousePosY = HIWORD(lParam);
-			InvalidateRect(hWnd, NULL, FALSE);
 			break;
 
 		case WM_MBUTTONDOWN:
 			m_ISMouseClick[(int)GameInput_M::MouseValue::Heel] = true;
 			m_MousePosX = LOWORD(lParam);
 			m_MousePosY = HIWORD(lParam);
-			InvalidateRect(hWnd, NULL, FALSE);
 			break;
 
 		case WM_MBUTTONUP:
 			m_ISMouseClick[(int)GameInput_M::MouseValue::Heel] = false;
 			m_MousePosX = LOWORD(lParam);
 			m_MousePosY = HIWORD(lParam);
-			InvalidateRect(hWnd, NULL, FALSE);
 			break;
 
 		case WM_MOUSEWHEEL:
-			m_MouseHeelValue = GET_WHEEL_DELTA_WPARAM(wParam);
+			m_MouseHeelDelta = GET_WHEEL_DELTA_WPARAM(wParam);
 			InvalidateRect(hWnd, NULL, FALSE);
 			break;
 
 		case WM_KEYDOWN:
-			m_keyBoardValue[wParam] = true;
-			InvalidateRect(hWnd, NULL, FALSE);
+			m_KeyBoardValue[wParam] = true;
 			break;
 
 		case WM_KEYUP:
-			m_keyBoardValue[wParam] = false;
-			InvalidateRect(hWnd, NULL, FALSE);
+			m_KeyBoardValue[wParam] = false;
 			break;
 		}
 
-	}
-	void Input::GetMousePos(int* p_x, int* p_y)
-	{
-		*p_x = this->m_MousePosX;
-		*p_y = this->m_MousePosY;
-	}
+    }
 }

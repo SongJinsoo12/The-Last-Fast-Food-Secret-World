@@ -1,5 +1,7 @@
 #include "CardGacha.h"
 
+CardGacha g_Gacha;
+
 void CardGacha::one(DeckBuilding& p_deck, MainGame& p_mg)
 {
 	int invensize = p_deck.GetSize();//카드풀에서 랜덤한 카드를 뽑음
@@ -132,6 +134,6 @@ void CardGacha::DrawGacha(HDC p_hdc, int p_mx, int p_my, WCHAR p_text[])
 		TextOut(p_hdc, draw_card[i].x - 2, draw_card[i].y, p_text, lstrlen(p_text));
 	}
 
-	wsprintf(p_text, TEXT("왼쪽상단의 상점 버튼을 눌러 돌아가기"));
-	TextOut(p_hdc, 690, 650, p_text, lstrlen(p_text));
+	//wsprintf(p_text, TEXT("왼쪽상단의 상점 버튼을 눌러 돌아가기"));
+	//TextOut(p_hdc, 690, 650, p_text, lstrlen(p_text));
 }
