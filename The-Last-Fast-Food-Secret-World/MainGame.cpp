@@ -11,11 +11,19 @@ void MainGame::AddGold(int v) {
 	Coin += v;
 }
 
-void MainGame::RemoveGold(int v) {
-	Coin -= v;
-	if (Coin <= 0)
-		Coin = 0;
+bool MainGame::RemoveGold(int v) {
+	int result = Coin - v;
+	if (result < 0)
+	{
+		return false;
+	}
+	else
+	{
+		Coin -= v;
+		return true;
+	}
 }
+
 
 int MainGame::GetLargeStage() {
 	return LargeStage;
