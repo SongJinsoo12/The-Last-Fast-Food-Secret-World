@@ -4,7 +4,10 @@
 #include <vector>
 #include "Singleton.h"
 
+#define m_State GameState_M::Context::GetInstance()
 using namespace std;
+
+class Input;
 
 namespace GameState_M {
 	enum class E_InGameState
@@ -22,11 +25,15 @@ namespace GameState_M {
 	class State
 	{
 	public:
+		//State();
 		//virtual ~State();
 
 		virtual void Enter() = 0;
 		virtual void Update(HDC p_hdc, HWND p_hwnd) = 0;
 		virtual void Exit() = 0;
+
+	protected:
+		//Input* m_input = nullptr;
 	};
 
 	class Context : public Singleton<Context>

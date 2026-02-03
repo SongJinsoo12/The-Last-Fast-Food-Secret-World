@@ -1,7 +1,9 @@
 #include "GameState.h"
 #include "RenderManager.h"
 #include "InputGame.h"
-#include <iostream>
+
+//각 화면
+#include "Shop.h"
 
 namespace GameState_M {
 	Context::Context() {
@@ -15,7 +17,7 @@ namespace GameState_M {
 		//StateVector[(int)E_InGameState::Lobby] = make_shared<Lobby>();
 	}
 
-	// �� ȭ�鿡 �´� Update ����
+	// 각 화면에 맞는 Update 로직
 	void Context::Update(HDC p_hdc, HWND p_hwnd)
 	{
 		if (currentState == nullptr)
@@ -34,22 +36,27 @@ namespace GameState_M {
 		currentState.get()->Enter();
 	}
 
+
+
 	void Lobby::Enter()
 	{
-		GameInput_M::Input::GetInstance().isClick();
+		m_rend.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(0, 0, 300, 300)
+			, false, GameImage_M::LayerType::Field);
 	}
 
 	void Lobby::Update(HDC p_hdc, HWND p_hwn) {
-		
+
+		if (GameInput_M::Input::GetInstance().isClick() == (int)GameInput_M::MouseValue::Left)
+			m_rend.ImageVisible("ID_1", true);
 	}
 
 	void Lobby::Exit() {
-		
+		m_rend.AllRemoveImage();
 	}
 
 	void Menu::Enter()
 	{
-	
+		m_rend.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(100, 0, 300, 300), true, GameImage_M::LayerType::Field);
 	}
 
 	void Menu::Update(HDC p_hdc, HWND p_hwnd)
@@ -58,7 +65,7 @@ namespace GameState_M {
 	}
 
 	void Menu::Exit() {
-		
+		m_rend.RemoveIDIamage("ID_1");
 	}
 
 	void DeckBuild::Enter() {
@@ -75,19 +82,19 @@ namespace GameState_M {
 
 	void Shop::Enter()
 	{
-		//g_Shop.SetDrawShop();
+		g_Shop.SetDrawShop();
 	}
 
 	void Shop::Update(HDC p_hdc, HWND p_hwnd)
 	{
-		//if (g_Input.isClick() == (int)GameInput_M::MouseValue::Left)
-		//	g_State.ChangeState(GameState_M::E_InGameState::Lobby);
-		//g_Shop.DrawShop(p_hdc, text);
+		if (g_Input.isClick() == (int)GameInput_M::MouseValue::Left)
+			g_State.ChangeState(GameState_M::E_InGameState::Lobby);
+		g_Shop.DrawShop(p_hdc, text);
 	}
 
 	void Shop::Exit()
 	{
-		//g_Shop.ClearShop();
+		g_Shop.ClearShop();
 	}
 
 	void LuckyBox::Enter()

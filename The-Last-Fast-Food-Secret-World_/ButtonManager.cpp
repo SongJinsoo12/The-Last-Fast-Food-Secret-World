@@ -3,7 +3,7 @@
 bool ButtonManager::AddButton(std::shared_ptr<BaseButton> btn) {
     for (auto& b : buttons) {
         if (b->GetId() == btn->GetId()) {
-            return false; // Áßº¹ ID ¡æ Ãß°¡ ½ÇÆĞ
+            return false; // ì¤‘ë³µ ID â†’ ì¶”ê°€ ì‹¤íŒ¨
         }
     }
     buttons.push_back(btn);
@@ -40,5 +40,5 @@ void ButtonManager::SetVisibleById(const std::string& id, bool v) {
     }
 }
 
-// Àü¿ª °´Ã¼ Á¤ÀÇ
+// ì „ì—­ ê°ì²´ ì •ì˜
 ButtonManager btnManager;

@@ -94,7 +94,7 @@ Card* CardTableManager::GetCardData(ALLCARDEnum p_uid)
 	return m_AllCardDataVec[(int)p_uid];
 }
 
-//카드 셔플
+//카드 셔플 
 vector<GameCard*> CardTableManager::GetRandomCard(int p_count)
 {
 	vector<GameCard*> outvec;

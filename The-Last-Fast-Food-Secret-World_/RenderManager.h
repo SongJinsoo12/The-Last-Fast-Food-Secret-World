@@ -7,6 +7,7 @@
 #include <unordered_map>
 
 #define m_rend GameImage_M::RenderManager::GetInstance()
+#define RENDINSTANCE GameImage_M::RenderManager::GetInstance()
 
 namespace GameImage_M {
 

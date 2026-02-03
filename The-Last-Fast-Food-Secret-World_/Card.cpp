@@ -1,4 +1,4 @@
-#include "Card.h"
+﻿#include "Card.h"
 #include <string>
 #include "RenderManager.h"
 #include "ImageLoad.h"
