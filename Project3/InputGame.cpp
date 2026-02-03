@@ -1,8 +1,6 @@
 #include "InputGame.h"
 #include <iostream>
 
-GameInput_M::Input g_Input;
-
 namespace GameInput_M {
 	int Input::isClick()
 	{

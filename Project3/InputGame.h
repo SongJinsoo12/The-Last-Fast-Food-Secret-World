@@ -1,5 +1,6 @@
 #pragma once
 #include <windows.h>
+#include "Singleton.h"
 
 namespace GameInput_M {
 	enum class MouseValue {
@@ -8,8 +9,9 @@ namespace GameInput_M {
 		Right
 	};
 
-	class Input
+	class Input : public Singleton<Input>
 	{
+		friend class Singleton<Input>;
 	public:
 		virtual int isClick();
 		virtual int isHeel();
@@ -28,5 +30,3 @@ namespace GameInput_M {
 	};
 
 }
-
-extern GameInput_M::Input g_Input;

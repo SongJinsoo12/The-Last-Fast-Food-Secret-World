@@ -94,7 +94,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	HDC memDC;
 	HBITMAP hOldBitmap;
 
-	g_Input.UpdateProcess(hWnd, iMessage, wParam, lParam);
+	GameInput_M::Input::GetInstance().UpdateProcess(hWnd, iMessage, wParam, lParam);
 
 	switch (iMessage) {
 	case WM_CREATE:
