@@ -123,9 +123,9 @@ DefCard::DefCard(DefKind kind, CRank rank, CAttribute attr, const std::wstring& 
     : name(name), kind(kind)
 {
     // Card 기본 필드 세팅
-    Type = E_Defence;
+    m_Type = E_Defence;
     Rank = rank;
-    Ait = attr;
+    m_Ait = attr;
     Atk = 0;
     Rdc = 0;
 }

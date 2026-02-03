@@ -5,7 +5,10 @@ class Status
 public:
 	Status();
 	~Status();
-
+	int GetHP();
+	void SetHP(int p_hp);
+	bool GetIsActAval();
+	void SetIsActAval(bool p_isActAval);
 private:
 
 protected:

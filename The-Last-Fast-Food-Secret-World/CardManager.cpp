@@ -4,6 +4,8 @@
 #include "ImageLoad.h"
 #include "ImageManager.h"
 #include "CardTableManager.h"
+#include "Boss.h"
+#include "Player.h"
 
 void CardManager::SetImage()
 {
@@ -51,8 +53,8 @@ void CardManager::SetImage()
 	cout << "이미지 로드 확인\n";
 }
 
-CardManager::CardManager() : deckCount(25), handCount(0), handSelection(4),
-isMyTurn(false), isSelect(false)
+CardManager::CardManager() : m_DeckCount(25), m_HandCount(0), m_HandSelection(4),
+m_IsMyTurn(false), m_IsSelect(false)
 {
 }
 
@@ -64,30 +66,30 @@ void CardManager::StartGame()
 
 CardManager::~CardManager()
 {
-	for (size_t i = 0; i < handCount; i++)
+	for (size_t i = 0; i < m_HandCount; i++)
 	{
-		delete deck[i];
+		delete m_Deck[i];
 	}
 }
 
 int CardManager::GetDeckCount()
 {
-	return deckCount;
+	return m_DeckCount;
 }
 
 int CardManager::GetHandCount()
 {
-	return handCount;
+	return m_HandCount;
 }
 
 vector<GameCard*> CardManager::GetHand()
 {
-	return hand;
+	return m_Hand;
 }
 
 void CardManager::SetDeck()
 {
-	deck = CardTableManager::Instance()->GetRandomCard(25);
+	m_Deck = CardTableManager::Instance()->GetRandomCard(25);
 
 	StartGame();
 }
@@ -98,22 +100,22 @@ void CardManager::CardDraw(int drawNum)
 	for (size_t i = 0; i < drawNum; i++)
 	{
 		//덱에 카드가 없으면 리턴
-		if (deckCount <= 0)
+		if (m_DeckCount <= 0)
 			return;
 
-		deckCount--;
-		handCount++;
+		m_DeckCount--;
+		m_HandCount++;
 
 
-		hand.push_back(deck[deckCount]);
-		m_rend.ImageVisible(to_string(deck[deckCount]->GetUid()), true);
+		m_Hand.push_back(m_Deck[m_DeckCount]);
+		m_rend.ImageVisible(to_string(m_Deck[m_DeckCount]->GetUid()), true);
 	}
 
 	//패 카드 임시 확인
 	cout << "패 카드 번호: [ ";
-	for (size_t i = 0; i < handCount; i++)
+	for (size_t i = 0; i < m_HandCount; i++)
 	{
-		cout << hand[i]->GetUid() << " ";
+		cout << m_Hand[i]->GetUid() << " ";
 	}
 	cout << " ]\n";
 }
@@ -155,7 +157,7 @@ void CardManager::DrawBG()
 void CardManager::DrawPlayerHand()
 {
 	//패가 없으면 리턴
-	if (handCount <= 0)
+	if (m_HandCount <= 0)
 		return;
 
 	int posY;
@@ -164,40 +166,40 @@ void CardManager::DrawPlayerHand()
 	int midX = 1280 * 0.5;
 	int handMidX = midX - (CARDX * 2) - (CARDX * 0.5);
 	//패 전체 길이는 임시로 카드 5장 길이로 설정
-	int sliceHand = (CARDX * 5) / handCount;
+	int sliceHand = (CARDX * 5) / m_HandCount;
 
 	//패가 5장 보다 적을 시
-	if (handCount < 5)
+	if (m_HandCount < 5)
 	{
-		sliceHand = (CARDX * handCount) / handCount;
+		sliceHand = (CARDX * m_HandCount) / m_HandCount;
 		handMidX = midX - 200;
 	}
 
-	for (size_t i = 0; i < handCount; i++)
+	for (size_t i = 0; i < m_HandCount; i++)
 	{
 		int startPos = handMidX + (sliceHand * i);
-		if (i == handSelection)
+		if (i == m_HandSelection)
 		{
 			//카드 정보 확대 보기
-			if (isSelect)
+			if (m_IsSelect)
 			{
-				m_rend.MoveImage(to_string(hand[handSelection]->GetUid()),
+				m_rend.MoveImage(to_string(m_Hand[m_HandSelection]->GetUid()),
 					Gdiplus::Rect(70, 380, CARDX * 2, CARDY * 2));
 			}
 			else
 			{
-				m_rend.MoveImage(to_string(hand[i]->GetUid()),
+				m_rend.MoveImage(to_string(m_Hand[i]->GetUid()),
 					Gdiplus::Rect(startPos, posY - 10, CARDX, CARDY));
 			}
 		}
 		else
 		{
-			m_rend.MoveImage(to_string(hand[i]->GetUid()),
+			m_rend.MoveImage(to_string(m_Hand[i]->GetUid()),
 				Gdiplus::Rect(startPos, posY + 10, CARDX, CARDY));
 		}
 
 		//카드 출력 순서
-		m_rend.LayerMoveToBack(to_string(hand[i]->GetUid()));
+		m_rend.LayerMoveToBack(to_string(m_Hand[i]->GetUid()));
 	}
 }
 
@@ -205,7 +207,7 @@ void CardManager::DrawPlayerHand()
 void CardManager::DrawOppHand()
 {
 	//패가 없으면 리턴
-	if (handCount <= 0)
+	if (m_HandCount <= 0)
 		return;
 
 	int posY;
@@ -214,16 +216,16 @@ void CardManager::DrawOppHand()
 	int midX = 1280 * 0.5;
 	int handMidX = midX - (CARDX * 2) - (CARDX * 0.5);
 	//패 전체 길이는 임시로 카드 5장 길이로 설정
-	int sliceHand = (CARDX * 5) / handCount;
+	int sliceHand = (CARDX * 5) / m_HandCount;
 
 	//패가 5장 보다 적을 시
-	if (handCount < 5)
+	if (m_HandCount < 5)
 	{
-		sliceHand = (CARDX * handCount) / handCount;
+		sliceHand = (CARDX * m_HandCount) / m_HandCount;
 		handMidX = midX - 200;
 	}
 
-	for (size_t i = 0; i < handCount; i++)
+	for (size_t i = 0; i < m_HandCount; i++)
 	{
 		int startPos = handMidX + (sliceHand * i);
 		string cardId = "Card_Boss_Hand_";
@@ -234,35 +236,35 @@ void CardManager::DrawOppHand()
 }
 
 //패 카드 선택
-void CardManager::HandSelect(WPARAM wParam, CardManager& opponent, HWND hWnd)
+void CardManager::HandSelect(WPARAM wParam, CardManager& player, CardManager& opponent, HWND hWnd)
 {
 	switch (wParam)
 	{
 	case VK_LEFT:
-		if (handSelection <= 0)
+		if (m_HandSelection <= 0)
 			return;
-		handSelection--;
+		m_HandSelection--;
 		break;
 	case VK_RIGHT:
-		if (handSelection >= handCount - 1)
+		if (m_HandSelection >= m_HandCount - 1)
 			return;
-		handSelection++;
+		m_HandSelection++;
 		break;
 		//임시 카드 정보 보기 버트
 	case VK_UP:
 		//CardInfo();
-		isSelect = true;
+		m_IsSelect = true;
 		break;
 	case VK_DOWN:
-		isSelect = false;
+		m_IsSelect = false;
 		break;
 
 		//임시 카드 내기 버튼
 	case VK_RETURN:
 		//자신의 턴이 아니면 행동 불가능
-		if (!isMyTurn)
+		if (!m_IsMyTurn)
 			return;
-		CardAct(opponent, hWnd);
+		CardAct(player, opponent, hWnd);
 		break;
 	default:
 		break;
@@ -270,22 +272,22 @@ void CardManager::HandSelect(WPARAM wParam, CardManager& opponent, HWND hWnd)
 }
 
 //패 카드 사용
-void CardManager::CardAct(CardManager& opponent, HWND hWnd)
+void CardManager::CardAct(CardManager& player ,CardManager& opponent, HWND hWnd)
 {
 	//패에 카드가 없으면 리턴
-	if (handCount <= 0)
+	if (m_HandCount <= 0)
 		return;
 	//선택 중이지 않으면 리턴
-	if (handSelection < 0)
+	if (m_HandSelection < 0)
 		return;
 
-	switch (hand[handSelection]->GetType())
+	switch (m_Hand[m_HandSelection]->GetType())
 	{
 	case E_Attack:
-		cout << "공격 카드 사용!!\n";
+		cout << "공격 카드 사용!! " << m_Hand[m_HandSelection]->GetAtk() << "데미지!!\n";
 		break;
 	case E_Deffense:
-		cout << "방어 카드 사용!!\n";
+		cout << "방어 카드 사용!!" << m_Hand[m_HandSelection]->GetDef() << "방어!!\n";
 		break;
 	case E_Magic:
 		cout << "보조 카드 사용!!\n";
@@ -293,25 +295,24 @@ void CardManager::CardAct(CardManager& opponent, HWND hWnd)
 	}
 
 	//이미지 안보이기
-	m_rend.ImageVisible(to_string(hand[handSelection]->GetUid()), false);
+	m_rend.ImageVisible(to_string(m_Hand[m_HandSelection]->GetUid()), false);
 
-	hand.erase(hand.begin() + handSelection);
-	handCount--;
+	m_Hand.erase(m_Hand.begin() + m_HandSelection);
+	m_HandCount--;
 	//사용한 카드가 패의 가장 오른쪽 카드이면 왼쪽 카드 선택
-	if (handSelection >= handCount && handSelection != 0)
-		handSelection--;
+	if (m_HandSelection >= m_HandCount && m_HandSelection != 0)
+		m_HandSelection--;
 
 	//턴 엔드
-	this->isMyTurn = !this->isMyTurn;
-	opponent.isMyTurn = !opponent.isMyTurn;
+	player.m_IsMyTurn = !player.m_IsMyTurn;
+	opponent.m_IsMyTurn = !opponent.m_IsMyTurn;
 	SetTimer(hWnd, TURNTIME, 7000, NULL);
-	cout << "상대방의 턴\n";
-
-	opponent.OpponentAct();
+	opponent.OpponentAct(player, opponent, hWnd);
+	cout << "턴 교체.\n";
 }
 
 //시작 턴 정하기
-void CardManager::StartTurn(CardManager& player, CardManager& opponent)
+void CardManager::StartTurn(CardManager& player, CardManager& opponent, HWND hWnd)
 {
 	randomInit(0, 100);
 	int randTurn;
@@ -319,30 +320,30 @@ void CardManager::StartTurn(CardManager& player, CardManager& opponent)
 
 	if (randTurn % 2 == 0)
 	{
-		player.isMyTurn = !player.isMyTurn;
+		player.m_IsMyTurn = !player.m_IsMyTurn;
 		cout << "자신의 턴\n";
 	}
 	else
 	{
-		opponent.isMyTurn = !opponent.isMyTurn;
+		opponent.m_IsMyTurn = !opponent.m_IsMyTurn;
 		cout << "상대방의 턴\n";
-		opponent.OpponentAct();
+		opponent.OpponentAct(player, opponent, hWnd);
 	}
 
 }
 
 //턴 시간 제한
-void CardManager::TimeLimit(WPARAM wParam, CardManager& opponent)
+void CardManager::TimeLimit(WPARAM wParam, HWND hWnd, CardManager& player, CardManager& opponent)
 {
 	switch (wParam)
 	{
 	case TURNTIME:
 		//턴 엔드
-		this->isMyTurn = !this->isMyTurn;
-		opponent.isMyTurn = !opponent.isMyTurn;
+		player.m_IsMyTurn = !player.m_IsMyTurn;
+		opponent.m_IsMyTurn = !opponent.m_IsMyTurn;
 
 		//자신의 차례면 드로우
-		if (this->isMyTurn)
+		if (player.m_IsMyTurn)
 		{
 			CardDraw(1);
 			cout << "자신의 턴\n";
@@ -350,10 +351,10 @@ void CardManager::TimeLimit(WPARAM wParam, CardManager& opponent)
 		else
 		{
 			cout << "상대방의 턴\n";
-			opponent.OpponentAct();
+			opponent.OpponentAct(player, opponent, hWnd);
 		}
 
-		this->DrawPlayerHand();
+		player.DrawPlayerHand();
 		opponent.DrawOppHand();
 		break;
 	default:
@@ -362,23 +363,78 @@ void CardManager::TimeLimit(WPARAM wParam, CardManager& opponent)
 }
 
 //보스 / 몬스터 행동
-void CardManager::OpponentAct()
+void CardManager::OpponentAct(Player& p_player, Boss& p_boss, CardManager& player, CardManager& opponent, HWND hWnd)
 {
-	/*
-	* 1. 카드 드로우
-	* 2. hp가 절반 이상일 경우 --> 공격 카드 서칭 --> 가장 공격력이 높은 카드 사용
-	*						--> 공격 카드가 없을 경우 --> 방어 카드 서칭 --> 가장 방어력 높은 카드 사용
-	*						--> 방어 카드 없을 경우 --> 보조 카드 사용
-	* 3. hp가 절반 이하일 경우 --> 보조 카드 중 회복 카드 서칭 --> 회복력 가장 높은 카드 사용
-	*						--> 회복 카드 없을 경우 방어 카드 서칭 --> 가장 방어력 높은 카드 사용
-	*						--> 방어 카드 없을 경우 공격 카드 서칭 --> 가장 공격력이 높은 카드 사용
-	*						--> 공격 카드 없을 경우 보조 카드 사용
-	*
-	* 공격 카드 우선 순위 ==> 1. 공격력 2.
-	* 방어 카드 우선 순위 ==> 1. 방어력 2.
-	* 보조 카드 우선 순위 ==> 얘네가 진짜 ㅅㅂ럼들임 ㅇㅇ. 1. 회복 2.
-	*/
-
+	//드로우 
 	CardDraw(1);
+
+	//임시 정보 표출
+	string info;
+	for (size_t i = 0; i < m_HandCount; i++)
+	{
+		info += (to_string(i) + "번째 카드 정보: ");
+		info += (to_string(m_Hand[i]->GetStar() + 1) + "성. 공격력 " + to_string(m_Hand[i]->GetAtk())
+			+ ". 방어력 " + to_string(m_Hand[i]->GetDef()) + ".");
+		info += m_Hand[i]->GetInfo() + "\n";
+	}
+	cout << info << endl;
+	
+	//공격 카드로 플레이어를 죽일 수 있다면 1순위 액트
+	for (size_t i = 0; i < m_HandCount; i++)
+	{
+		if (m_Hand[i]->GetType() == E_Attack)
+		{
+			if (m_Hand[i]->GetAtk() >= p_player.GetHP())
+			{
+				m_HandSelection = i;
+				break;
+			}
+		}
+	}
+
+	
+	
+
+
+	BossCardAct(player, hWnd);
+}
+
+void CardManager::BossCardAct(CardManager& player, HWND hWnd)
+{
+	//패에 카드가 없으면 리턴
+	if (m_HandCount <= 0)
+		return;
+	//선택 중이지 않으면 리턴
+	if (m_HandSelection < 0)
+		return;
+
+	switch (m_Hand[m_HandSelection]->GetType())
+	{
+	case E_Attack:
+		cout << "공격 카드 사용!! " << m_Hand[m_HandSelection]->GetAtk() << "데미지!!\n";
+		break;
+	case E_Deffense:
+		cout << "방어 카드 사용!!" << m_Hand[m_HandSelection]->GetDef() << "방어!!\n";
+		break;
+	case E_Magic:
+		cout << "보조 카드 사용!!\n";
+		break;
+	}
+
+	//이미지 안보이기
+	m_rend.ImageVisible(to_string(m_Hand[m_HandSelection]->GetUid() + BOSSUID), false);
+
+	m_Hand.erase(m_Hand.begin() + m_HandSelection);
+	m_HandCount--;
+	//사용한 카드가 패의 가장 오른쪽 카드이면 왼쪽 카드 선택
+	if (m_HandSelection >= m_HandCount && m_HandSelection != 0)
+		m_HandSelection--;
+
+	//턴 엔드
+	player.m_IsMyTurn = !player.m_IsMyTurn;
+	m_IsMyTurn = !m_IsMyTurn;
+	SetTimer(hWnd, TURNTIME, 7000, NULL);
+	player.CardDraw(1);
+	cout << "턴 교체.\n";
 
 }

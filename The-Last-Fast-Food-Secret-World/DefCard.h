@@ -94,7 +94,7 @@ public:
     const std::wstring& GetName() const { return name; }
     DefKind GetKind() const { return kind; }
     CRank GetRank() const { return Rank; }
-    CAttribute GetAttribute() const { return Ait; }
+    CAttribute GetAttribute() const { return m_Ait; }
 
     // 카드 사용 시 방어 버프 생성
     // (랜덤이 필요하면 rng/ctx를 활용할 수 있도록 시그니처를 맞춤)

@@ -37,8 +37,8 @@ float AtkCard::RankTo_0_25_0_5_0_75(CRank r)
 AtkCard::AtkCard(CAttribute attr, CRank rank, AtkEffectType effect)
 {
     // Card 베이스 멤버 초기화
-    Type = E_Attack;
-    Ait = attr;
+    m_Type = E_Attack;
+    m_Ait = attr;
     Rank = rank;
 
     m_effect = effect;

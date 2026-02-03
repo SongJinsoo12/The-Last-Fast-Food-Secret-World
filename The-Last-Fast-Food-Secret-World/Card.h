@@ -55,12 +55,13 @@ enum Star
 class Card
 {
 protected:
-	int uid;
-	int atk;
-	int def;
-	CAttribute Ait;
-	CType Type;
-	Star star;
+	int m_Uid;
+	int m_Atk;
+	int m_Def;
+	CAttribute m_Ait;
+	CType m_Type;
+	Star m_Star;
+	string m_info;
 
 public:
 	Card();
@@ -80,6 +81,8 @@ public:
 	void SetType(CType p_Type);
 	Star GetStar();
 	void SetStar(Star p_Star);
+	string GetInfo();
+	void SetInfo(string p_info);
 
 };
 

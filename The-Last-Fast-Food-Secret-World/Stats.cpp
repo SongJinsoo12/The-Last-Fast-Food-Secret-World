@@ -1,4 +1,5 @@
 #include "Stats.h"
+#include "Status.h"
 
 template <typename T>
 Stats<T>::Stats() {
@@ -10,3 +11,5 @@ template <typename T>
 int Stats<T>::GetHP() {
 	return health;
 }
+
+
