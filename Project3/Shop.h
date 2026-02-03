@@ -101,7 +101,7 @@ public:
 	void SetDrawShop()
 	{
 		//상자 보관용 선반
-		g_renderManager.SetImage(L"shelf.png", "shelf1", 
+		m_rend.SetImage(L"shelf.png", "shelf1", 
 			Rect(0, 0, 651, 101), 
 			Rect(700, 250, 651, 101), 
 			true);

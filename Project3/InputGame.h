@@ -22,7 +22,9 @@ namespace GameInput_M {
 		bool m_ISMouseClick[(int)GameInput_M::MouseValue::Right + 1];
 		int m_MousePosX;
 		int m_MousePosY;
-		int m_MouseHeelValue;
+		int m_MouseHeelDelta;
+
+		bool m_KeyArr[256];
 	};
 
 }

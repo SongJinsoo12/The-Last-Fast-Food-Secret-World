@@ -5,8 +5,6 @@
 //°¢ È­¸é
 #include "Shop.h"
 
-GameState_M::Context g_State;
-
 namespace GameState_M {
 	Context::Context() {
 		StateVector.resize((int)E_InGameState::InGameResult + 1);
@@ -40,21 +38,22 @@ namespace GameState_M {
 
 	void Lobby::Enter()
 	{
-		g_renderManager.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(0, 0, 300, 300), false);
+		m_rend.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(0, 0, 300, 300)
+			, false, GameImage_M::LayerType::Field);
 	}
 
 	void Lobby::Update(HDC p_hdc, HWND p_hwn) {
 		if (g_Input.isClick() == (int)GameInput_M::MouseValue::Left)
-			g_renderManager.ImageVisible("ID_1", true);
+			m_rend.ImageVisible("ID_1", true);
 	}
 
 	void Lobby::Exit() {
-		g_renderManager.AllRemoveImage();
+		m_rend.AllRemoveImage();
 	}
 
 	void Menu::Enter()
 	{
-		g_renderManager.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(100, 0, 300, 300), true);
+		m_rend.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(100, 0, 300, 300), true, GameImage_M::LayerType::Field);
 	}
 
 	void Menu::Update(HDC p_hdc, HWND p_hwnd)
@@ -63,7 +62,7 @@ namespace GameState_M {
 	}
 
 	void Menu::Exit() {
-		g_renderManager.RemoveIDIamage("ID_1");
+		m_rend.RemoveIDIamage("ID_1");
 	}
 
 	void DeckBuild::Enter() {

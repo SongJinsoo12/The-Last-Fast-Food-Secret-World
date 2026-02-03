@@ -82,7 +82,8 @@ namespace GameImage_M {
 
 	shared_ptr<ImageLoad> RenderManager::FindImageID(string p_id)
 	{
-		if (m_IDMap.find(p_id) == m_IDMap.end()) return;
+		if (m_IDMap.find(p_id) == m_IDMap.end()) 
+			return nullptr;
 
 		LayerType layer = m_IDMap[p_id];
 		vector<shared_ptr<ImageLoad>>& targetVec = m_RenderList[(int)layer];

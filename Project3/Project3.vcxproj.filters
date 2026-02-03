@@ -60,6 +60,21 @@
     <ClInclude Include="easing.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="tweenpoint.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="tweentraits.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="dispatcher.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="easingresolve.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="int2type.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Card.cpp">

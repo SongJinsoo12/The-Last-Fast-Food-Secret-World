@@ -128,7 +128,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Card.h" />
+    <ClInclude Include="dispatcher.h" />
     <ClInclude Include="easing.h" />
+    <ClInclude Include="easingresolve.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="Gdi.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -136,17 +138,22 @@
     <ClInclude Include="ImageLoad.h" />
     <ClInclude Include="ImageManager.h" />
     <ClInclude Include="InputGame.h" />
+    <ClInclude Include="int2type.h" />
     <ClInclude Include="MainGame.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="RenderLayer.h" />
     <ClInclude Include="RenderManager.h" />
-    <ClInclude Include="Shop.h" />
+    <ClInclude Include="Shop.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="Stats.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="tween.h" />
+    <ClInclude Include="tweenpoint.h" />
+    <ClInclude Include="tweentraits.h" />
     <ClInclude Include="tweeny.h" />
   </ItemGroup>
   <ItemGroup>
@@ -163,7 +170,9 @@
     </ClCompile>
     <ClCompile Include="RenderLayer.cpp" />
     <ClCompile Include="RenderManager.cpp" />
-    <ClCompile Include="Shop.cpp" />
+    <ClCompile Include="Shop.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Stats.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>

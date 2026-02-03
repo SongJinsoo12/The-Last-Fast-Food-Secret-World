@@ -2,8 +2,9 @@
 #include "Windows.h"
 #include <memory>
 #include <vector>
+#include "Singleton.h"
 
-//#define m_State GameState_M::Context::Get
+#define m_State GameState_M::Context::GetInstance()
 
 using namespace std;
 
@@ -30,7 +31,10 @@ namespace GameState_M {
 		virtual void Exit() = 0;
 	};
 
-	class Context {
+	class Context : public Singleton<Context>
+	{
+		friend class Singleton<Context>;
+
 	private:
 		shared_ptr<State> currentState;
 		vector<shared_ptr<State>> StateVector;
@@ -95,5 +99,3 @@ namespace GameState_M {
 		void Exit() override;
 	};
 }
-
-extern GameState_M::Context g_State;
