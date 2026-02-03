@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 #include "MainGame.h"
-
+#include "InputGame.h"
 #include "RenderManager.h"
 #include "ImageManager.h"
 
@@ -22,7 +22,7 @@ enum StageName
 };
 
 
-class Stage : MainGame
+class Stage : MainGame 
 {
 protected:
 

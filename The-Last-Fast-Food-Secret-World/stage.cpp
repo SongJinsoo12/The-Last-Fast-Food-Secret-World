@@ -7,7 +7,6 @@
 
 
 
-
 int Stage::Get_LargeStage() { //튜토리얼 클래스 용
     return LargeStage;
 }
@@ -185,24 +184,33 @@ bool Stage::GameOver(bool isPlayerLost/* player.h  IsAlive()*/) {
 
 void Stage::SetImage() {
     m_rend.SetImage(L"StageClear.png", "StageClear",
-        Rect(0, 0, 1024, 1024), Rect(0, 0, 1280, 720), true, GameImage_M::LayerType::UI);
-    m_rend.SetImage(L"StageClearBnt_1.png", "StageClearBtn_1",
-        Rect(0, 0, 1200, 1200), Rect(0, 0, 1280, 720), true, GameImage_M::LayerType::UI);
+        Rect(0, 0, 1024, 1024), Rect(0, 0, 1280, 720), false, GameImage_M::LayerType::UI);
+    m_rend.SetImage(L"StageClearBtn_1.png", "StageClearBtn_1",
+        Rect(0, 0, 200, 100), Rect(0, 0, 1280, 720), false, GameImage_M::LayerType::UI);
     cout << "스테이지 클리어 화면 로드 확인\n";
 
 }
 
 void Stage::LoadStageClearScreen() {
-
+   RECT StageClearBtnRect = {340, 360, 540, 460};
+    
+    m_rend.ImageVisible("StageClear", true);
+    m_rend.ImageVisible("StageClearBtn_1", true);
     m_rend.MoveImage("StageClear",
-        Gdiplus::Rect(0, 0, 500, 500));
-    btnManager.AddButton(make_shared<RectButton>( "StageClearBtn_1", Rect(390, 500, 500, 100), true));
+        Gdiplus::Rect(640, 360, 500, 500));
+    m_rend.MoveImage("StageClearBtn_1",
+        Gdiplus::Rect(500, 360, 500, 500));
+	
+    btnManager.AddButton(make_shared<RectButton>( "StageClearBtn_1", StageClearBtnRect));
 	cout << "스테이지 클리어 화면 출력 확인" << endl;
     //while?
-    if (btnManager.HandleClick(mg.mx, mg.my) && btnManager.HandleClick(mg.mx, mg.my) -> GetId() == "StageClearBtn_1")
+    /*if (btnManager.HandleClick(m_Input.m_MousePosX, m_Input.m_MousePosY) && btnManager.HandleClick(mg.mx, mg.my) -> GetId() == "StageClearBtn_1")
     {
         GameState = E_MENU;
-    }
+        m_rend.ImageVisible("StageClear", false);
+        
+		btnManager.SetVisibleById("StageClearBtn_1", false);    
+    }*/
     
 }
 

@@ -92,6 +92,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		case LOAD:
 			g_player.SetDeck();
 			g_enemy.SetDeck();
+			stage.LoadStageClearScreen();
 
 			g_player.StartTurn(g_player, g_enemy);
 			g_player.DrawPlayerHand();
@@ -129,8 +130,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		/*g_player.DrawPlayerHand();
 		g_enemy.DrawOppHand();*/
 
-		m_rend.RenderAll(&graphics);
 		btnManager.DrawAll();
+		m_rend.RenderAll(&graphics);
+		
 
 		BitBlt(hdc, 0, 0, rt.right, rt.bottom, memDC, 0, 0, SRCCOPY);
 
