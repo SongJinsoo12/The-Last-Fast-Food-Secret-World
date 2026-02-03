@@ -44,7 +44,10 @@ namespace GameState_M {
 
 	void Lobby::Update(HDC p_hdc, HWND p_hwn) {
 		if (GameInput_M::Input::GetInstance().isClick() == (int)GameInput_M::MouseValue::Left)
+		{
+			//m_State.ChangeState(GameState_M::E_InGameState::InGameResult);
 			m_rend.ImageVisible("ID_1", true);
+		}
 	}
 
 	void Lobby::Exit() {
@@ -108,14 +111,18 @@ namespace GameState_M {
 
 	void InGame::Enter()
 	{
+		//이미지 로드/보여기
+		//값 초기화 가능 
 	}
 
 	void InGame::Update(HDC p_hdc, HWND p_hwnd)
 	{
+		//게임 로직 함수
 	}
 
 	void InGame::Exit()
 	{
+		//이미지 지우기
 	}
 
 	void InGameResult::Enter()
