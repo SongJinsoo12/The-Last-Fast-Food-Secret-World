@@ -1,4 +1,4 @@
-﻿#include "RenderManager.h"
+#include "RenderManager.h"
 #include <iostream>
 
 namespace GameImage_M {
@@ -58,10 +58,10 @@ namespace GameImage_M {
 		LayerType layer = m_IDMap[p_id];
 		vector<shared_ptr<ImageLoad>>& targetVec = m_RenderList[(int)layer];
 
-		for (vector<shared_ptr<ImageLoad>>::iterator it = targetVec.begin();
+		for (vector<shared_ptr<ImageLoad>>::iterator it= targetVec.begin(); 
 			it != targetVec.end(); it++)
 		{
-			if ((*it)->GetID() == p_id) {
+			if ((*it)->GetID()==p_id){
 				targetVec.erase(it);
 				m_IDMap.erase(p_id);
 				break;
@@ -82,18 +82,20 @@ namespace GameImage_M {
 
 	shared_ptr<ImageLoad> RenderManager::FindImageID(string p_id)
 	{
-		if (m_IDMap.find(p_id) == m_IDMap.end()) return nullptr;
+		if (m_IDMap.find(p_id) == m_IDMap.end()) 
+			return nullptr;
 
 		LayerType layer = m_IDMap[p_id];
 		vector<shared_ptr<ImageLoad>>& targetVec = m_RenderList[(int)layer];
 		for (const shared_ptr<ImageLoad>& img : targetVec)
 		{
-			if (img->GetID() == p_id)
+			if (img->GetID() == p_id) 
 				return img;
 		}
 
 		return nullptr;
 	}
+
 	void RenderManager::LayerMoveForward(string p_id)
 	{
 		if (m_IDMap.find(p_id) == m_IDMap.end()) return;
@@ -107,6 +109,7 @@ namespace GameImage_M {
 			}
 		}
 	}
+
 	void RenderManager::LayerMoveBackward(string p_id)
 	{
 		if (m_IDMap.find(p_id) == m_IDMap.end()) return;
@@ -120,13 +123,14 @@ namespace GameImage_M {
 			}
 		}
 	}
+
 	void RenderManager::LayerMoveToFont(string p_id)
 	{
 		if (m_IDMap.find(p_id) == m_IDMap.end()) return;
 		LayerType layer = m_IDMap[p_id];
 		vector<shared_ptr<ImageLoad>>& targetVec = m_RenderList[(int)layer];
 
-		for (vector<shared_ptr<ImageLoad>>::iterator it = targetVec.begin();
+		for (vector<shared_ptr<ImageLoad>>::iterator it=targetVec.begin();
 			it != targetVec.end(); it++)
 		{
 			if ((*it)->GetID() == p_id) {
@@ -137,6 +141,7 @@ namespace GameImage_M {
 			}
 		}
 	}
+
 	void RenderManager::LayerMoveToBack(string p_id)
 	{
 		if (m_IDMap.find(p_id) == m_IDMap.end()) return;
