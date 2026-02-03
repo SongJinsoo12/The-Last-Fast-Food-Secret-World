@@ -4,6 +4,11 @@
 #include <vector>
 #include "Singleton.h"
 
+<<<<<<< HEAD
+#define m_State GameState_M::Context::GetInstance()
+
+=======
+>>>>>>> 0264c57aa6c6a2dbd9f7563d09fb1056bad0373f
 using namespace std;
 
 namespace GameState_M {
