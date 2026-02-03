@@ -1,10 +1,10 @@
 #pragma once
 
-class Status
+class CardPlayerStatus
 {
 public:
-	Status();
-	~Status();
+	CardPlayerStatus();
+	~CardPlayerStatus();
 	int GetHP();
 	void SetHP(int p_hp);
 	bool GetIsActAval();

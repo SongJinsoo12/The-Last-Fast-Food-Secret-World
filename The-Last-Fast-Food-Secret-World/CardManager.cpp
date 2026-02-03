@@ -307,7 +307,7 @@ void CardManager::CardAct(CardManager& player ,CardManager& opponent, HWND hWnd)
 	player.m_IsMyTurn = !player.m_IsMyTurn;
 	opponent.m_IsMyTurn = !opponent.m_IsMyTurn;
 	SetTimer(hWnd, TURNTIME, 7000, NULL);
-	opponent.OpponentAct(player, opponent, hWnd);
+	//opponent.OpponentAct(player, opponent, hWnd);
 	cout << "턴 교체.\n";
 }
 
@@ -327,7 +327,7 @@ void CardManager::StartTurn(CardManager& player, CardManager& opponent, HWND hWn
 	{
 		opponent.m_IsMyTurn = !opponent.m_IsMyTurn;
 		cout << "상대방의 턴\n";
-		opponent.OpponentAct(player, opponent, hWnd);
+		//opponent.OpponentAct(player, opponent, hWnd);
 	}
 
 }
@@ -351,7 +351,7 @@ void CardManager::TimeLimit(WPARAM wParam, HWND hWnd, CardManager& player, CardM
 		else
 		{
 			cout << "상대방의 턴\n";
-			opponent.OpponentAct(player, opponent, hWnd);
+			//opponent.OpponentAct(player, opponent, hWnd);
 		}
 
 		player.DrawPlayerHand();
@@ -363,41 +363,41 @@ void CardManager::TimeLimit(WPARAM wParam, HWND hWnd, CardManager& player, CardM
 }
 
 //보스 / 몬스터 행동
-void CardManager::OpponentAct(Player& p_player, Boss& p_boss, CardManager& player, CardManager& opponent, HWND hWnd)
-{
-	//드로우 
-	CardDraw(1);
-
-	//임시 정보 표출
-	string info;
-	for (size_t i = 0; i < m_HandCount; i++)
-	{
-		info += (to_string(i) + "번째 카드 정보: ");
-		info += (to_string(m_Hand[i]->GetStar() + 1) + "성. 공격력 " + to_string(m_Hand[i]->GetAtk())
-			+ ". 방어력 " + to_string(m_Hand[i]->GetDef()) + ".");
-		info += m_Hand[i]->GetInfo() + "\n";
-	}
-	cout << info << endl;
-	
-	//공격 카드로 플레이어를 죽일 수 있다면 1순위 액트
-	for (size_t i = 0; i < m_HandCount; i++)
-	{
-		if (m_Hand[i]->GetType() == E_Attack)
-		{
-			if (m_Hand[i]->GetAtk() >= p_player.GetHP())
-			{
-				m_HandSelection = i;
-				break;
-			}
-		}
-	}
-
-	
-	
-
-
-	BossCardAct(player, hWnd);
-}
+//void CardManager::OpponentAct(Player& p_player, Boss& p_boss, CardManager& player, CardManager& opponent, HWND hWnd)
+//{
+//	//드로우 
+//	CardDraw(1);
+//
+//	//임시 정보 표출
+//	string info;
+//	for (int i = 0; i < m_HandCount; i++)
+//	{
+//		info += (to_string(i) + "번째 카드 정보: ");
+//		info += (to_string(m_Hand[i]->GetStar() + 1) + "성. 공격력 " + to_string(m_Hand[i]->GetAtk())
+//			+ ". 방어력 " + to_string(m_Hand[i]->GetDef()) + ".");
+//		info += m_Hand[i]->GetInfo() + "\n";
+//	}
+//	cout << info << endl;
+//	
+//	//공격 카드로 플레이어를 죽일 수 있다면 1순위 액트
+//	for (int i = 0; i < m_HandCount; i++)
+//	{
+//		if (m_Hand[i]->GetType() == E_Attack)
+//		{
+//			if (m_Hand[i]->GetAtk() >= p_player.GetHP())
+//			{
+//				m_HandSelection = i;
+//				break;
+//			}
+//		}
+//	}
+//
+//	
+//	
+//
+//
+//	BossCardAct(player, hWnd);
+//}
 
 void CardManager::BossCardAct(CardManager& player, HWND hWnd)
 {
