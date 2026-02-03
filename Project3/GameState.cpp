@@ -12,9 +12,9 @@ namespace GameState_M {
 		StateVector[(int)E_InGameState::Menu] = make_shared<Menu>();
 		StateVector[(int)E_InGameState::DeckBuild] = make_shared<DeckBuild>();
 		StateVector[(int)E_InGameState::Shop] = make_shared<Shop>();
-		//StateVector[(int)E_InGameState::Lobby] = make_shared<Lobby>();
-		//StateVector[(int)E_InGameState::Lobby] = make_shared<Lobby>();
-		//StateVector[(int)E_InGameState::Lobby] = make_shared<Lobby>();
+		StateVector[(int)E_InGameState::LuckyBox] = make_shared<LuckyBox>();
+		StateVector[(int)E_InGameState::InGame] = make_shared<InGame>();
+		StateVector[(int)E_InGameState::InGameResult] = make_shared<InGameResult>();
 	}
 
 	// 각 화면에 맞는 Update 로직
