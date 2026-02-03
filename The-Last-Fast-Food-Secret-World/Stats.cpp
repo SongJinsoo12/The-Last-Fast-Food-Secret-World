@@ -1,5 +1,4 @@
 #include "Stats.h"
-#include "Status.h"
 
 template <typename T>
 Stats<T>::Stats() {
