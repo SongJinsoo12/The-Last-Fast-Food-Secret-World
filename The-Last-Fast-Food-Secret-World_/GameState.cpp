@@ -80,12 +80,18 @@ namespace GameState_M {
 	void DeckBuild::Update(HDC p_hdc, HWND p_hwnd) {
 		WCHAR text[256] = L"";
 
+		//화면 그리기
+		g_DeckBuild.DrawDeckBuild(p_hdc, text);
+
 		//좌클릭시 카드 선택
 		if (INPUT.isClick() == (int)GameInput_M::MouseValue::Left)
 		{
 			INPUT.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
 			if (btnManager.HandleClickId(g_MainGame.mx, g_MainGame.my) == "rb1")
+			{
+				cout << "버튼클릭" << endl;
 				STATE.ChangeState(GameState_M::E_InGameState::Shop);
+			}
 			g_DeckBuild.DeckBuild(g_MainGame.mx, g_MainGame.my, 'L');
 		}
 		//우클릭시 카드 이동
@@ -94,9 +100,6 @@ namespace GameState_M {
 			INPUT.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
 			g_DeckBuild.DeckBuild(g_MainGame.mx, g_MainGame.my, 'R');
 		}
-
-		//화면 그리기
-		g_DeckBuild.DrawDeckBuild(p_hdc, text);
 	}
 
 	void DeckBuild::Exit() {
@@ -122,6 +125,10 @@ namespace GameState_M {
 	void Shop::Update(HDC p_hdc, HWND p_hwnd)
 	{
 		WCHAR text[256] = L"";
+
+		//상점 화면 그리기
+		g_Shop.DrawShop(p_hdc, text);
+
 		//좌클릭시 상자선택
 		if (INPUT.isClick() == (int)GameInput_M::MouseValue::Left)
 		{
@@ -144,9 +151,6 @@ namespace GameState_M {
 			}
 			g_Shop.DrawGachaButton(p_hdc, g_MainGame.mx, g_MainGame.my, text);
 		}
-		
-		//상점 화면 그리기
-		g_Shop.DrawShop(p_hdc, text);
 
 		//임시 - 우클릭 시 덱빌딩화면 전환
 		if (GameInput_M::Input::GetInstance().isClick() == (int)GameInput_M::MouseValue::Right)

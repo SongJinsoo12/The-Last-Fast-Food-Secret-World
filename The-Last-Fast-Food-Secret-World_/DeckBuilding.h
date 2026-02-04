@@ -142,6 +142,10 @@ public:
 
 		max_page = (inven.size() / 25);
 		cout << "maxpage : " << max_page << endl;
+
+		RENDER.SetImage(L"rect_button.png", "rb1"
+			, Rect(0, 0, 100, 101), Rect(0, 0, 0, 0), false, GameImage_M::LayerType::UI);
+		btnManager.AddButton(make_shared<RectButton>("rb1", RECT{ 10, 10, 100, 60 }));
 	}
 	void ExitDeckBuild()
 	{
@@ -149,6 +153,7 @@ public:
 		for (int i = 0; i < inven.size(); i++) RENDER.RemoveIDIamage("inven_card" + to_string(i));
 		for (int i = 0; i < myDeck.size(); i++) RENDER.RemoveIDIamage("deck_card" + to_string(i));
 		RENDER.RemoveIDIamage("s_card");
+		RENDER.RemoveIDIamage("rb1");
 	}
 
 	//인벤토리 출력

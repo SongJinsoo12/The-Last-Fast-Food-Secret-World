@@ -115,5 +115,5 @@ void CardGacha::DrawGacha(HDC p_hdc, int p_mx, int p_my, WCHAR p_text[])
 void CardGacha::ExitGacha()
 {
 	cout << "버튼 삭제" << endl;
-	RENDER.ImageVisible("back", false);
+	RENDER.RemoveIDIamage("back");
 }

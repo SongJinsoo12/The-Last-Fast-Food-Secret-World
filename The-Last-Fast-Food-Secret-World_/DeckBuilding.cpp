@@ -415,6 +415,7 @@ void DeckBuilding::DrawDeckBuild(HDC p_hdc, WCHAR p_text[])
 	}
 	DrawMyDeck(p_hdc, p_text);	//마이덱
 
+	RENDER.ImageVisible("rb1", true);
 	RENDER.RemoveIDIamage("s_card");
 	if (SelectedCard)
 	{
@@ -454,11 +455,4 @@ void DeckBuilding::DrawDeckBuild(HDC p_hdc, WCHAR p_text[])
 	wsprintf(p_text, TEXT("?"));
 	TextOut(p_hdc, 1060 + 300, 40, p_text, lstrlen(p_text));
 
-	RENDER.SetImage(L"rect_button.png", "rb1"
-		, Rect(0, 0, 100, 101), Rect(0, 0, 0, 0), true, GameImage_M::LayerType::UI);
-	btnManager.AddButton(make_shared<RectButton>("rb1", RECT{ 0, 0, 50, 21 }));
-	/*RENDER.SetImage(L"cookie.png", "c_b1", Rect(0, 0, 100, 100), Rect(0, 0, 0, 0), true, GameImage_M::LayerType::Background);
-	btnManager.AddButton(make_shared<CircleButton>("c_b1", 50, 50, 100));*/
-	//btnManager.AddButton(TYPERECT("c_b1", Rect(0, 0, 50, 20)));
-	//btnManager.AddButton(TYPECIRCLE("c_b1", 50, 50, 100));
 }
