@@ -70,24 +70,9 @@ void CardGacha::ten(DeckBuilding& p_deck, MainGame& p_mg)
 void CardGacha::GetGacha(bool isOne, DeckBuilding& p_deck, MainGame& p_mg, Chest p_selChest)
 {
 	isOneGacha = isOne;
-	int remove_gold = p_selChest.GetPrice();
 	//분기나눠서 1차 or 10차 나누기
-	if (isOne)
-	{
-		if (!p_mg.RemoveGold(remove_gold))
-		{
-			this->isGachaFailed = true;
-		}
-		one(p_deck, p_mg);
-	}
-	else if (!isOne)
-	{
-		if (!p_mg.RemoveGold(remove_gold * 9))
-		{
-			this->isGachaFailed = true;
-		}
-		ten(p_deck, p_mg);
-	}
+	if (isOneGacha) one(p_deck, p_mg);
+	else if (!isOneGacha) ten(p_deck, p_mg);
 }
 
 void CardGacha::InGacha()
@@ -106,22 +91,10 @@ void CardGacha::InGacha()
 	}
 }
 
-void CardGacha::DrawGachaButton(HDC p_hdc, DeckBuilding p_deck, Chest p_selChest, int p_mx, int p_my, WCHAR p_text[])
+void CardGacha::EnterGacha()
 {
-	//1뽑 버튼
-	Rectangle(p_hdc, 700, 615, 1000, 685);
-	wsprintf(p_text, TEXT("1개 - %dG"), p_selChest.GetPrice());
-	TextOut(p_hdc, 830, 645, p_text, lstrlen(p_text));
-
-	//10뽑 버튼
-	Rectangle(p_hdc, 1050, 615, 1350, 685);
-	wsprintf(p_text, TEXT("10개 - %dG"), p_selChest.GetPrice() * 9);
-	TextOut(p_hdc, 1170, 645, p_text, lstrlen(p_text));
-
-	if (this->isGachaFailed)
-	{
-		TextOut(p_hdc, 50, 500, TEXT("돈이 부족합니다."), 10);
-	}
+	RENDER.SetImage(L"rect_button.png", "back", Rect(0, 0, 100, 110), Rect(0, 0, 0, 0), false, GameImage_M::LayerType::UI);
+	btnManager.AddButton(make_shared<RectButton>("back", RECT{ 10, 10, 100, 60 }));
 }
 
 void CardGacha::DrawGacha(HDC p_hdc, int p_mx, int p_my, WCHAR p_text[])
@@ -133,7 +106,14 @@ void CardGacha::DrawGacha(HDC p_hdc, int p_mx, int p_my, WCHAR p_text[])
 		wsprintf(p_text, TEXT("%d"), draw_card[i].GetUid());
 		TextOut(p_hdc, draw_card[i].x - 2, draw_card[i].y, p_text, lstrlen(p_text));
 	}
+	RENDER.ImageVisible("back", true);
 
 	//wsprintf(p_text, TEXT("왼쪽상단의 상점 버튼을 눌러 돌아가기"));
 	//TextOut(p_hdc, 690, 650, p_text, lstrlen(p_text));
+}
+
+void CardGacha::ExitGacha()
+{
+	cout << "버튼 삭제" << endl;
+	RENDER.ImageVisible("back", false);
 }

@@ -46,10 +46,10 @@ public:
 	void GetGacha(bool isOne, DeckBuilding& p_deck, MainGame& p_mg, Chest p_selChest);//뽑기를 실행(T-1/F-10)
 	void InGacha();//뽑기화면 속 로직
 
-	//상점에 뽑기버튼을 출력, 버튼 클릭 시 뽑기를 실행
-	void DrawGachaButton(HDC p_hdc, DeckBuilding p_deck, Chest p_selChest, int p_mx, int p_my, WCHAR p_text[]);
+	void EnterGacha();
 	//뽑기화면을 출력
 	void DrawGacha(HDC p_hdc, int p_mx, int p_my, WCHAR p_text[]);
+	void ExitGacha();
 };
 
 extern CardGacha g_Gacha; // 전역 카드뽑기 객체

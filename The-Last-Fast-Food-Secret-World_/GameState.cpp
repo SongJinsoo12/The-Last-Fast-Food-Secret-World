@@ -29,7 +29,6 @@ namespace GameState_M {
 			return;
 
 		currentState.get()->Update(p_hdc, p_hwnd);
-
 	}
 
 	void Context::ChangeState(E_InGameState inputState) {
@@ -45,13 +44,12 @@ namespace GameState_M {
 
 	void Lobby::Enter()
 	{
-		g_DeckBuild.LoadDeck();//세이브는 소멸자에
+		g_DeckBuild.LoadDeck();//시작시 덱 로드, 세이브는 소멸자에
 		//RENDER.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(0, 0, 300, 300)
 			//, false, GameImage_M::LayerType::Field);
 	}
 
 	void Lobby::Update(HDC p_hdc, HWND p_hwn) {
-
 		if (GameInput_M::Input::GetInstance().isClick() == (int)GameInput_M::MouseValue::Left)
 			STATE.ChangeState(GameState_M::E_InGameState::Shop);
 	}
@@ -75,32 +73,40 @@ namespace GameState_M {
 	}
 
 	void DeckBuild::Enter() {
+		//덱빌드진입
 		g_DeckBuild.EnterDeckBuild();
 	}
 
 	void DeckBuild::Update(HDC p_hdc, HWND p_hwnd) {
 		WCHAR text[256] = L"";
 
+		//좌클릭시 카드 선택
 		if (INPUT.isClick() == (int)GameInput_M::MouseValue::Left)
 		{
 			INPUT.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
+			if (btnManager.HandleClickId(g_MainGame.mx, g_MainGame.my) == "rb1")
+				STATE.ChangeState(GameState_M::E_InGameState::Shop);
 			g_DeckBuild.DeckBuild(g_MainGame.mx, g_MainGame.my, 'L');
 		}
+		//우클릭시 카드 이동
 		else if (INPUT.isClick() == (int)GameInput_M::MouseValue::Right)
 		{
 			INPUT.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
 			g_DeckBuild.DeckBuild(g_MainGame.mx, g_MainGame.my, 'R');
 		}
 
+		//화면 그리기
 		g_DeckBuild.DrawDeckBuild(p_hdc, text);
 	}
 
 	void DeckBuild::Exit() {
+		//덱빌드 퇴장
 		g_DeckBuild.ExitDeckBuild();
 	}
 
 	void Shop::Enter()
 	{
+		//상점 진입
 		while (!g_Shop.DrawEnterShop())
 		{
 			chrono::steady_clock::time_point start = chrono::steady_clock::now();
@@ -116,64 +122,70 @@ namespace GameState_M {
 	void Shop::Update(HDC p_hdc, HWND p_hwnd)
 	{
 		WCHAR text[256] = L"";
-		cout << "Shop Update" << endl;
+		//좌클릭시 상자선택
 		if (INPUT.isClick() == (int)GameInput_M::MouseValue::Left)
 		{
 			INPUT.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
 			g_Shop.SelectChest(g_MainGame.mx, g_MainGame.my);
 		}
 
+		//상자가 선택된 경우 -> 뽑기버튼 활성화 및 뽑기화면전환
 		if (g_Shop.CheckIsSelection())
 		{
-			if (INPUT.isClick() == (int)GameInput_M::MouseValue::Left)
+			if (btnManager.HandleClickId(g_MainGame.mx, g_MainGame.my) == "one" && g_Shop.isSucceedGacha(p_hdc, 1))
 			{
-				if (InCircle(850, 635, g_MainGame.mx, g_MainGame.my))
-				{
-					g_Gacha.GetGacha(TRUE, g_DeckBuild, g_MainGame, g_Shop.GetSelectedChest());
-					STATE.ChangeState(GameState_M::E_InGameState::LuckyBox);
-				}
-				else if (InCircle(1200, 635, g_MainGame.mx, g_MainGame.my))
-				{
-					g_Gacha.GetGacha(FALSE, g_DeckBuild, g_MainGame, g_Shop.GetSelectedChest());
-					STATE.ChangeState(GameState_M::E_InGameState::LuckyBox);
-				}
-
-				//
+				g_Gacha.GetGacha(TRUE, g_DeckBuild, g_MainGame, g_Shop.GetSelectedChest());
+				STATE.ChangeState(GameState_M::E_InGameState::LuckyBox);
 			}
-			g_Gacha.DrawGachaButton(p_hdc, g_DeckBuild, g_Shop.GetSelectedChest(), g_MainGame.mx, g_MainGame.my, text);
+			else if (btnManager.HandleClickId(g_MainGame.mx, g_MainGame.my) == "ten" && g_Shop.isSucceedGacha(p_hdc, 10))
+			{
+				g_Gacha.GetGacha(FALSE, g_DeckBuild, g_MainGame, g_Shop.GetSelectedChest());
+				STATE.ChangeState(GameState_M::E_InGameState::LuckyBox);
+			}
+			g_Shop.DrawGachaButton(p_hdc, g_MainGame.mx, g_MainGame.my, text);
 		}
-
+		
+		//상점 화면 그리기
 		g_Shop.DrawShop(p_hdc, text);
 
+		//임시 - 우클릭 시 덱빌딩화면 전환
 		if (GameInput_M::Input::GetInstance().isClick() == (int)GameInput_M::MouseValue::Right)
 			STATE.ChangeState(GameState_M::E_InGameState::DeckBuild);
 	}
 
 	void Shop::Exit()
 	{
+		//상점 퇴장
 		g_Shop.ExitShop();
 	}
 
 	void LuckyBox::Enter()
 	{
+		g_Gacha.EnterGacha();
 	}
 
 	void LuckyBox::Update(HDC p_hdc, HWND p_hwnd)
 	{
 		WCHAR text[256] = L"";
+		//좌클릭시 좌표 받아오고
 		if (INPUT.isClick() == (int)GameInput_M::MouseValue::Left)
-		{
 			INPUT.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
+
+		//돌아가기 버튼 클릭시 상점으로 이동
+		if (btnManager.HandleClickId(g_MainGame.mx, g_MainGame.my) == "back")
+		{
+			STATE.ChangeState(GameState_M::E_InGameState::Shop);
+			return;
 		}
 
-		if (InCircle(100, 100, g_MainGame.mx, g_MainGame.my))
-			STATE.ChangeState(GameState_M::E_InGameState::Shop);
-		g_Gacha.InGacha();
-		g_Gacha.DrawGacha(p_hdc, g_MainGame.mx, g_MainGame.my, text);
+		g_Gacha.InGacha();//뽑은카드 좌표 세팅
+		g_Gacha.DrawGacha(p_hdc, g_MainGame.mx, g_MainGame.my, text);//뽑은카드 그리기
 	}
 
 	void LuckyBox::Exit()
 	{
+		cout << "exit" << endl;
+		g_Gacha.ExitGacha();
 	}
 
 	void InGame::Enter()

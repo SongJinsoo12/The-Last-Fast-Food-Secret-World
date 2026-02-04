@@ -7,6 +7,7 @@
 #include "Card.h"
 #include "macroNum.h"
 #include "RenderManager.h"
+#include "ButtonManager.h"
 
 #include <iostream>
 #include <fstream>	//파일읽기
@@ -39,10 +40,10 @@ private:
 public:
 	DeckBuilding()
 	{
-
 	}
 	virtual ~DeckBuilding()
 	{
+		this->SaveDeck();
 	}
 
 	void SaveDeck();

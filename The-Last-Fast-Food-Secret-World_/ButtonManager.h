@@ -8,14 +8,18 @@ private:
     std::vector<std::shared_ptr<BaseButton>> buttons;
 
 public:
-    // Áßº¹ ID ¹æÁö
+    // ì¤‘ë³µ ID ë°©ì§€
     bool AddButton(std::shared_ptr<BaseButton> btn);
 
     void DrawAll();
-    BaseButton* HandleClick(int mx, int my);
+    // í´ë¦­ëœ ë²„íŠ¼ì˜ IDë¥¼ ë°˜í™˜ (ì—†ìœ¼ë©´ ë¹ˆ ë¬¸ìì—´)
+    std::string HandleClickId(int mx, int my);
+
 
     void SetVisibleAll(bool v);
     void SetVisibleById(const std::string& id, bool v);
+    int GetButtonSize();
 };
 
-extern ButtonManager btnManager; // Àü¿ª ¹öÆ° ¸Å´ÏÀú
+extern ButtonManager btnManager; // ì „ì—­ ë²„íŠ¼ ë§¤ë‹ˆì €
+//extern ButtonManager btnManager;

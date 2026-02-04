@@ -1,5 +1,5 @@
 #pragma once
-//#include "MainGame.h"
+#include "MainGame.h"
 #include "DeckBuilding.h"
 #include "RenderManager.h"
 #include "ButtonManager.h"
@@ -87,7 +87,7 @@ public:
 			, Rect(0, 0, 651, 101), Rect(mov_sel, 250, 651, 101), false, GameImage_M::LayerType::Background);
 		RENDER.SetImage(L"shelf.png", "shelf2"
 			, Rect(0, 0, 651, 101), Rect(mov_sel, 450, 651, 101), false, GameImage_M::LayerType::Background);
-		//상점 주인
+		//상점 주인 / 버튼형식으로 바꿔서 상호작용 추가하기
 		RENDER.SetImage(L"cookie.png", "cookie"
 			, Rect(0, 0, 250, 250), Rect(300 - 180, 430 - 180, 360, 360), false, GameImage_M::LayerType::Background);
 		//상자 정보 및 상점 주인 대사 출력용
@@ -97,14 +97,33 @@ public:
 		for (int i = 0; i < 3; i++)
 		{
 			RENDER.SetImage(L"chest.png", "chest" + to_string(i)
-				, Rect(0, 0, 1024, 1024), Rect(chest[i].x - 48, chest[i].y - 78, 128, 128), false, GameImage_M::LayerType::Background);
+				, Rect(0, 0, 1024, 1024), Rect(0, 0, 0, 0), false, GameImage_M::LayerType::Background);
 		}
+
+		RENDER.SetImage(L"rect_button.png", "one"
+			, Rect(0, 0, 100, 110), Rect(0, 0, 0, 0), false, GameImage_M::LayerType::UI);
+		RENDER.SetImage(L"rect_button.png", "ten"
+			, Rect(0, 0, 100, 110), Rect(0, 0, 0, 0), false, GameImage_M::LayerType::UI);
 	}
 	virtual ~Shop()
 	{
 
 	}
 
+	bool isSucceedGacha(HDC p_hdc, int p_gacha_num)
+	{
+		int remove_gold = selectedChest.GetPrice() * p_gacha_num;
+		if (g_MainGame.RemoveGold(remove_gold))
+		{
+			return true;
+		}
+		else
+		{
+			TextOut(p_hdc, 50, 500, TEXT("돈이 부족합니다."), 10);
+			return false;
+		}
+	}
+	void DrawGachaButton(HDC p_hdc, int p_mx, int p_my, WCHAR p_text[]);
 	//상자를 선택함
 	void SelectChest(int p_mx, int p_my);
 	int GetSelectedPrice()
@@ -135,13 +154,14 @@ public:
 		RENDER.ImageVisible("cookie", false);
 		RENDER.ImageVisible("textbox", false);
 		for (int i = 0; i < 6; i++) RENDER.ImageVisible("chest" + to_string(i), false);
+		RENDER.ImageVisible("one", false);
+		RENDER.ImageVisible("ten", false);
 		mov_sel = 1400;
 		this->CancelSelection();
 	}
 	void DrawShop(HDC p_hdc, WCHAR p_text[]);
 	bool DrawEnterShop()
 	{
-
 		//MoveImageTween("shelf1", Rect(), 3).OnComplete( EndFN );
 
 		RENDER.MoveImage("shelf1", Rect(mov_sel - 10, 250, 651, 101));
@@ -151,8 +171,12 @@ public:
 		mov_sel -= (int)((mov_sel - 700) / 10);
 		if (mov_sel <= 710)//입장 애니메이션이 끝난 후 나머지 이미지 활성화
 		{
+			for (int i = 0; i < 6; i++)
+			{
+				btnManager.AddButton(make_shared<CircleButton>("chest" + to_string(i), chest[i].x + 10, chest[i].y - 5, 64));
+				RENDER.ImageVisible("chest" + to_string(i), true);
+			}//상자 출력
 			RENDER.ImageVisible("cookie", true);// 상점 주인
-			for (int i = 0; i < 6; i++) RENDER.ImageVisible("chest" + to_string(i), true);//상자 출력
 			return true;
 		}
 		else return false;

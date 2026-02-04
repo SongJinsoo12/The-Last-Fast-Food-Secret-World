@@ -16,14 +16,15 @@ void ButtonManager::DrawAll() {
     }
 }
 
-BaseButton* ButtonManager::HandleClick(int mx, int my) {
+std::string ButtonManager::HandleClickId(int mx, int my) {
     for (auto& btn : buttons) {
         if (btn->HitTest(mx, my)) {
-            return btn.get();
+            return btn->GetId(); // 클릭된 버튼의 ID 반환
         }
     }
-    return nullptr;
+    return ""; // 클릭된 버튼 없음
 }
+
 
 void ButtonManager::SetVisibleAll(bool v) {
     for (auto& btn : buttons) {
@@ -38,6 +39,11 @@ void ButtonManager::SetVisibleById(const std::string& id, bool v) {
             break;
         }
     }
+}
+
+int ButtonManager::GetButtonSize()
+{
+    return buttons.size();
 }
 
 // 전역 객체 정의

@@ -218,24 +218,24 @@ void DeckBuilding::ItoD(int p_mx, int p_my)
 				cout << "덱 꽉참" << "\n";
 				return;
 			}
-			////덱에 들어갈 수 있는 1성이 최대라면 종료
-			//else if (Star_n[0] >= 15)
-			//{
-			//	cout << "1성 꽉참" << "\n";
-			//	return;
-			//}
-			////덱에 들어갈 수 있는 2성이 최대라면 종료
-			//else if (Star_n[1] >= 7)
-			//{
-			//	cout << "2성 꽉참" << "\n";
-			//	return;
-			//}
-			////덱에 들어갈 수 있는 3성이 최대라면 종료
-			//else if (Star_n[2] >= 3)
-			//{
-			//	cout << "3성 꽉참" << "\n";
-			//	return;
-			//}
+			//덱에 들어갈 수 있는 1성이 최대라면 종료
+			else if (Star_n[0] >= 15)
+			{
+				cout << "1성 꽉참" << "\n";
+				return;
+			}
+			//덱에 들어갈 수 있는 2성이 최대라면 종료
+			else if (Star_n[1] >= 7)
+			{
+				cout << "2성 꽉참" << "\n";
+				return;
+			}
+			//덱에 들어갈 수 있는 3성이 최대라면 종료
+			else if (Star_n[2] >= 3)
+			{
+				cout << "3성 꽉참" << "\n";
+				return;
+			}
 
 			int star = selectedCard.GetStar();
 			++Star_n[star];
@@ -276,6 +276,8 @@ void DeckBuilding::DtoI(int p_mx, int p_my)
 			--Star_n[star];
 			cout << Star_n[0] << Star_n[1] << Star_n[2] << endl;
 
+			//마지막카드이동시 배열에서 사라진카드이므로 예외처리
+			RENDER.ImageVisible(to_string(myDeck[i].GetUid()), false);
 			//이동시킬 카드의 좌표를 변경. 출발지 배열에서 제거 후 목적지 배열 맨 뒤에 추가
 			int x = (inven.size() % 25) % 5, y = (inven.size() % 25) / 5;
 			myDeck[i].x = x * 82 + 1050, myDeck[i].y = y * 120 + 130;
@@ -365,9 +367,14 @@ void DeckBuilding::DrawInventory(HDC p_hdc, WCHAR p_text[], vector<Card> p_cardT
 
 void DeckBuilding::DrawMyDeck(HDC p_hdc, WCHAR p_text[])
 {
-	//마지막카드이동시 배열에서 사라진카드이므로 예외처리
-	RENDER.RemoveIDIamage("deck_card" + to_string(myDeck.size()));
-	for (int i = 0; i < myDeck.size(); i++)
+	int decksize = myDeck.size();
+
+	for (int i = 0; i < decksize; i++)
+	{
+		RENDER.ImageVisible(to_string(myDeck[i].GetUid()), false);
+	}
+	
+	for (int i = 0; i < decksize; i++)
 	{
 		RENDER.MoveImage(to_string(myDeck[i].GetUid()), Rect(myDeck[i].x - 50, myDeck[i].y - 66, 100, 132));
 		RENDER.ImageVisible(to_string(myDeck[i].GetUid()), true);
@@ -447,4 +454,11 @@ void DeckBuilding::DrawDeckBuild(HDC p_hdc, WCHAR p_text[])
 	wsprintf(p_text, TEXT("?"));
 	TextOut(p_hdc, 1060 + 300, 40, p_text, lstrlen(p_text));
 
+	RENDER.SetImage(L"rect_button.png", "rb1"
+		, Rect(0, 0, 100, 101), Rect(0, 0, 0, 0), true, GameImage_M::LayerType::UI);
+	btnManager.AddButton(make_shared<RectButton>("rb1", RECT{ 0, 0, 50, 21 }));
+	/*RENDER.SetImage(L"cookie.png", "c_b1", Rect(0, 0, 100, 100), Rect(0, 0, 0, 0), true, GameImage_M::LayerType::Background);
+	btnManager.AddButton(make_shared<CircleButton>("c_b1", 50, 50, 100));*/
+	//btnManager.AddButton(TYPERECT("c_b1", Rect(0, 0, 50, 20)));
+	//btnManager.AddButton(TYPECIRCLE("c_b1", 50, 50, 100));
 }

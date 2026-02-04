@@ -145,7 +145,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 
 	case WM_LBUTTONDOWN:
-		if (btnManager.HandleClick(mg.mx, mg.my) && btnManager.HandleClick(mg.mx, mg.my)->GetId() == "cookie1")
+		if (btnManager.HandleClickId(mg.mx, mg.my) == "cookie1")
 		{
 			SetTimer(hWnd, 1, 8, NULL);
 			shop.SetDrawShop();
