@@ -3,6 +3,8 @@
 #include <memory>
 #include <vector>
 #include "Singleton.h"
+#include "CardManager.h"
+#include "Timer.h"
 
 #define M_STATE GameState_M::Context::GetInstance()
 
@@ -90,6 +92,9 @@ namespace GameState_M {
 		void Enter() override;
 		void Update(HDC p_hdc, HWND p_hwnd) override;
 		void Exit() override;
+	private:
+		CardManager m_player, m_boss;
+		Timer m_timer;
 	};
 
 	class InGameResult :public State {

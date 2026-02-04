@@ -4,7 +4,7 @@
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 HINSTANCE g_hInst;											// 인스턴스 핸들
-LPCTSTR lpszClass = TEXT("윤찬_25311014");					// 제목 표시줄에 표시
+LPCTSTR lpszClass = TEXT("T.L.F.F2 : Secret World");					// 제목 표시줄에 표시
 
 //auto tween = tweeny::from(50).to(500).during(2000).via(tweeny::easing::exponentialOut);
 //
@@ -41,9 +41,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	RegisterClass(&WndClass);
 
 	hWnd = CreateWindow(lpszClass, lpszClass, // 윈도우 생성
-		WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
-		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT
-		/*100,100,500,500*/, NULL, (HMENU)NULL, hInstance, NULL);
+		WS_OVERLAPPEDWINDOW, /*CW_USEDEFAULT,
+		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT*/
+		100,0,1280,720, NULL, (HMENU)NULL, hInstance, NULL);
 
 	ShowWindow(hWnd, nCmdShow);
 

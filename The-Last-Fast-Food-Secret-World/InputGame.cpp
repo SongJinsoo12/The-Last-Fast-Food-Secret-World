@@ -19,12 +19,27 @@ namespace GameInput_M {
 		else
 			return 0;
 	}
+
 	int Input::isHeel()
 	{
 		return m_MouseHeelDelta;
 	}
+
+	bool Input::isKeyboard(int p_key)
+	{
+		if (0 > p_key || p_key >= 256)
+			return false;
+		return m_KeyBoardValue[p_key];
+	}
+
+	void Input::GetMousePos(int* p_x, int* p_y)
+	{
+		*p_x = this->m_MousePosX;
+		*p_y = this->m_MousePosY;
+	}
+
 	void Input::UpdateProcess(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
-    {
+	{
 
 		switch (iMessage) {
 
@@ -32,14 +47,14 @@ namespace GameInput_M {
 			m_ISMouseClick[(int)GameInput_M::MouseValue::Left] = true;
 			m_MousePosX = LOWORD(lParam);
 			m_MousePosY = HIWORD(lParam);
-			std::cout << "¸¶¿ì½º ÁÂÅ¬¸¯ ´©¸£±â" << std::endl;
+			std::cout << "???²J ????? ??????" << std::endl;
 			break;
 
 		case WM_LBUTTONUP:
 			m_ISMouseClick[(int)GameInput_M::MouseValue::Left] = false;
 			m_MousePosX = LOWORD(lParam);
 			m_MousePosY = HIWORD(lParam);
-			std::cout << "¸¶¿ì½º ÁÂÅ¬¸¯ ³¡³»±â" << std::endl;
+			std::cout << "???²J ????? ??????" << std::endl;
 			break;
 
 		case WM_RBUTTONDOWN:
@@ -72,14 +87,13 @@ namespace GameInput_M {
 			break;
 
 		case WM_KEYDOWN:
-			m_KeyArr[wParam] = true;
+			m_KeyBoardValue[wParam] = true;
 			break;
 
 		case WM_KEYUP:
-			if (m_KeyArr[wParam])
-				m_KeyArr[wParam] = false;
+			m_KeyBoardValue[wParam] = false;
 			break;
 		}
 
-    }
+	}
 }

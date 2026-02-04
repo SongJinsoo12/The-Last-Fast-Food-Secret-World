@@ -1,6 +1,7 @@
 #include "GameState.h"
 #include "RenderManager.h"
 #include "InputGame.h"
+#include "CardTableManager.h"
 
 //각 화면
 //#include "Shop.h"
@@ -38,25 +39,26 @@ namespace GameState_M {
 
 	void Lobby::Enter()
 	{
-		M_REND.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(0, 0, 300, 300)
-			, false, GameImage_M::LayerType::Field);
+		/*M_REND.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(0, 0, 300, 300)
+			, false, GameImage_M::LayerType::Field);*/
 	}
 
 	void Lobby::Update(HDC p_hdc, HWND p_hwn) {
 		if (GameInput_M::Input::GetInstance().isClick() == (int)GameInput_M::MouseValue::Left)
 		{
 			//m_State.ChangeState(GameState_M::E_InGameState::InGameResult);
-			M_REND.ImageVisible("ID_1", true);
+			//M_REND.ImageVisible("ID_1", true);
+			M_STATE.ChangeState(GameState_M::E_InGameState::InGame);
 		}
 	}
 
 	void Lobby::Exit() {
-		M_REND.AllRemoveImage();
+		//M_REND.AllRemoveImage();
 	}
 
 	void Menu::Enter()
 	{
-		M_REND.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(100, 0, 300, 300), true, GameImage_M::LayerType::Field);
+		//M_REND.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(100, 0, 300, 300), true, GameImage_M::LayerType::Field);
 	}
 
 	void Menu::Update(HDC p_hdc, HWND p_hwnd)
@@ -65,7 +67,7 @@ namespace GameState_M {
 	}
 
 	void Menu::Exit() {
-		M_REND.RemoveIDIamage("ID_1");
+		//M_REND.RemoveIDIamage("ID_1");
 	}
 
 	void DeckBuild::Enter() {
@@ -113,6 +115,23 @@ namespace GameState_M {
 	{
 		//이미지 로드/보여기
 		//값 초기화 가능 
+		m_player.SetImage();
+		m_player.DrawBG();
+		CardTableManager::Instance();
+
+		//임시 타이머
+		m_timer.StartTimer();
+		while (true)
+		{
+			m_timer.UpdateTimer();
+			if (m_timer.CheckTimer(4))
+				break;
+		}
+		m_player.SetDeck();
+		m_boss.SetDeck();
+		m_player.StartTurn(m_player, m_boss);
+		m_player.DrawPlayerHand();
+		m_boss.DrawOppHand();
 	}
 
 	void InGame::Update(HDC p_hdc, HWND p_hwnd)

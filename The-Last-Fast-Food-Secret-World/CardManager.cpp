@@ -306,13 +306,13 @@ void CardManager::CardAct(CardManager& player ,CardManager& opponent, HWND hWnd)
 	//턴 엔드
 	player.m_IsMyTurn = !player.m_IsMyTurn;
 	opponent.m_IsMyTurn = !opponent.m_IsMyTurn;
-	SetTimer(hWnd, TURNTIME, 7000, NULL);
+	//SetTimer(hWnd, TURNTIME, 7000, NULL);
 	//opponent.OpponentAct(player, opponent, hWnd);
 	cout << "턴 교체.\n";
 }
 
 //시작 턴 정하기
-void CardManager::StartTurn(CardManager& player, CardManager& opponent, HWND hWnd)
+void CardManager::StartTurn(CardManager& player, CardManager& opponent)
 {
 	randomInit(0, 100);
 	int randTurn;
