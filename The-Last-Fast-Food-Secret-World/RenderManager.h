@@ -1,6 +1,6 @@
 #pragma once
 
-#define m_rend GameImage_M::RenderManager::GetInstance()
+#define M_REND GameImage_M::RenderManager::GetInstance()
 
 #include "ImageLoad.h"
 #include "ImageManager.h"

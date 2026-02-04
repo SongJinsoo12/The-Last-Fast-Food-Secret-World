@@ -9,34 +9,34 @@
 
 void CardManager::SetImage()
 {
-	m_rend.SetImage(L"background_city_night.png", "City_Night",
+	M_REND.SetImage(L"background_city_night.png", "City_Night",
 		Gdiplus::Rect(0, 0, 2304, 1296), Gdiplus::Rect(0, 0, 1280, 720), false,
 		GameImage_M::LayerType::Background);
 
-	m_rend.SetImage(L"background_pink_plant.png", "Plant_Pink",
+	M_REND.SetImage(L"background_pink_plant.png", "Plant_Pink",
 		Gdiplus::Rect(0, 0, 2304, 1296), Gdiplus::Rect(0, 0, 1280, 720), false,
 		GameImage_M::LayerType::Background);
-	m_rend.SetImage(L"background_orange_plant.png", "Plant_Orange",
+	M_REND.SetImage(L"background_orange_plant.png", "Plant_Orange",
 		Gdiplus::Rect(0, 0, 2304, 1296), Gdiplus::Rect(0, 0, 1280, 720), false,
 		GameImage_M::LayerType::Background);
-	m_rend.SetImage(L"background_dark_plant.png", "Plant_Dark",
+	M_REND.SetImage(L"background_dark_plant.png", "Plant_Dark",
 		Gdiplus::Rect(0, 0, 2304, 1296), Gdiplus::Rect(0, 0, 1280, 720), true,
 		GameImage_M::LayerType::Background);
-	m_rend.SetImage(L"background_ari_ship.png", "Air_Ship",
+	M_REND.SetImage(L"background_ari_ship.png", "Air_Ship",
 		Gdiplus::Rect(0, 0, 2304, 1296), Gdiplus::Rect(0, 0, 1280, 720), false,
 		GameImage_M::LayerType::Background);
 
-	m_rend.SetImage(L"card_zone.png", "Card_Middle_Up",
+	M_REND.SetImage(L"card_zone.png", "Card_Middle_Up",
 		Gdiplus::Rect(0, 0, 88, 110), Gdiplus::Rect(0, 0, 0, 0), true,
 		GameImage_M::LayerType::Background);
-	m_rend.SetImage(L"card_zone.png", "Card_Middle_Down",
+	M_REND.SetImage(L"card_zone.png", "Card_Middle_Down",
 		Gdiplus::Rect(0, 0, 88, 110), Gdiplus::Rect(0, 0, 0, 0), true,
 		GameImage_M::LayerType::Background);
 
-	m_rend.SetImage(L"card_back_2.png", "Card_Deck_Up",
+	M_REND.SetImage(L"card_back_2.png", "Card_Deck_Up",
 		Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), true,
 		GameImage_M::LayerType::Background);
-	m_rend.SetImage(L"card_back.png", "Card_Deck_Down",
+	M_REND.SetImage(L"card_back.png", "Card_Deck_Down",
 		Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), true,
 		GameImage_M::LayerType::Background);
 
@@ -45,7 +45,7 @@ void CardManager::SetImage()
 		string cardId = "Card_Boss_Hand_";
 		cardId = cardId + to_string(i);
 
-		m_rend.SetImage(L"card_back_2.png", cardId,
+		M_REND.SetImage(L"card_back_2.png", cardId,
 			Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), true,
 			GameImage_M::LayerType::Background);
 	}
@@ -108,7 +108,7 @@ void CardManager::CardDraw(int drawNum)
 
 
 		m_Hand.push_back(m_Deck[m_DeckCount]);
-		m_rend.ImageVisible(to_string(m_Deck[m_DeckCount]->GetUid()), true);
+		M_REND.ImageVisible(to_string(m_Deck[m_DeckCount]->GetUid()), true);
 	}
 
 	//패 카드 임시 확인
@@ -139,14 +139,14 @@ void CardManager::DrawBG()
 
 	/*g_renderManager.MoveImage("City_Night",
 		Gdiplus::Rect(0, 0, 1280, 720));*/
-	m_rend.MoveImage("Card_Middle_Up",
+	M_REND.MoveImage("Card_Middle_Up",
 		Gdiplus::Rect(midX - cardMidX, midY - (deckY + 10), deckX, deckY));
-	m_rend.MoveImage("Card_Middle_Down",
+	M_REND.MoveImage("Card_Middle_Down",
 		Gdiplus::Rect(midX - cardMidX, (midY + 10), deckX, deckY));
 
-	m_rend.MoveImage("Card_Deck_Up",
+	M_REND.MoveImage("Card_Deck_Up",
 		Gdiplus::Rect(0, 0, deckX, deckY));
-	m_rend.MoveImage("Card_Deck_Down",
+	M_REND.MoveImage("Card_Deck_Down",
 		Gdiplus::Rect(1265 - deckX, 682 - deckY, deckX, deckY));
 
 
@@ -183,23 +183,23 @@ void CardManager::DrawPlayerHand()
 			//카드 정보 확대 보기
 			if (m_IsSelect)
 			{
-				m_rend.MoveImage(to_string(m_Hand[m_HandSelection]->GetUid()),
+				M_REND.MoveImage(to_string(m_Hand[m_HandSelection]->GetUid()),
 					Gdiplus::Rect(70, 380, CARDX * 2, CARDY * 2));
 			}
 			else
 			{
-				m_rend.MoveImage(to_string(m_Hand[i]->GetUid()),
+				M_REND.MoveImage(to_string(m_Hand[i]->GetUid()),
 					Gdiplus::Rect(startPos, posY - 10, CARDX, CARDY));
 			}
 		}
 		else
 		{
-			m_rend.MoveImage(to_string(m_Hand[i]->GetUid()),
+			M_REND.MoveImage(to_string(m_Hand[i]->GetUid()),
 				Gdiplus::Rect(startPos, posY + 10, CARDX, CARDY));
 		}
 
 		//카드 출력 순서
-		m_rend.LayerMoveToBack(to_string(m_Hand[i]->GetUid()));
+		M_REND.LayerMoveToBack(to_string(m_Hand[i]->GetUid()));
 	}
 }
 
@@ -230,7 +230,7 @@ void CardManager::DrawOppHand()
 		int startPos = handMidX + (sliceHand * i);
 		string cardId = "Card_Boss_Hand_";
 		cardId = cardId + to_string(i);
-		m_rend.MoveImage(cardId,
+		M_REND.MoveImage(cardId,
 			Gdiplus::Rect(startPos, posY + 10, CARDX, CARDY));
 	}
 }
@@ -295,7 +295,7 @@ void CardManager::CardAct(CardManager& player ,CardManager& opponent, HWND hWnd)
 	}
 
 	//이미지 안보이기
-	m_rend.ImageVisible(to_string(m_Hand[m_HandSelection]->GetUid()), false);
+	M_REND.ImageVisible(to_string(m_Hand[m_HandSelection]->GetUid()), false);
 
 	m_Hand.erase(m_Hand.begin() + m_HandSelection);
 	m_HandCount--;
@@ -422,7 +422,7 @@ void CardManager::BossCardAct(CardManager& player, HWND hWnd)
 	}
 
 	//이미지 안보이기
-	m_rend.ImageVisible(to_string(m_Hand[m_HandSelection]->GetUid() + BOSSUID), false);
+	M_REND.ImageVisible(to_string(m_Hand[m_HandSelection]->GetUid() + BOSSUID), false);
 
 	m_Hand.erase(m_Hand.begin() + m_HandSelection);
 	m_HandCount--;

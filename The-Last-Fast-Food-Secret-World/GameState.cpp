@@ -38,7 +38,7 @@ namespace GameState_M {
 
 	void Lobby::Enter()
 	{
-		m_rend.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(0, 0, 300, 300)
+		M_REND.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(0, 0, 300, 300)
 			, false, GameImage_M::LayerType::Field);
 	}
 
@@ -46,17 +46,17 @@ namespace GameState_M {
 		if (GameInput_M::Input::GetInstance().isClick() == (int)GameInput_M::MouseValue::Left)
 		{
 			//m_State.ChangeState(GameState_M::E_InGameState::InGameResult);
-			m_rend.ImageVisible("ID_1", true);
+			M_REND.ImageVisible("ID_1", true);
 		}
 	}
 
 	void Lobby::Exit() {
-		m_rend.AllRemoveImage();
+		M_REND.AllRemoveImage();
 	}
 
 	void Menu::Enter()
 	{
-		m_rend.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(100, 0, 300, 300), true, GameImage_M::LayerType::Field);
+		M_REND.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(100, 0, 300, 300), true, GameImage_M::LayerType::Field);
 	}
 
 	void Menu::Update(HDC p_hdc, HWND p_hwnd)
@@ -65,7 +65,7 @@ namespace GameState_M {
 	}
 
 	void Menu::Exit() {
-		m_rend.RemoveIDIamage("ID_1");
+		M_REND.RemoveIDIamage("ID_1");
 	}
 
 	void DeckBuild::Enter() {
