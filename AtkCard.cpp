@@ -12,10 +12,10 @@ AtkCard::AtkCard()
 	DotDamage = 1;
 	DefCardUsed = false;
 	Poison = false;
-	type = Card::Atk;
+	type = Card::m_Atk;
 }
 
-int AtkCard::DefaultAtk(CAttribute attr, CRank rank) 
+int AtkCard::DefaultAtk(CAttribute attr, Star rank)
 {
 	if (attr == E_BREAD)
 	{
@@ -24,17 +24,17 @@ int AtkCard::DefaultAtk(CAttribute attr, CRank rank)
 	return cardrule.RankValue(rank);
 }
 
-int AtkCard::Take_Damage_After_Atk(Mob& player, CAttribute attr, CRank rank)
+int AtkCard::Take_Damage_After_Atk(Mob& player, CAttribute attr, Star rank)
 {
 	if (player.GetMaxHP() > player.GetHP())
 	{
 		switch (rank)
 		{
-		case Star_1:
+		case E_ONE:
 			return 2;
-		case Star_2:
+		case E_TWO:
 			return 3;
-		case Star_3:
+		case E_THREE:
 			return 4;
 		default:
 			return 2;
@@ -44,22 +44,22 @@ int AtkCard::Take_Damage_After_Atk(Mob& player, CAttribute attr, CRank rank)
 	return 0;
 }
 
-int AtkCard::coinAtk(CAttribute attr, CRank rank) 
+int AtkCard::coinAtk(CAttribute attr, Star rank)
 {
-	int coin = rand() % 2;
-	if (coin == 0)
+	int Cardcoin = rand() % 2;
+	if (Cardcoin == 0)
 	{
 		return 0;
 	}
-	if (coin == 1)
+	if (Cardcoin == 1)
 	{
 		switch (rank)
 		{
-		case Star_1:
+		case E_ONE:
 			return 2;
-		case Star_2:
+		case E_TWO:
 			return 3;
-		case Star_3:
+		case E_THREE:
 			return 4;
 		default:
 			return 2;
@@ -67,33 +67,30 @@ int AtkCard::coinAtk(CAttribute attr, CRank rank)
 	}
 }
 
-int AtkCard::DefCard_After_Atk(bool DefCardUsed, CRank rank)
+int AtkCard::DefCard_After_Atk(bool DefCardUsed, Star rank)
 {
 	if (DefCardUsed)
 	{
-		return Atk + 2;
+		return m_Atk + 2;
 	}
-	return Atk;
+	return m_Atk;
 }
 
-int AtkCard::PoisonDamageCard(CRank rank) 
+int AtkCard::PoisonDamageCard(Star rank)
 {
 	if (Poison == false)
 	{
 		Poison = true;
 		switch (rank)
 		{
-		case Star_1:
-			DotDamage = 1;
-			break;
-		case Star_2:
-			DotDamage = 2;
-			break;
-		case Star_3:
-			DotDamage = 3;
-			break;
+		case E_ONE:
+			return 2;
+		case E_TWO:
+			return 3;
+		case E_THREE:
+			return 4;
 		default:
-			break;
+			return 2;
 		}
 	}
 	return DotDamage;

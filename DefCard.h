@@ -3,8 +3,8 @@
 #include "Card.h"   // CAttribute, CRank
 class Mob;
 
-// ¹æ¾îÄ«µå: ¼öÄ¡(¹æ¾î·®/¹İ»ç·® µî)¸¸ °è»êÇÏ´Â ¿ªÇÒ.
-// ½ÇÁ¦ Àû¿ë(¹æ¾î¸· ÀúÀå, ÇÇÇØ °¨¼Ò, ¹İ»ç Àû¿ë µî)Àº GameRunner/CardDatabase¿¡¼­ Ã³¸®ÇÏ´Â °ÍÀ» ±ÇÀåÇÕ´Ï´Ù.
+// ë°©ì–´ì¹´ë“œ: ìˆ˜ì¹˜(ë°©ì–´ëŸ‰/ë°˜ì‚¬ëŸ‰ ë“±)ë§Œ ê³„ì‚°í•˜ëŠ” ì—­í• .
+// ì‹¤ì œ ì ìš©(ë°©ì–´ë§‰ ì €ì¥, í”¼í•´ ê°ì†Œ, ë°˜ì‚¬ ì ìš© ë“±)ì€ GameRunner/CardDatabaseì—ì„œ ì²˜ë¦¬í•˜ëŠ” ê²ƒì„ ê¶Œì¥í•©ë‹ˆë‹¤.
 class DefCard : public Card
 {
 private:
@@ -12,15 +12,15 @@ private:
 public:
     DefCard();
 
-    // ±âº» ¹æ¾î(¼Ó¼ºÀÌ BREAD¸é 0)
-    int DefaultDef(CAttribute attr, CRank rank);
+    // ê¸°ë³¸ ë°©ì–´(ì†ì„±ì´ BREADë©´ 0)
+    int DefaultDef(CAttribute attr, Star rank);
 
-    // »§ ¹æ¾î: "Áß¸³/¹ü¿ë" ¹æ¾î·®(ÇöÀç´Â ·©Å©¿¡ µû¸¥ ¼Ò·®ÀÇ °íÁ¤ °¨¼Ò·® ¹İÈ¯)
-    int BreadDef(CAttribute atkAttr, CRank rank);
+    // ë¹µ ë°©ì–´: "ì¤‘ë¦½/ë²”ìš©" ë°©ì–´ëŸ‰(í˜„ì¬ëŠ” ë­í¬ì— ë”°ë¥¸ ì†ŒëŸ‰ì˜ ê³ ì • ê°ì†ŒëŸ‰ ë°˜í™˜)
+    int BreadDef(CAttribute atkAttr, Star rank);
 
-    // ¹«Àû(ÀÓ½Ã): ÇöÀç Mob/Player¿¡ '¹«Àû' »óÅÂ ½Ã½ºÅÛÀÌ ¾ø´Ù¸é Å« ¹æ¾î°ªÀ» ¹İÈ¯ÇÏ´Â ¹æ½ÄÀ¸·Î ´ëÃ¼
-    int invincibility(Mob& mob, CAttribute attr, CRank rank);
+    //// ë¬´ì (ì„ì‹œ): í˜„ì¬ Mob/Playerì— 'ë¬´ì ' ìƒíƒœ ì‹œìŠ¤í…œì´ ì—†ë‹¤ë©´ í° ë°©ì–´ê°’ì„ ë°˜í™˜í•˜ëŠ” ë°©ì‹ìœ¼ë¡œ ëŒ€ì²´
+    //int invincibility(Mob& mob, CAttribute attr, Star rank);
 
-    // ÇÇÇØ ¹İ»ç·®(·©Å©º° 2/3/4)
-    int DamageReflection(CAttribute attr, CRank rank);
+    // í”¼í•´ ë°˜ì‚¬ëŸ‰(ë­í¬ë³„ 2/3/4)
+    int DamageReflection(CAttribute attr, Star rank);
 };
