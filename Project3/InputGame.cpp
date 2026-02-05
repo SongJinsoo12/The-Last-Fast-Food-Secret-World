@@ -50,7 +50,14 @@ namespace GameInput_M {
 	{
 		if (0 > p_key || p_key >= 256)
 			return false;
-		return m_KeyBoardValue[p_key];
+
+		if (m_KeyBoardValue[p_key])
+		{
+			m_KeyBoardValue[p_key] = false;
+			return true;
+		}
+		else
+			return false;
 	}
 
 	void Input::GetMousePos(int* p_x, int* p_y)
