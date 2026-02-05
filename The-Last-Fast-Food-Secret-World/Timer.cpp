@@ -1,6 +1,6 @@
 #include "Timer.h"
 
-Timer::Timer() : m_time(0), m_isStart(false)
+Timer::Timer() : m_time(0), m_isStart(false), m_index(0)
 {
 }
 
@@ -37,4 +37,19 @@ bool Timer::GetIsStart()
 void Timer::SetIsStart(bool p_isStart)
 {
 	m_isStart = p_isStart;
+}
+
+int Timer::GetIndex()
+{
+	return m_index;
+}
+
+void Timer::SetIndex(int p_index)
+{
+	m_index = p_index;
+}
+
+void Timer::PlusIndex()
+{
+	m_index++;
 }

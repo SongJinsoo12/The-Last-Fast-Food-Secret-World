@@ -50,12 +50,65 @@ void CardManager::SetImage()
 			Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), true,
 			GameImage_M::LayerType::Background);
 	}
+	for (size_t i = 0; i < 10; i++)
+	{
+		string cardPng = "card_shiny_";
+		string cardId = "Card_Shiny_";
+		cardPng += to_string(i + 1);
+		cardPng += ".png";
+		cardId += to_string(i);
+
+		wstring wCardPng;
+		wCardPng.assign(cardPng.begin(), cardPng.end());
+
+		M_REND.SetImage(wCardPng, cardId,
+			Gdiplus::Rect(0, 0, 100, 128), Gdiplus::Rect(0, 0, 0, 0), false,
+			GameImage_M::LayerType::UI);
+
+		//wprintf(wCardPng.c_str());
+	}
 
 	cout << "이미지 로드 확인\n";
 }
 
+//카드 반짝임 이펙트 애니메이션
+void CardManager::ShinyEffect(int x, int y)
+{
+	if (!m_isLoop) return;
+
+	if (!m_shiny.GetIsStart())
+	{
+		m_shiny.StartTimer();
+		m_shiny.SetIsStart(true);
+	}
+
+	string cardId = "Card_Shiny_";
+	cardId += to_string(m_shiny.GetIndex());
+	M_REND.MoveImage(cardId, Gdiplus::Rect(x, y, 100, 128));
+	M_REND.ImageVisible(cardId, true);
+
+	m_shiny.UpdateTimer();
+	if (m_shiny.CheckTimer(0.05))
+	{
+		M_REND.ImageVisible(cardId, false);
+
+		//이펙트 끝
+		if (m_shiny.GetIndex() >= 10)
+		{
+			/*string exId = "Card_Shiny_";
+			exId += m_shiny.GetIndex() - 1;
+			M_REND.ImageVisible(exId, false);*/
+			m_shiny.SetIndex(0);
+			m_isLoop = false;
+		}
+
+		m_shiny.StartTimer();
+		m_shiny.PlusIndex();
+	}
+}
+
 CardManager::CardManager() : m_DeckCount(25), m_HandCount(0), m_HandSelection(4),
-m_IsMyTurn(false), m_IsSelect(false)
+m_IsMyTurn(false), m_IsSelect(false), m_isLoop(false)
 {
 }
 
@@ -262,8 +315,18 @@ void CardManager::CardAct(CardManager& player ,CardManager& opponent)
 		break;
 	}
 
+	m_isLoop = true;
+
 	//이미지 안보이기
 	M_REND.ImageVisible(to_string(m_Hand[m_HandSelection]->GetUid()), false);
+	/*int midX = 1280 * 0.5;
+	int midY = 720 * 0.5;
+	int cardMidX = CARDX * 0.5;
+	int deckX = CARDX;
+	int deckY = CARDY;
+	M_REND.MoveImage(to_string(m_Hand[m_HandSelection]->GetUid()),
+		Gdiplus::Rect(midX - cardMidX, (midY + 10), deckX, deckY));
+	ShinyEffect(midX - cardMidX, (midY + 10));*/
 
 	m_Hand.erase(m_Hand.begin() + m_HandSelection);
 	m_HandCount--;

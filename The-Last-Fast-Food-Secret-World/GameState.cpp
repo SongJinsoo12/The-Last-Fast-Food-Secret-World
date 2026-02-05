@@ -135,6 +135,7 @@ namespace GameState_M {
 		//ÆÐ Ãâ·Â
 		m_player.DrawPlayerHand();
 		m_boss.DrawOppHand();
+		m_player.ShinyEffect(200, 200);
 	}
 
 	void InGame::Exit()

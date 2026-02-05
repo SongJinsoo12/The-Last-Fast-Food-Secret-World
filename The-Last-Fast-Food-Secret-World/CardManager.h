@@ -36,6 +36,7 @@ public:
 	void BossCardAct(CardManager& player);
 
 	void SetImage();
+	void ShinyEffect(int x, int y);
 
 private:
 	int m_DeckCount;//덱 장수
@@ -46,5 +47,6 @@ private:
 	bool m_IsMyTurn;//턴 확인
 	bool m_IsSelect;//패 카드 선택 확인
 	//AI m_boss;//보스 ai
-	Timer m_timer;
+	Timer m_timer, m_shiny;
+	bool m_isLoop;
 };
