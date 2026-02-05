@@ -94,7 +94,7 @@ namespace GameState_M {
 		void Exit() override;
 	private:
 		CardManager m_player, m_boss;
-		Timer m_timer;
+		//Timer m_timer;
 	};
 
 	class InGameResult :public State {

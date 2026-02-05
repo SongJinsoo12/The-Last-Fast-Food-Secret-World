@@ -1,6 +1,6 @@
 #include "Timer.h"
 
-Timer::Timer() : m_time(0)
+Timer::Timer() : m_time(0), m_isStart(false)
 {
 }
 
@@ -27,4 +27,14 @@ bool Timer::CheckTimer(double p_time)
 		return true;
 	else
 		return false;
+}
+
+bool Timer::GetIsStart()
+{
+	return m_isStart;
+}
+
+void Timer::SetIsStart(bool p_isStart)
+{
+	m_isStart = p_isStart;
 }

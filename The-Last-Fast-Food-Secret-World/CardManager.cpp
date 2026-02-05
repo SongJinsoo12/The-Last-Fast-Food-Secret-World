@@ -6,6 +6,7 @@
 #include "CardTableManager.h"
 #include "Boss.h"
 #include "Player.h"
+#include "InputGame.h"
 
 void CardManager::SetImage()
 {
@@ -235,44 +236,8 @@ void CardManager::DrawOppHand()
 	}
 }
 
-//패 카드 선택
-void CardManager::HandSelect(WPARAM wParam, CardManager& player, CardManager& opponent, HWND hWnd)
-{
-	switch (wParam)
-	{
-	case VK_LEFT:
-		if (m_HandSelection <= 0)
-			return;
-		m_HandSelection--;
-		break;
-	case VK_RIGHT:
-		if (m_HandSelection >= m_HandCount - 1)
-			return;
-		m_HandSelection++;
-		break;
-		//임시 카드 정보 보기 버트
-	case VK_UP:
-		//CardInfo();
-		m_IsSelect = true;
-		break;
-	case VK_DOWN:
-		m_IsSelect = false;
-		break;
-
-		//임시 카드 내기 버튼
-	case VK_RETURN:
-		//자신의 턴이 아니면 행동 불가능
-		if (!m_IsMyTurn)
-			return;
-		CardAct(player, opponent, hWnd);
-		break;
-	default:
-		break;
-	}
-}
-
 //패 카드 사용
-void CardManager::CardAct(CardManager& player ,CardManager& opponent, HWND hWnd)
+void CardManager::CardAct(CardManager& player ,CardManager& opponent)
 {
 	//패에 카드가 없으면 리턴
 	if (m_HandCount <= 0)
@@ -280,6 +245,9 @@ void CardManager::CardAct(CardManager& player ,CardManager& opponent, HWND hWnd)
 	//선택 중이지 않으면 리턴
 	if (m_HandSelection < 0)
 		return;
+	
+	//타이머 초기화
+	m_timer.SetIsStart(false);
 
 	switch (m_Hand[m_HandSelection]->GetType())
 	{
@@ -306,9 +274,21 @@ void CardManager::CardAct(CardManager& player ,CardManager& opponent, HWND hWnd)
 	//턴 엔드
 	player.m_IsMyTurn = !player.m_IsMyTurn;
 	opponent.m_IsMyTurn = !opponent.m_IsMyTurn;
-	//SetTimer(hWnd, TURNTIME, 7000, NULL);
-	//opponent.OpponentAct(player, opponent, hWnd);
+	opponent.BossCardAct(player);
 	cout << "턴 교체.\n";
+}
+
+void CardManager::HandSelect(CardManager& player, CardManager& opponent)
+{
+	if (GameInput_M::Input::GetInstance().isKeyboard(KEY_LEFT)
+		&& !(m_HandSelection <= 0)) m_HandSelection--;
+	else if (GameInput_M::Input::GetInstance().isKeyboard(KEY_RIGHT)
+		&& !(m_HandSelection >= m_HandCount - 1)) m_HandSelection++;
+
+	else if (GameInput_M::Input::GetInstance().isKeyboard(KEY_UP)) m_IsSelect = true;
+	else if (GameInput_M::Input::GetInstance().isKeyboard(KEY_DOWN)) m_IsSelect = false;
+	else if (GameInput_M::Input::GetInstance().isKeyboard(KEY_ENTER) 
+		&& m_IsMyTurn) CardAct(player, opponent);
 }
 
 //시작 턴 정하기
@@ -328,17 +308,21 @@ void CardManager::StartTurn(CardManager& player, CardManager& opponent)
 		opponent.m_IsMyTurn = !opponent.m_IsMyTurn;
 		cout << "상대방의 턴\n";
 		//opponent.OpponentAct(player, opponent, hWnd);
+		//opponent.BossCardAct(player);
 	}
-
 }
 
-//턴 시간 제한
-void CardManager::TimeLimit(WPARAM wParam, HWND hWnd, CardManager& player, CardManager& opponent)
+void CardManager::TimeLimit(CardManager& player, CardManager& opponent)
 {
-	switch (wParam)
+	if (!m_timer.GetIsStart())
 	{
-	case TURNTIME:
-		//턴 엔드
+		m_timer.StartTimer();
+		m_timer.SetIsStart(true);
+	}
+	
+	m_timer.UpdateTimer();
+	if (m_timer.CheckTimer(5))
+	{
 		player.m_IsMyTurn = !player.m_IsMyTurn;
 		opponent.m_IsMyTurn = !opponent.m_IsMyTurn;
 
@@ -351,16 +335,41 @@ void CardManager::TimeLimit(WPARAM wParam, HWND hWnd, CardManager& player, CardM
 		else
 		{
 			cout << "상대방의 턴\n";
-			//opponent.OpponentAct(player, opponent, hWnd);
+			//opponent.BossCardAct(player);
 		}
-
-		player.DrawPlayerHand();
-		opponent.DrawOppHand();
-		break;
-	default:
-		break;
+		m_timer.SetIsStart(false);
 	}
 }
+
+//턴 시간 제한
+//void CardManager::TimeLimit(WPARAM wParam, HWND hWnd, CardManager& player, CardManager& opponent)
+//{
+//	switch (wParam)
+//	{
+//	case TURNTIME:
+//		//턴 엔드
+//		player.m_IsMyTurn = !player.m_IsMyTurn;
+//		opponent.m_IsMyTurn = !opponent.m_IsMyTurn;
+//
+//		//자신의 차례면 드로우
+//		if (player.m_IsMyTurn)
+//		{
+//			CardDraw(1);
+//			cout << "자신의 턴\n";
+//		}
+//		else
+//		{
+//			cout << "상대방의 턴\n";
+//			//opponent.OpponentAct(player, opponent, hWnd);
+//		}
+//
+//		player.DrawPlayerHand();
+//		opponent.DrawOppHand();
+//		break;
+//	default:
+//		break;
+//	}
+//}
 
 //보스 / 몬스터 행동
 //void CardManager::OpponentAct(Player& p_player, Boss& p_boss, CardManager& player, CardManager& opponent, HWND hWnd)
@@ -399,7 +408,7 @@ void CardManager::TimeLimit(WPARAM wParam, HWND hWnd, CardManager& player, CardM
 //	BossCardAct(player, hWnd);
 //}
 
-void CardManager::BossCardAct(CardManager& player, HWND hWnd)
+void CardManager::BossCardAct(CardManager& player)
 {
 	//패에 카드가 없으면 리턴
 	if (m_HandCount <= 0)
@@ -433,7 +442,7 @@ void CardManager::BossCardAct(CardManager& player, HWND hWnd)
 	//턴 엔드
 	player.m_IsMyTurn = !player.m_IsMyTurn;
 	m_IsMyTurn = !m_IsMyTurn;
-	SetTimer(hWnd, TURNTIME, 7000, NULL);
+	//SetTimer(hWnd, TURNTIME, 7000, NULL);
 	player.CardDraw(1);
 	cout << "턴 교체.\n";
 

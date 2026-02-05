@@ -29,7 +29,14 @@ namespace GameInput_M {
 	{
 		if (0 > p_key || p_key >= 256)
 			return false;
-		return m_KeyBoardValue[p_key];
+
+		if (m_KeyBoardValue[p_key])
+		{
+			m_KeyBoardValue[p_key] = false;
+			return true;
+		}
+		else
+			return false;
 	}
 
 	void Input::GetMousePos(int* p_x, int* p_y)
@@ -47,14 +54,14 @@ namespace GameInput_M {
 			m_ISMouseClick[(int)GameInput_M::MouseValue::Left] = true;
 			m_MousePosX = LOWORD(lParam);
 			m_MousePosY = HIWORD(lParam);
-			std::cout << "???²J ????? ??????" << std::endl;
+			std::cout << "¸¶¿ì½º ÁÂÅ¬¸¯ ´©¸£±â" << std::endl;
 			break;
 
 		case WM_LBUTTONUP:
 			m_ISMouseClick[(int)GameInput_M::MouseValue::Left] = false;
 			m_MousePosX = LOWORD(lParam);
 			m_MousePosY = HIWORD(lParam);
-			std::cout << "???²J ????? ??????" << std::endl;
+			std::cout << "¸¶¿ì½º ÁÂÅ¬¸¯ ³¡³»±â" << std::endl;
 			break;
 
 		case WM_RBUTTONDOWN:

@@ -119,14 +119,6 @@ namespace GameState_M {
 		m_player.DrawBG();
 		CardTableManager::Instance();
 
-		//임시 타이머
-		m_timer.StartTimer();
-		while (true)
-		{
-			m_timer.UpdateTimer();
-			if (m_timer.CheckTimer(4))
-				break;
-		}
 		m_player.SetDeck();
 		m_boss.SetDeck();
 		m_player.StartTurn(m_player, m_boss);
@@ -136,7 +128,13 @@ namespace GameState_M {
 
 	void InGame::Update(HDC p_hdc, HWND p_hwnd)
 	{
+		m_player.TimeLimit(m_player, m_boss);
 		//게임 로직 함수
+		m_player.HandSelect(m_player, m_boss);
+
+		//패 출력
+		m_player.DrawPlayerHand();
+		m_boss.DrawOppHand();
 	}
 
 	void InGame::Exit()
