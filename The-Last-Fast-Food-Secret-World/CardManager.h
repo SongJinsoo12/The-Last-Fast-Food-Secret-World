@@ -34,9 +34,9 @@ public:
 	//void TimeLimit(WPARAM wParam, HWND hWnd, CardManager& player, CardManager& opponent);
 	//void OpponentAct(Player& p_player, Boss& p_boss, CardManager& player, CardManager& opponent, HWND hWnd);
 	void BossCardAct(CardManager& player);
-
 	void SetImage();
-	void ShinyEffect(int x, int y);
+	void PlayCardEffect(int x, int y);
+	void PlayRip(int x, int y);
 
 private:
 	int m_DeckCount;//덱 장수
@@ -47,6 +47,6 @@ private:
 	bool m_IsMyTurn;//턴 확인
 	bool m_IsSelect;//패 카드 선택 확인
 	//AI m_boss;//보스 ai
-	Timer m_timer, m_shiny;
-	bool m_isLoop;
+	Timer m_timer, m_shiny, m_rip;
+	bool m_isShiny, m_isRip;
 };

@@ -135,7 +135,10 @@ namespace GameState_M {
 		//ÆÐ Ãâ·Â
 		m_player.DrawPlayerHand();
 		m_boss.DrawOppHand();
-		m_player.ShinyEffect(200, 200);
+		string shinyId = "Card_Shiny_";
+		string ripId = "Card_Rip_";
+		m_player.PlayCardEffect(200, 200);
+		m_player.PlayRip(300, 200);
 	}
 
 	void InGame::Exit()

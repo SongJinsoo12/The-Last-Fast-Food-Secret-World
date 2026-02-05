@@ -8,6 +8,12 @@
 #include "Player.h"
 #include "InputGame.h"
 
+
+CardManager::CardManager() : m_DeckCount(25), m_HandCount(0), m_HandSelection(4),
+m_IsMyTurn(false), m_IsSelect(false), m_isShiny(false), m_isRip(false)
+{
+}
+
 void CardManager::SetImage()
 {
 	M_REND.SetImage(L"background_city_night.png", "City_Night",
@@ -64,17 +70,78 @@ void CardManager::SetImage()
 		M_REND.SetImage(wCardPng, cardId,
 			Gdiplus::Rect(0, 0, 100, 128), Gdiplus::Rect(0, 0, 0, 0), false,
 			GameImage_M::LayerType::UI);
+	}
+	for (size_t i = 0; i < 15; i++)
+	{
+		if (i < 12)
+		{
+			string cardPng = "card_rip_";
+			string cardId = "Card_Rip_";
+			cardPng += to_string(i + 1);
+			cardPng += ".png";
+			cardId += to_string(i);
 
-		//wprintf(wCardPng.c_str());
+			wstring wCardPng;
+			wCardPng.assign(cardPng.begin(), cardPng.end());
+
+			M_REND.SetImage(wCardPng, cardId,
+				Gdiplus::Rect(0, 0, 100, 128), Gdiplus::Rect(0, 0, 0, 0), false,
+				GameImage_M::LayerType::UI);
+		}
+		else if (i == 12)
+		{
+			string cardPng = "card_rip_";
+			string cardId = "Card_Rip_";
+			cardPng += to_string(i + 1);
+			cardPng += ".png";
+			cardId += to_string(i);
+
+			wstring wCardPng;
+			wCardPng.assign(cardPng.begin(), cardPng.end());
+
+			M_REND.SetImage(wCardPng, cardId,
+				Gdiplus::Rect(0, 0, 108, 155), Gdiplus::Rect(0, 0, 0, 0), false,
+				GameImage_M::LayerType::UI);
+		}
+		else if (i == 13)
+		{
+			string cardPng = "card_rip_";
+			string cardId = "Card_Rip_";
+			cardPng += to_string(i + 1);
+			cardPng += ".png";
+			cardId += to_string(i);
+
+			wstring wCardPng;
+			wCardPng.assign(cardPng.begin(), cardPng.end());
+
+			M_REND.SetImage(wCardPng, cardId,
+				Gdiplus::Rect(0, 0, 113, 177), Gdiplus::Rect(0, 0, 0, 0), false,
+				GameImage_M::LayerType::UI);
+		}
+		else if (i == 14)
+		{
+			string cardPng = "card_rip_";
+			string cardId = "Card_Rip_";
+			cardPng += to_string(i + 1);
+			cardPng += ".png";
+			cardId += to_string(i);
+
+			wstring wCardPng;
+			wCardPng.assign(cardPng.begin(), cardPng.end());
+
+			M_REND.SetImage(wCardPng, cardId,
+				Gdiplus::Rect(0, 0, 122, 182), Gdiplus::Rect(0, 0, 0, 0), false,
+				GameImage_M::LayerType::UI);
+		}
 	}
 
 	cout << "이미지 로드 확인\n";
 }
 
-//카드 반짝임 이펙트 애니메이션
-void CardManager::ShinyEffect(int x, int y)
+//카드 이펙트 애니메이션
+void CardManager::PlayCardEffect(int x, int y)
 {
-	if (!m_isLoop) return;
+	if (!m_isShiny) return;
 
 	if (!m_shiny.GetIsStart())
 	{
@@ -95,21 +162,90 @@ void CardManager::ShinyEffect(int x, int y)
 		//이펙트 끝
 		if (m_shiny.GetIndex() >= 10)
 		{
-			/*string exId = "Card_Shiny_";
-			exId += m_shiny.GetIndex() - 1;
-			M_REND.ImageVisible(exId, false);*/
 			m_shiny.SetIndex(0);
-			m_isLoop = false;
+			m_isShiny = false;
+			return;
 		}
 
 		m_shiny.StartTimer();
 		m_shiny.PlusIndex();
+		string newId = "Card_Shiny_";
+		newId += to_string(m_shiny.GetIndex());
+		M_REND.MoveImage(newId, Gdiplus::Rect(x, y, 100, 128));
+		M_REND.ImageVisible(newId, true);
 	}
 }
 
-CardManager::CardManager() : m_DeckCount(25), m_HandCount(0), m_HandSelection(4),
-m_IsMyTurn(false), m_IsSelect(false), m_isLoop(false)
+void CardManager::PlayRip(int x, int y)
 {
+	if (!m_isRip) return;
+
+	if (!m_rip.GetIsStart())
+	{
+		m_rip.StartTimer();
+		m_rip.SetIsStart(true);
+	}
+	string cardId = "Card_Rip_";
+	cardId += to_string(m_rip.GetIndex());
+	if (m_rip.GetIndex() < 12)
+	{
+		M_REND.MoveImage(cardId, Gdiplus::Rect(x, y, 108, 128));
+		M_REND.ImageVisible(cardId, true);
+	}
+	else if (m_rip.GetIndex() == 12)
+	{
+		M_REND.MoveImage(cardId, Gdiplus::Rect(x, y, 108, 155));
+		M_REND.ImageVisible(cardId, true);
+	}
+	else if (m_rip.GetIndex() == 13)
+	{
+		M_REND.MoveImage(cardId, Gdiplus::Rect(x, y, 113, 177));
+		M_REND.ImageVisible(cardId, true);
+	}
+	else if (m_rip.GetIndex() == 14)
+	{
+		M_REND.MoveImage(cardId, Gdiplus::Rect(x, y, 122, 182));
+		M_REND.ImageVisible(cardId, true);
+	}
+
+	m_rip.UpdateTimer();
+	if (m_rip.CheckTimer(0.03))
+	{
+		M_REND.ImageVisible(cardId, false);
+
+		//이펙트 끝
+		if (m_rip.GetIndex() >= 15)
+		{
+			m_rip.SetIndex(0);
+			m_isRip = false;
+			return;
+		}
+
+		m_rip.StartTimer();
+		m_rip.PlusIndex();
+		string newId = "Card_Rip_";
+		newId += to_string(m_rip.GetIndex());
+		if (m_rip.GetIndex() < 12)
+		{
+			M_REND.MoveImage(newId, Gdiplus::Rect(x, y, 108, 128));
+			M_REND.ImageVisible(newId, true);
+		}
+		else if (m_rip.GetIndex() == 12)
+		{
+			M_REND.MoveImage(newId, Gdiplus::Rect(x, y, 108, 155));
+			M_REND.ImageVisible(newId, true);
+		}
+		else if (m_rip.GetIndex() == 13)
+		{
+			M_REND.MoveImage(newId, Gdiplus::Rect(x, y, 113, 177));
+			M_REND.ImageVisible(newId, true);
+		}
+		else if (m_rip.GetIndex() == 14)
+		{
+			M_REND.MoveImage(newId, Gdiplus::Rect(x, y, 122, 182));
+			M_REND.ImageVisible(newId, true);
+		}
+	}
 }
 
 void CardManager::StartGame()
@@ -315,7 +451,8 @@ void CardManager::CardAct(CardManager& player ,CardManager& opponent)
 		break;
 	}
 
-	m_isLoop = true;
+	m_isShiny = true;
+	m_isRip = true;
 
 	//이미지 안보이기
 	M_REND.ImageVisible(to_string(m_Hand[m_HandSelection]->GetUid()), false);
