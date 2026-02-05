@@ -16,6 +16,7 @@ namespace GameInput_M {
 		friend class Singleton<Input>;
 	public:
 		virtual int isClick();
+		virtual int isOneClick();
 		virtual int isHeel();
 		virtual bool isKeyboard(int p_key);
 		virtual void GetMousePos(int* p_x, int* p_y);

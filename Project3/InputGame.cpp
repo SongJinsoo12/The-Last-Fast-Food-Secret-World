@@ -20,6 +20,27 @@ namespace GameInput_M {
 			return 0;
 	}
 
+	int Input::isOneClick()
+	{
+		if (m_ISMouseClick[(int)GameInput_M::MouseValue::Right])
+		{
+			m_ISMouseClick[(int)GameInput_M::MouseValue::Right] = false;
+			return (int)GameInput_M::MouseValue::Right;
+		}
+		else if (m_ISMouseClick[(int)GameInput_M::MouseValue::Left])
+		{
+			m_ISMouseClick[(int)GameInput_M::MouseValue::Left] = false;
+			return (int)GameInput_M::MouseValue::Left;
+		}
+		else if (m_ISMouseClick[(int)GameInput_M::MouseValue::Heel])
+		{
+			m_ISMouseClick[(int)GameInput_M::MouseValue::Heel] = false;
+			return (int)GameInput_M::MouseValue::Heel;
+		}
+		else
+			return 0;
+	}
+
 	int Input::isHeel()
 	{
 		return m_MouseHeelDelta;
