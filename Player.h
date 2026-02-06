@@ -270,6 +270,12 @@ public:
     void SetNextAtkAttributeRandom(CAttribute neutral = E_BREAD);
     bool HasNextAtkAttributeOverride() const;
 
+    // 공격 금지
+    void ProhibitPlay(int turns);
+    void ProhibitAttackPlay(int turns);
+    bool IsPlayProhibited() const;
+    bool IsAttackPlayProhibited() const;
+
 private:
     // 플레이어 표시용 이름
     std::wstring m_name = L"Player";
@@ -367,4 +373,8 @@ private:
 
     // Internal: resolve cardId -> CType (returns E_Magic if unknown).
     static CType ResolveCardTypeById(int cardId);
+
+    // 공격 카드 금지
+    int m_playProhibitTurnsLeft = 0;
+    int m_attackProhibitTurnsLeft = 0;
 };

@@ -180,6 +180,14 @@ void Player::EndTurn()
     {
         --m_disarrayTurnsLeft;
     }
+    if (m_playProhibitTurnsLeft > 0)
+    {
+        --m_playProhibitTurnsLeft;
+    }
+    if (m_attackProhibitTurnsLeft > 0)
+    {
+        --m_attackProhibitTurnsLeft;
+    }
     // 다른 턴 종료 처리들
 }
 
@@ -712,6 +720,28 @@ void Player::SetNextAtkAttributeRandom(CAttribute neutral)
 bool Player::HasNextAtkAttributeOverride() const
 {
     return m_hasNextAtkAttributeOverride;
+}
+
+void Player::ProhibitPlay(int turns)
+{
+    if (turns <= 0) return;
+    m_playProhibitTurnsLeft = std::max(m_playProhibitTurnsLeft, turns);
+}
+
+void Player::ProhibitAttackPlay(int turns)
+{
+    if (turns <= 0) return;
+    m_attackProhibitTurnsLeft = std::max(m_attackProhibitTurnsLeft, turns);
+}
+
+bool Player::IsPlayProhibited() const
+{
+    return m_playProhibitTurnsLeft > 0;
+}
+
+bool Player::IsAttackPlayProhibited() const
+{
+    return m_attackProhibitTurnsLeft > 0;
 }
 
 void Player::OnAcquireCard(int cardId)

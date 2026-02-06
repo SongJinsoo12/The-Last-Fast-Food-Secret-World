@@ -45,7 +45,7 @@ int DefCard::BreadDef(CAttribute /*atkAttr*/, Star rank)
     }
 }
 
-//int DefCard::invincibility(Mob& mob, CAttribute attr, Star rank)
+//int DefCard::invincibility(CAttribute attr, Star rank)
 //{
 //    if (attr == E_BREAD) return 0;
 //

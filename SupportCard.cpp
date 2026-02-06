@@ -315,12 +315,11 @@ void SupportCard::SeeCard(Player& player)
     player.ReorderTopDeck(top);
 }
 
-//void SupportCard::Enemy_Atk_Prohibition(Player& player, Mob& mob)
-//{
-//    // 공격 카드만 금지하려면 cardId -> 타입 해석이 필요합니다.
-//    // 간단 버전: "다음 1턴동안 어떤 카드도 못 냄"
-//    player.ProhibitPlay(1);
-//}
+void SupportCard::Enemy_Atk_Prohibition(Player& player, Mob& mob)
+{
+    // mob 으로 변경
+    player.ProhibitPlay(1);
+}
 
 void SupportCard::Enemy_Forsake_Card(Mob& enemy)
 {
