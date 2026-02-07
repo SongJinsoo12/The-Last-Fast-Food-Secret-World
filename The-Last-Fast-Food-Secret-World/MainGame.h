@@ -22,9 +22,15 @@ public:
 	int mx, my;	// 마우스 커서
 
 	MainGame();
+	int GetGold()
+	{
+		return this->Coin;
+	}
 	void AddGold(int v);
-	void RemoveGold(int v);
+	bool RemoveGold(int v);
 
 	int GetStage();
 };
+
+extern MainGame g_MainGame;
 

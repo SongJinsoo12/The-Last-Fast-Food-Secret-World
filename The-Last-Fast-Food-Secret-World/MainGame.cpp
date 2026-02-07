@@ -1,7 +1,9 @@
 #include "MainGame.h"
 
+MainGame g_MainGame;
+
 MainGame::MainGame() {
-	Coin = 0;
+	Coin = 4000;
 	LargeStage = 1;
 	SmallStage = 1;
 	CardBox = 0;
@@ -11,10 +13,17 @@ void MainGame::AddGold(int v) {
 	Coin += v;
 }
 
-void MainGame::RemoveGold(int v) {
-	Coin -= v;
-	if (Coin <= 0)
-		Coin = 0;
+bool MainGame::RemoveGold(int v) {
+	int result = Coin - v;
+	if (result < 0)
+	{
+		return false;
+	}
+	else
+	{
+		Coin -= v;
+		return true;
+	}
 }
 
 int MainGame::GetStage() {
