@@ -1,10 +1,9 @@
 #pragma once
-#include <cstdlib>
-#include <Windows.h>
-
 #include "MainGame.h"
 #include "DeckBuilding.h"
-
+#include "RenderManager.h"
+#include "ButtonManager.h"
+#include <chrono>
 
 //상자의 정보를 담음(확률, 좌표)
 class Chest
@@ -45,22 +44,17 @@ public:
 	//원하는 확률 하나를 리턴함
 	int GetProb(int p_idx)
 	{
-		return probability[p_idx];
+		return this->probability[p_idx];
 	}
 
 	int GetChestID()
 	{
-		return id;
+		return this->id;
 	}
 
 	int GetPrice()
 	{
 		return this->price;
-	}
-
-	void SetInctroducing(string p_text)
-	{
-
 	}
 };
 
@@ -70,14 +64,20 @@ private:
 	Chest chest[6];					//전체 상자
 	Chest selectedChest;			//선택된 상자
 	BOOL isSelect = FALSE;			//하이라이트될 상자를 선택했는가
+
+	chrono::steady_clock::time_point ani_start;
+	int mov_sel = 1400;
+
+public:
+	ButtonManager m_ShopBtnM;
+
 public:
 	Shop()
 	{
 		srand(time(NULL));
-
-		for (int i = 0; i < 6; i++)//0 1 2 3 4 5
+		for (int i = 0; i < 3; i++)//0 1 2 3 4 5
 		{
-			//테스트용 랜덤확률지정
+			//테스트용 랜덤확률지정 / 확정되면 지울예정
 			int hund = 101, v1 = 0, v2 = 0, v3 = 0, v4 = 0;
 			v1 = rand() % hund, hund -= v1;	//v1 = 0~100 -> 12, hund = 88
 			v2 = rand() % hund, hund -= v2;//v2 = 0~88 -> 20, hund = 68
@@ -87,12 +87,37 @@ public:
 			//상자 위치 설정해줌
 			chest[i].x = 875 + (i % 3) * 150, chest[i].y = 250 + (i / 3) * 200;
 		}
+
+		//상자 보관용 선반
+		RENDER.SetImage(L"shelf.png", "shelf1"
+			, Rect(0, 0, 651, 101), Rect(mov_sel, 250, 651, 101), false, GameImage_M::LayerType::Background);
+		RENDER.SetImage(L"shelf.png", "shelf2"
+			, Rect(0, 0, 651, 101), Rect(mov_sel, 450, 651, 101), false, GameImage_M::LayerType::Background);
+		//상점 주인 / 버튼형식으로 바꿔서 상호작용 추가하기
+		RENDER.SetImage(L"cookie.png", "cookie"
+			, Rect(0, 0, 250, 250), Rect(300 - 180, 430 - 180, 360, 360), false, GameImage_M::LayerType::Background);
+		//상자 정보 및 상점 주인 대사 출력용
+		RENDER.SetImage(L"textbox.png", "textbox"
+			, Rect(0, 0, 500, 200), Rect(50, 500, 500, 200), false, GameImage_M::LayerType::Background);
+		//상자 출력
+		for (int i = 0; i < 3; i++)
+		{
+			RENDER.SetImage(L"chest.png", "chest" + to_string(i)
+				, Rect(0, 0, 1024, 1024), Rect(0, 0, 0, 0), false, GameImage_M::LayerType::Background);
+		}
+
+		RENDER.SetImage(L"rect_button.png", "one"
+			, Rect(0, 0, 100, 110), Rect(0, 0, 0, 0), false, GameImage_M::LayerType::UI);
+		RENDER.SetImage(L"rect_button.png", "ten"
+			, Rect(0, 0, 100, 110), Rect(0, 0, 0, 0), false, GameImage_M::LayerType::UI);
 	}
 	virtual ~Shop()
 	{
 
 	}
 
+	bool isSucceedGacha(HDC p_hdc, int p_gacha_num);
+	void DrawGachaButton(HDC p_hdc, int p_mx, int p_my, WCHAR p_text[]);
 	//상자를 선택함
 	void SelectChest(int p_mx, int p_my);
 	int GetSelectedPrice()
@@ -104,7 +129,15 @@ public:
 		return this->selectedChest;
 	}
 	BOOL CheckIsSelection();
-	void CancelSeletion();
+	void CancelSelection();
 
-	void DrawShop(HDC p_hdc, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[]);
+	//이미지 로드 확인해보기 / 쿠키는 맥도날드 점원, 상자는 가게메뉴로 변경(==상점 컨셉을 맥으로)
+	void SetDrawShop();
+	void SetEnterShop();
+	//화면 전환 시 상점의 이미지들을 전부 비활성화
+	void ExitShop();
+	void DrawShop(HDC p_hdc, WCHAR p_text[]);
+	bool DrawEnterShop();
 };
+
+extern Shop g_Shop;
