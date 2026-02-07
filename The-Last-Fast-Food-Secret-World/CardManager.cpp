@@ -135,13 +135,15 @@ void CardManager::SetImage()
 				GameImage_M::LayerType::UI);
 		}
 	}
+
+	int skillId = 0;
 	for (size_t i = 0; i < 10; i++)
 	{
 		string cardPng = "warrior_skill1_frame";
-		string cardId = "Card_Skill1_";
+		string cardId = "Card_Skill_";
 		cardPng += to_string(i + 1);
 		cardPng += ".png";
-		cardId += to_string(i);
+		cardId += to_string(skillId);
 
 		wstring wCardPng;
 		wCardPng.assign(cardPng.begin(), cardPng.end());
@@ -149,14 +151,15 @@ void CardManager::SetImage()
 		M_REND.SetImage(wCardPng, cardId,
 			Gdiplus::Rect(0, 0, 128, 128), Gdiplus::Rect(0, 0, 0, 0), false,
 			GameImage_M::LayerType::UI);
+		skillId++;
 	}
 	for (size_t i = 0; i < 10; i++)
 	{
 		string cardPng = "warrior_skill3_frame";
-		string cardId = "Card_Skill3_";
+		string cardId = "Card_Skill_";
 		cardPng += to_string(i + 1);
 		cardPng += ".png";
-		cardId += to_string(i);
+		cardId += to_string(skillId);
 
 		wstring wCardPng;
 		wCardPng.assign(cardPng.begin(), cardPng.end());
@@ -164,14 +167,15 @@ void CardManager::SetImage()
 		M_REND.SetImage(wCardPng, cardId,
 			Gdiplus::Rect(0, 0, 128, 128), Gdiplus::Rect(0, 0, 0, 0), false,
 			GameImage_M::LayerType::UI);
+		skillId++;
 	}
 	for (size_t i = 0; i < 7; i++)
 	{
 		string cardPng = "warrior_skill4_frame";
-		string cardId = "Card_Skill4_";
+		string cardId = "Card_Skill_";
 		cardPng += to_string(i + 1);
 		cardPng += ".png";
-		cardId += to_string(i);
+		cardId += to_string(skillId);
 
 		wstring wCardPng;
 		wCardPng.assign(cardPng.begin(), cardPng.end());
@@ -179,6 +183,7 @@ void CardManager::SetImage()
 		M_REND.SetImage(wCardPng, cardId,
 			Gdiplus::Rect(0, 0, 128, 128), Gdiplus::Rect(0, 0, 0, 0), false,
 			GameImage_M::LayerType::UI);
+		skillId++;
 	}
 
 	cout << "이미지 로드 확인\n";

@@ -134,9 +134,9 @@ namespace GameState_M {
 		m_ripEffect.SetImageSize(300, 200, 100, 128);
 		m_ripEffect.SetIndex(15);
 
-		m_skillEffect.SetId("Card_Skill1_");
+		m_skillEffect.SetId("Card_Skill_");
 		m_skillEffect.SetImageSize(430, 200, 128, 128);
-		m_skillEffect.SetIndex(10);
+		m_skillEffect.SetIndex(27);
 	}
 
 	void InGame::PlayAnimation(Timer& p_timer, Animation& p_effect, bool* p_isPlay)
