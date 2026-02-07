@@ -1,6 +1,7 @@
 #include "GameState.h"
 #include "RenderManager.h"
 #include "InputGame.h"
+#include "CardTableManager.h"
 #include <chrono>
 
 //각 화면
@@ -17,9 +18,8 @@ namespace GameState_M {
 		StateVector[(int)E_InGameState::DeckBuild] = make_shared<DeckBuild>();
 		StateVector[(int)E_InGameState::Shop] = make_shared<Shop>();
 		StateVector[(int)E_InGameState::LuckyBox] = make_shared<LuckyBox>();
-		//StateVector[(int)E_InGameState::Lobby] = make_shared<Lobby>();
-		//StateVector[(int)E_InGameState::Lobby] = make_shared<Lobby>();
-		//StateVector[(int)E_InGameState::Lobby] = make_shared<Lobby>();
+		StateVector[(int)E_InGameState::InGame] = make_shared<InGame>();
+		StateVector[(int)E_InGameState::InGameResult] = make_shared<InGameResult>();
 	}
 
 	// 각 화면에 맞는 Update 로직
@@ -29,6 +29,7 @@ namespace GameState_M {
 			return;
 
 		currentState.get()->Update(p_hdc, p_hwnd);
+
 	}
 
 	void Context::ChangeState(E_InGameState inputState) {
@@ -40,27 +41,26 @@ namespace GameState_M {
 		currentState.get()->Enter();
 	}
 
-
-
 	void Lobby::Enter()
 	{
 		g_DeckBuild.LoadDeck();//시작시 덱 로드, 세이브는 소멸자에
-		//RENDER.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(0, 0, 300, 300)
-			//, false, GameImage_M::LayerType::Field);
+		/*M_REND.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(0, 0, 300, 300)
+			, false, GameImage_M::LayerType::Field);*/
 	}
 
 	void Lobby::Update(HDC p_hdc, HWND p_hwn) {
+		//확인용으로 좌클릭 시 상점이동
 		if (GameInput_M::Input::GetInstance().isClick() == (int)GameInput_M::MouseValue::Left)
 			STATE.ChangeState(GameState_M::E_InGameState::Shop);
 	}
 
 	void Lobby::Exit() {
-		//RENDER.AllRemoveImage();
+		//M_REND.AllRemoveImage();
 	}
 
 	void Menu::Enter()
 	{
-		//RENDER.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(100, 0, 300, 300), true, GameImage_M::LayerType::Field);
+		//M_REND.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(100, 0, 300, 300), true, GameImage_M::LayerType::Field);
 	}
 
 	void Menu::Update(HDC p_hdc, HWND p_hwnd)
@@ -69,7 +69,7 @@ namespace GameState_M {
 	}
 
 	void Menu::Exit() {
-		//RENDER.RemoveIDIamage("ID_1");
+		//M_REND.RemoveIDIamage("ID_1");
 	}
 
 	void DeckBuild::Enter() {
@@ -100,6 +100,7 @@ namespace GameState_M {
 			INPUT.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
 			g_DeckBuild.DeckBuild(g_MainGame.mx, g_MainGame.my, 'R');
 		}
+
 	}
 
 	void DeckBuild::Exit() {
@@ -189,14 +190,37 @@ namespace GameState_M {
 
 	void InGame::Enter()
 	{
+		//이미지 로드/보여기
+		//값 초기화 가능 
+		m_player.SetImage();
+		m_player.DrawBG();
+		CardTableManager::Instance();
+
+		m_player.SetDeck();
+		m_boss.SetDeck();
+		m_player.StartTurn(m_player, m_boss);
+		m_player.DrawPlayerHand();
+		m_boss.DrawOppHand();
 	}
 
 	void InGame::Update(HDC p_hdc, HWND p_hwnd)
 	{
+		m_player.TimeLimit(m_player, m_boss);
+		//게임 로직 함수
+		m_player.HandSelect(m_player, m_boss);
+
+		//패 출력
+		m_player.DrawPlayerHand();
+		m_boss.DrawOppHand();
+		string shinyId = "Card_Shiny_";
+		string ripId = "Card_Rip_";
+		m_player.PlayCardEffect(200, 200);
+		m_player.PlayRip(300, 200);
 	}
 
 	void InGame::Exit()
 	{
+		//이미지 지우기
 	}
 
 	void InGameResult::Enter()
