@@ -1,120 +1,122 @@
 #include "CardGacha.h"
 
-void CardGacha::one(DeckBuilding& p_deck)
-{
-	int invensize = p_deck.GetSize();
-	Card* all = p_deck.GetAllCard();
-	Card out = all[rand() % AllCARDMAXSIZE];
-	int x = invensize % 5, y = invensize / 5;
-	out.x = x * 150 + 750, out.y = y * 150 + 50;
-	p_deck.PushCard(&out, 1);
+CardGacha g_Gacha;
 
+void CardGacha::one(DeckBuilding& p_deck, MainGame& p_mg)
+{
+	int invensize = p_deck.GetSize();//카드풀에서 랜덤한 카드를 뽑음
 	draw_card.resize(1);
-	draw_card[0] = out;
+	int randIdx = rand() % AllCARDMAXSIZE;
+	int ID = allCard[randIdx]->GetUid();
+	draw_card[0].SetUid(ID);
+	Star STAR = allCard[randIdx]->GetStar();
+	draw_card[0].SetStar(STAR);
+	CType TYPE = allCard[randIdx]->GetType();
+	draw_card[0].SetType(TYPE);
+
+	//카드가 추가될때 중복카드는 뽑기결과에서 나오되, 인벤에서 제외되어야함.
+	if (isObtain[randIdx])
+	{
+		//중복 시 임시로 아이디를 음수로 변경 (기본카드의 경우는 예외를 설정할 예정)
+		cout << draw_card[0].GetUid() << "는 중복" << "\n";
+		draw_card[0].SetUid(-1);
+		p_mg.AddGold(100 * 4); //고정값 * 레어도별 가중치 페이백
+	}
+	else
+	{
+		//신규 획득 카드는 얻었다는 표시를 설정
+		cout << draw_card[0].GetUid() << "는 신규" << "\n";
+		isObtain[randIdx] = TRUE;
+	}
+	int x = invensize % 5, y = invensize / 5;
+	draw_card[0].x = x * 75 + 1050, draw_card[0].y = y * 150 + 50;
+	p_deck.PushCard(draw_card);
 }
 
-void CardGacha::ten(DeckBuilding& p_deck)
+void CardGacha::ten(DeckBuilding& p_deck, MainGame& p_mg)
 {
-	Card out[10];
 	int invensize = p_deck.GetSize();
-	Card* all = p_deck.GetAllCard();
-	for (int i = 0; i < 10; i++)
-	{
-		out[i] = all[(rand() % AllCARDMAXSIZE - 10) + 10];
-		int x = (invensize + i) % 5, y = (invensize + i) / 5;
-		out[i].x = x * 150 + 750, out[i].y = y * 150 + 50;
-	}
-	p_deck.PushCard(out, 10);
-
 	draw_card.resize(10);
 	for (int i = 0; i < 10; i++)
 	{
-		draw_card[i] = out[i];
+		//카드풀에서 랜덤한 카드를 뽑음
+		int randIdx = rand() % AllCARDMAXSIZE;
+		int ID = allCard[randIdx]->GetUid();
+		draw_card[i].SetUid(ID);
+		Star STAR = allCard[randIdx]->GetStar();
+		draw_card[i].SetStar(STAR);
+		CType TYPE = allCard[randIdx]->GetType();
+		draw_card[i].SetType(TYPE);
+
+		//카드가 추가될때 중복카드는 뽑기결과에서 나오되, 인벤에서 제외되어야함.
+		if (isObtain[randIdx])
+		{
+			//중복 시 임시로 아이디를 음수로 변경 (기본카드의 경우는 예외를 설정할 예정)
+			cout << draw_card[i].GetUid() << "는 중복" << "\n";
+			draw_card[i].SetUid(-1);
+			p_mg.AddGold(100 * 4); //고정값 * 레어도별 가중치 페이백
+		}
+		else
+		{
+			//신규 획득 카드는 얻었다는 표시를 설정
+			cout << draw_card[i].GetUid() << "는 신규" << "\n";
+			isObtain[randIdx] = TRUE;
+		}
 	}
+	p_deck.PushCard(draw_card);
 }
 
-//�̱⸦ ��(TRUE-1�� / FALSE-10��, ����ī�带 ������ ����)
+//뽑기를 함(TRUE-1뽑 / FALSE-10뽑, 뽑은카드를 저장할 변수)
 void CardGacha::GetGacha(bool isOne, DeckBuilding& p_deck, MainGame& p_mg, Chest p_selChest)
 {
-	int remove_gold = p_selChest.GetPrice();
-	//�б⳪���� 1�� or 10�� ������
-	if (isOne)
-	{
-		if (!p_mg.RemoveGold(remove_gold))
-		{
-			this->isGachaFailed = true;
-		}
-		one(p_deck);
-	}
-	else if (!isOne)
-	{
-		if (!p_mg.RemoveGold(remove_gold * 9))
-		{
-			this->isGachaFailed = true;
-		}
-		ten(p_deck);
-	}
+	isOneGacha = isOne;
+	//분기나눠서 1차 or 10차 나누기
+	if (isOneGacha) one(p_deck, p_mg);
+	else if (!isOneGacha) ten(p_deck, p_mg);
 }
 
 void CardGacha::InGacha()
 {
-	int size = draw_card.size();
-
-	if (size == 1)
+	//뽑기의 종류에 따라 출력방식 변경
+	if (isOneGacha)
 	{
 		draw_card[0].x = 700, draw_card[0].y = 350;
 	}
-	else if (size == 10)
+	else
 	{
-		for (int i = 0; i < size; i++)
+		for (int i = 0; i < 10; i++)
 		{
 			draw_card[i].x = (i % 5) * 250 + 200, draw_card[i].y = (i / 5) * 250 + 200;
 		}
 	}
 }
 
-void CardGacha::DrawGachaButton(HDC p_hdc, DeckBuilding p_deck, Chest p_selChest, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[])
+void CardGacha::EnterGacha()
 {
-	//1�� ��ư
-	if (InCircle(850, 635, p_mx, p_my))
-	{
-		p_hpen = CreatePen(PS_SOLID, 5, RGB(0, 255, 0));
-		p_oldpen = (HPEN)SelectObject(p_hdc, p_hpen);
-	}
-	Rectangle(p_hdc, 700, 615, 1000, 685);
-	SelectObject(p_hdc, p_oldpen);
-	DeleteObject(p_hpen);	//����� / ����󺹱�
-	wsprintf(p_text, TEXT("1�� - %dG"), p_selChest.GetPrice());
-	TextOut(p_hdc, 830, 645, p_text, lstrlen(p_text));
-
-	//10�� ��ư
-	if (InCircle(1200, 635, p_mx, p_my))
-	{
-		p_hpen = CreatePen(PS_SOLID, 5, RGB(0, 255, 0));
-		p_oldpen = (HPEN)SelectObject(p_hdc, p_hpen);
-	}
-	Rectangle(p_hdc, 1050, 615, 1350, 685);
-	SelectObject(p_hdc, p_oldpen);
-	DeleteObject(p_hpen);	//����� / ����󺹱�
-	wsprintf(p_text, TEXT("10�� - %dG"), p_selChest.GetPrice() * 9);
-	TextOut(p_hdc, 1170, 645, p_text, lstrlen(p_text));
-
-	if (this->isGachaFailed)
-	{
-		TextOut(p_hdc, 50, 500, TEXT("���� �����մϴ�."), 10);
-	}
+	RENDER.SetImage(L"rect_button.png", "back", Rect(0, 0, 100, 110), Rect(0, 0, 0, 0), false, GameImage_M::LayerType::UI);
+	btnManager.AddButton(make_shared<RectButton>("back", RECT{ 1250, 600, 1400, 660 }));
 }
 
-void CardGacha::DrawGacha(HDC p_hdc, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[])
+void CardGacha::DrawGacha(HDC p_hdc, int p_mx, int p_my, WCHAR p_text[])
 {
-	//����ī�� ����ϰ� �����Ұ�///////////////////
+	//뽑은카드 출력하게 수정할것///////////////////
 	for (int i = 0; i < draw_card.size(); i++)
 	{
-		Rectangle(p_hdc, draw_card[i].x - 45, draw_card[i].y - 75, draw_card[i].x + 45, draw_card[i].y + 75);
-		wsprintf(p_text, TEXT("%d"), draw_card[i].id);
-		TextOut(p_hdc, draw_card[i].x - 2, draw_card[i].y, p_text, lstrlen(p_text));
+		RENDER.MoveImage(to_string(draw_card[i].GetUid()), Rect(draw_card[i].x - 50, draw_card[i].y - 66, 100, 132));
+		RENDER.ImageVisible(to_string(draw_card[i].GetUid()), true);
+		/*Rectangle(p_hdc, draw_card[i].x - 45, draw_card[i].y - 75, draw_card[i].x + 45, draw_card[i].y + 75);
+		wsprintf(p_text, TEXT("%d"), draw_card[i].GetUid());
+		TextOut(p_hdc, draw_card[i].x - 2, draw_card[i].y, p_text, lstrlen(p_text));*/
 	}
+	RENDER.ImageVisible("back", true);
+}
 
-	wsprintf(p_text, TEXT("���ʻ���� ���� ��ư�� ���� ���ư���"));
-	TextOut(p_hdc, 690, 650, p_text, lstrlen(p_text));
+void CardGacha::ExitGacha()
+{
+	for (int i = 0; i < draw_card.size(); i++)
+	{
+		RENDER.ImageVisible(to_string(draw_card[i].GetUid()), false);
+	}
+	cout << "버튼 삭제" << endl;
+	RENDER.RemoveIDIamage("back");
 }
