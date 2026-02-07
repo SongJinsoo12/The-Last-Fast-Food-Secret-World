@@ -6,7 +6,7 @@
 #include "CardManager.h"
 #include "Timer.h"
 
-#define M_STATE GameState_M::Context::GetInstance()
+#define STATE GameState_M::Context::GetInstance()
 
 using namespace std;
 
@@ -104,3 +104,4 @@ namespace GameState_M {
 		void Exit() override;
 	};
 }
+
