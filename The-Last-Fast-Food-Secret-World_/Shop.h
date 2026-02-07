@@ -3,6 +3,7 @@
 #include "DeckBuilding.h"
 #include "RenderManager.h"
 #include "ButtonManager.h"
+#include <chrono>
 
 //상자의 정보를 담음(확률, 좌표)
 class Chest
@@ -64,7 +65,12 @@ private:
 	Chest selectedChest;			//선택된 상자
 	BOOL isSelect = FALSE;			//하이라이트될 상자를 선택했는가
 
+	chrono::steady_clock::time_point ani_start;
 	int mov_sel = 1400;
+
+public:
+	ButtonManager m_ShopBtnM;
+
 public:
 	Shop()
 	{
@@ -110,19 +116,7 @@ public:
 
 	}
 
-	bool isSucceedGacha(HDC p_hdc, int p_gacha_num)
-	{
-		int remove_gold = selectedChest.GetPrice() * p_gacha_num;
-		if (g_MainGame.RemoveGold(remove_gold))
-		{
-			return true;
-		}
-		else
-		{
-			TextOut(p_hdc, 50, 500, TEXT("돈이 부족합니다."), 10);
-			return false;
-		}
-	}
+	bool isSucceedGacha(HDC p_hdc, int p_gacha_num);
 	void DrawGachaButton(HDC p_hdc, int p_mx, int p_my, WCHAR p_text[]);
 	//상자를 선택함
 	void SelectChest(int p_mx, int p_my);
@@ -138,49 +132,12 @@ public:
 	void CancelSelection();
 
 	//이미지 로드 확인해보기 / 쿠키는 맥도날드 점원, 상자는 가게메뉴로 변경(==상점 컨셉을 맥으로)
-	void SetDrawShop()
-	{
-		RENDER.ImageVisible("shelf1", true);//상자 보관용 선반1
-		RENDER.ImageVisible("shelf2", true);//상자 보관용 선반2
-
-		//상자 정보 및 상점 주인 대사 출력용
-		RENDER.ImageVisible("textbox", true);
-	}
+	void SetDrawShop();
+	void SetEnterShop();
 	//화면 전환 시 상점의 이미지들을 전부 비활성화
-	void ExitShop()
-	{
-		RENDER.ImageVisible("shelf1", false);
-		RENDER.ImageVisible("shelf2", false);
-		RENDER.ImageVisible("cookie", false);
-		RENDER.ImageVisible("textbox", false);
-		for (int i = 0; i < 6; i++) RENDER.ImageVisible("chest" + to_string(i), false);
-		RENDER.ImageVisible("one", false);
-		RENDER.ImageVisible("ten", false);
-		mov_sel = 1400;
-		this->CancelSelection();
-	}
+	void ExitShop();
 	void DrawShop(HDC p_hdc, WCHAR p_text[]);
-	bool DrawEnterShop()
-	{
-		//MoveImageTween("shelf1", Rect(), 3).OnComplete( EndFN );
-
-		RENDER.MoveImage("shelf1", Rect(mov_sel - 10, 250, 651, 101));
-		RENDER.MoveImage("shelf2", Rect(mov_sel - 10, 450, 651, 101));
-		RENDER.MoveImage("textbox", Rect((700 - mov_sel) + 50 + 10, 500, 500, 200));
-
-		mov_sel -= (int)((mov_sel - 700) / 10);
-		if (mov_sel <= 710)//입장 애니메이션이 끝난 후 나머지 이미지 활성화
-		{
-			for (int i = 0; i < 6; i++)
-			{
-				btnManager.AddButton(make_shared<CircleButton>("chest" + to_string(i), chest[i].x + 10, chest[i].y - 5, 64));
-				RENDER.ImageVisible("chest" + to_string(i), true);
-			}//상자 출력
-			RENDER.ImageVisible("cookie", true);// 상점 주인
-			return true;
-		}
-		else return false;
-	}
+	bool DrawEnterShop();
 };
 
 extern Shop g_Shop;

@@ -110,15 +110,7 @@ namespace GameState_M {
 	void Shop::Enter()
 	{
 		//상점 진입
-		while (!g_Shop.DrawEnterShop())
-		{
-			chrono::steady_clock::time_point start = chrono::steady_clock::now();
-			g_Shop.SetDrawShop();
-		}
-
-
-		chrono::steady_clock::time_point end = chrono::steady_clock::now();
-		//SetTimer(hWnd, 1, 8, NULL);
+		g_Shop.SetDrawShop();
 		cout << "Shop Enter" << endl;
 	}
 
@@ -126,35 +118,38 @@ namespace GameState_M {
 	{
 		WCHAR text[256] = L"";
 
-		//상점 화면 그리기
-		g_Shop.DrawShop(p_hdc, text);
-
-		//좌클릭시 상자선택
-		if (INPUT.isClick() == (int)GameInput_M::MouseValue::Left)
+		if (g_Shop.DrawEnterShop())
 		{
-			INPUT.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
-			g_Shop.SelectChest(g_MainGame.mx, g_MainGame.my);
-		}
+			//상점 화면 그리기
+			g_Shop.DrawShop(p_hdc, text);
 
-		//상자가 선택된 경우 -> 뽑기버튼 활성화 및 뽑기화면전환
-		if (g_Shop.CheckIsSelection())
-		{
-			if (btnManager.HandleClickId(g_MainGame.mx, g_MainGame.my) == "one" && g_Shop.isSucceedGacha(p_hdc, 1))
+			//좌클릭시 상자선택
+			if (INPUT.isClick() == (int)GameInput_M::MouseValue::Left)
 			{
-				g_Gacha.GetGacha(TRUE, g_DeckBuild, g_MainGame, g_Shop.GetSelectedChest());
-				STATE.ChangeState(GameState_M::E_InGameState::LuckyBox);
+				INPUT.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
+				g_Shop.SelectChest(g_MainGame.mx, g_MainGame.my);
 			}
-			else if (btnManager.HandleClickId(g_MainGame.mx, g_MainGame.my) == "ten" && g_Shop.isSucceedGacha(p_hdc, 10))
-			{
-				g_Gacha.GetGacha(FALSE, g_DeckBuild, g_MainGame, g_Shop.GetSelectedChest());
-				STATE.ChangeState(GameState_M::E_InGameState::LuckyBox);
-			}
-			g_Shop.DrawGachaButton(p_hdc, g_MainGame.mx, g_MainGame.my, text);
-		}
 
-		//임시 - 우클릭 시 덱빌딩화면 전환
-		if (GameInput_M::Input::GetInstance().isClick() == (int)GameInput_M::MouseValue::Right)
-			STATE.ChangeState(GameState_M::E_InGameState::DeckBuild);
+			//상자가 선택된 경우 -> 뽑기버튼 활성화 및 뽑기화면전환
+			if (g_Shop.CheckIsSelection())
+			{
+				if (g_Shop.m_ShopBtnM.HandleClickId(g_MainGame.mx, g_MainGame.my) == "one" && g_Shop.isSucceedGacha(p_hdc, 1))
+				{
+					g_Gacha.GetGacha(TRUE, g_DeckBuild, g_MainGame, g_Shop.GetSelectedChest());
+					STATE.ChangeState(GameState_M::E_InGameState::LuckyBox);
+				}
+				else if (g_Shop.m_ShopBtnM.HandleClickId(g_MainGame.mx, g_MainGame.my) == "ten" && g_Shop.isSucceedGacha(p_hdc, 10))
+				{
+					g_Gacha.GetGacha(FALSE, g_DeckBuild, g_MainGame, g_Shop.GetSelectedChest());
+					STATE.ChangeState(GameState_M::E_InGameState::LuckyBox);
+				}
+				g_Shop.DrawGachaButton(p_hdc, g_MainGame.mx, g_MainGame.my, text);
+			}
+
+			//임시 - 우클릭 시 덱빌딩화면 전환
+			if (GameInput_M::Input::GetInstance().isClick() == (int)GameInput_M::MouseValue::Right)
+				STATE.ChangeState(GameState_M::E_InGameState::DeckBuild);
+		}
 	}
 
 	void Shop::Exit()

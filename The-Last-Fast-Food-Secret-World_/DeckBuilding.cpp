@@ -164,6 +164,22 @@ void DeckBuilding::LoadDeck()
 
 }
 
+void DeckBuilding::PageBuff(bool p_isIncrease)
+{
+	if (p_isIncrease)
+	{
+		++i_page;
+		if (i_page > max_page) --i_page;
+	}
+	else
+	{
+		--i_page;
+		if (i_page < 0) i_page = 0;
+	}
+	cout << i_page << " / " << max_page << endl;
+	return;
+}
+
 vector<Card> DeckBuilding::EraseDuple(vector<Card> p_cards)
 {
 	for (int i = 0; i < p_cards.size(); i++)
@@ -255,7 +271,7 @@ void DeckBuilding::ItoD(int p_mx, int p_my)
 				inven[j].x -= 82;
 				if (inven[j].x < 1000)
 				{
-					inven[j].x = 82 * 4 + 1050, inven[j].y -= 130;
+					inven[j].x = 82 * 4 + 1050, inven[j].y -= 120;
 					if (inven[j].y < 120) inven[j].x = 82 * 4 + 1050, inven[j].y = 120 * 4 + 130;
 				}
 			}
@@ -336,32 +352,55 @@ void DeckBuilding::DeckBuild(int p_mx, int p_my, char click_m)
 	}
 }
 
+void DeckBuilding::EnterDeckBuild()
+{
+	filter = 0;
+	for (int i = 0; i < inven.size(); i++)
+	{
+		pushTypeCard(inven[i]);
+	}
+
+	atkCards = SetPos(atkCards);
+	defCards = SetPos(defCards);
+	magicCards = SetPos(magicCards);
+
+	max_page = (inven.size() / 25);
+	cout << "maxpage : " << max_page << endl;
+	DrawOnly_pre = inven;
+
+	RENDER.SetImage(L"rect_button.png", "rb1"
+		, Rect(0, 0, 100, 101), Rect(0, 0, 0, 0), false, GameImage_M::LayerType::UI);
+	btnManager.AddButton(make_shared<RectButton>("rb1", RECT{ 10, 10, 100, 60 }));
+}
+
+void DeckBuilding::ExitDeckBuild()
+{
+	filter = 0;
+	for (int i = 0; i < inven.size(); i++) RENDER.RemoveIDIamage("inven_card" + to_string(i));
+	for (int i = 0; i < myDeck.size(); i++) RENDER.RemoveIDIamage("deck_card" + to_string(i));
+	RENDER.RemoveIDIamage("s_card");
+	RENDER.RemoveIDIamage("rb1");
+}
+
 void DeckBuilding::DrawInventory(HDC p_hdc, WCHAR p_text[], vector<Card> p_cardType)
 {
-	for (int i = 0; i < 25; i++)
+	for (int i = 0; i < DrawOnly_pre.size(); i++)
 	{
 		//마지막카드이동시 배열에서 사라진카드이므로 예외처리
-		RENDER.RemoveIDIamage("inven_card" + to_string(i));
+		//RENDER.RemoveIDIamage("inven_card" + to_string(i));
+		RENDER.ImageVisible(to_string(DrawOnly_pre[i].GetUid()), false);
 	}
 	for (int i = 0; i < 25; i++)
 	{
 		int index = i + i_page * 25;
-		if (index >= p_cardType.size()) return;
-		RENDER.RemoveIDIamage("inven_card" + to_string(i));
+		if (index >= p_cardType.size())
+		{
+			DrawOnly_pre = p_cardType;
+			return;
+		}
 
-		wstring image_path = L"card";
-		wstring image_type;
-		wstring image_star = to_wstring((int)p_cardType[index].GetStar() + 1);
-		if (p_cardType[index].GetType() == E_Attack) image_type = L"_atk_";
-		else if (p_cardType[index].GetType() == E_Deffense) image_type = L"_def_";//1040+82-30,50+140-30 -> x==1032+82,y==30+140
-		image_path += image_type + image_star + L".png";				//1040-30,50-30 -> x-38,y-50 / x==1032,y==30
-
-		RENDER.SetImage(image_path, "inven_card" + to_string(i), Rect(0, 0, 100, 132)
-			, Rect(p_cardType[index].x - 38, p_cardType[index].y - 50, (int)(100 * 0.75f), (int)(132 * 0.75f))
-			, true, GameImage_M::LayerType::Background);
-
-		wsprintf(p_text, TEXT("%d, %d"), p_cardType[index].GetUid(), index);
-		TextOut(p_hdc, p_cardType[i].x - 10, p_cardType[index].y, p_text, lstrlen(p_text));
+		RENDER.MoveImage(to_string(p_cardType[index].GetUid()), Rect(p_cardType[index].x - 38, p_cardType[index].y - 50, (int)(100 * 0.75f), (int)(132 * 0.75f)));
+		RENDER.ImageVisible(to_string(p_cardType[index].GetUid()), true);
 	}
 }
 
@@ -378,21 +417,6 @@ void DeckBuilding::DrawMyDeck(HDC p_hdc, WCHAR p_text[])
 	{
 		RENDER.MoveImage(to_string(myDeck[i].GetUid()), Rect(myDeck[i].x - 50, myDeck[i].y - 66, 100, 132));
 		RENDER.ImageVisible(to_string(myDeck[i].GetUid()), true);
-
-		/*RENDER.RemoveIDIamage("deck_card" + to_string(i));
-
-		wstring image_path = L"card";
-		wstring image_type;
-		wstring image_star = to_wstring((int)myDeck[i].GetStar() + 1);
-		if (myDeck[i].GetType() == E_Attack) image_type = L"_atk_";
-		else if (myDeck[i].GetType() == E_Deffense) image_type = L"_def_";
-		image_path += image_type + image_star + L".png";
-
-		RENDER.SetImage(image_path, "deck_card" + to_string(i), Rect(0, 0, 100, 132)
-			, Rect(myDeck[i].x - 50, myDeck[i].y - 66, 100, 132), true, GameImage_M::LayerType::Background);*/
-
-		wsprintf(p_text, TEXT("%d"), myDeck[i].GetUid());
-		TextOut(p_hdc, myDeck[i].x - 10, myDeck[i].y, p_text, lstrlen(p_text));
 	}
 }
 
@@ -423,11 +447,10 @@ void DeckBuilding::DrawDeckBuild(HDC p_hdc, WCHAR p_text[])
 		if (SelectedCard->GetType() == E_Attack) path += L"_atk_";
 		else if (SelectedCard->GetType() == E_Deffense) path += L"_def_";
 		path += to_wstring(SelectedCard->GetStar() + 1) + L".png";
+		if (SelectedCard->GetType() == E_Magic) path = L"card_magic.png";
 		RENDER.SetImage(path, "s_card", Rect(0, 0, 100, 132), Rect(25, 100, 100 * 3.5f, 132 * 3.5f)
 			, true, GameImage_M::LayerType::Background);
 		RENDER.MoveImage("s_card", Rect(25, 100, 100 * 3.5f, 132 * 3.5f));
-		wsprintf(p_text, TEXT("%d"), SelectedCard->GetUid());
-		TextOut(p_hdc, 200, 350, p_text, lstrlen(p_text));
 	}
 
 	Rectangle(p_hdc, 1020, 670, 1150, 710);//인벤좌로이동

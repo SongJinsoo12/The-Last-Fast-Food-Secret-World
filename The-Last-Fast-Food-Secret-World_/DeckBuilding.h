@@ -30,6 +30,7 @@ private:
 	vector<Card> atkCards;
 	vector<Card> defCards;
 	vector<Card> magicCards;
+	vector<Card> DrawOnly_pre = this->inven;
 	Card* SelectedCard;//덱편집화면에서 유저가 정보를 확인할 카드변수 / exit시 선택해제할것
 
 	int filter = 0;//필터용 변수 0이면 필터x
@@ -49,21 +50,7 @@ public:
 	void SaveDeck();
 	void LoadDeck();
 
-	void PageBuff(bool p_isIncrease)
-	{
-		if (p_isIncrease)
-		{
-			++i_page;
-			if (i_page > max_page) --i_page;
-		}
-		else
-		{
-			--i_page;
-			if (i_page < 0) i_page = 0;
-		}
-		cout << i_page << " / " << max_page << endl;
-		return;
-	}
+	void PageBuff(bool p_isIncrease);
 	//중복이 존재하면 제거후 뒤의 카드들을 앞으로 이동
 	vector<Card> EraseDuple(vector<Card> p_cards);
 
@@ -128,33 +115,8 @@ public:
 	void SelectCard(int p_mx, int p_my);
 	void DeckBuild(int p_mx, int p_my, char click_m);//click_m == 좌/우클릭 확인용, 좌-카드하이라이트/우-카드이동
 
-	void EnterDeckBuild()
-	{
-		filter = 0;
-		for (int i = 0; i < inven.size(); i++)
-		{
-			pushTypeCard(inven[i]);
-		}
-
-		atkCards = SetPos(atkCards);
-		defCards = SetPos(defCards);
-		magicCards = SetPos(magicCards);
-
-		max_page = (inven.size() / 25);
-		cout << "maxpage : " << max_page << endl;
-
-		RENDER.SetImage(L"rect_button.png", "rb1"
-			, Rect(0, 0, 100, 101), Rect(0, 0, 0, 0), false, GameImage_M::LayerType::UI);
-		btnManager.AddButton(make_shared<RectButton>("rb1", RECT{ 10, 10, 100, 60 }));
-	}
-	void ExitDeckBuild()
-	{
-		filter = 0;
-		for (int i = 0; i < inven.size(); i++) RENDER.RemoveIDIamage("inven_card" + to_string(i));
-		for (int i = 0; i < myDeck.size(); i++) RENDER.RemoveIDIamage("deck_card" + to_string(i));
-		RENDER.RemoveIDIamage("s_card");
-		RENDER.RemoveIDIamage("rb1");
-	}
+	void EnterDeckBuild();
+	void ExitDeckBuild();
 
 	//인벤토리 출력
 	void DrawInventory(HDC p_hdc, WCHAR p_text[], vector<Card> p_cardType);
