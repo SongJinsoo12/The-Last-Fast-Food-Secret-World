@@ -124,7 +124,61 @@ namespace GameState_M {
 		m_player.StartTurn(m_player, m_boss);
 		m_player.DrawPlayerHand();
 		m_boss.DrawOppHand();
+
+		//애니메이션 작업
+		m_shinyEffect.SetId("Card_Shiny_");
+		m_shinyEffect.SetImageSize(200, 200, 100, 128);
+		m_shinyEffect.SetIndex(10);
+
+		m_ripEffect.SetId("Card_Rip_");
+		m_ripEffect.SetImageSize(300, 200, 100, 128);
+		m_ripEffect.SetIndex(15);
+
+		m_skillEffect.SetId("Card_Skill1_");
+		m_skillEffect.SetImageSize(430, 200, 128, 128);
+		m_skillEffect.SetIndex(10);
 	}
+
+	void InGame::PlayAnimation(Timer& p_timer, Animation& p_effect, bool* p_isPlay)
+	{
+		if (!*p_isPlay) return;
+
+		if (!p_timer.GetIsStart())
+		{
+			p_timer.StartTimer();
+			p_timer.SetIsStart(true);
+		}
+
+		string cardId = p_effect.GetId();
+		cardId += to_string(p_timer.GetIndex());
+
+		M_REND.MoveImage(cardId, Gdiplus::Rect(p_effect.GetImageX(), p_effect.GetImageY(),
+			p_effect.GetImageWidth(), p_effect.GetImageHeight()));
+		M_REND.ImageVisible(cardId, true);
+
+		p_timer.UpdateTimer();
+		if (p_timer.CheckTimer(0.05))
+		{
+			M_REND.ImageVisible(cardId, false);
+
+			//이펙트 끝
+			if (p_timer.GetIndex() >= p_effect.GetIndex())
+			{
+				p_timer.SetIndex(0);
+				*p_isPlay = false;
+				return;
+			}
+
+			p_timer.StartTimer();
+			p_timer.PlusIndex();
+			string newId = p_effect.GetId();
+			newId += to_string(p_timer.GetIndex());
+			M_REND.MoveImage(newId, Gdiplus::Rect(p_effect.GetImageX(), p_effect.GetImageY(),
+				p_effect.GetImageWidth(), p_effect.GetImageHeight()));
+			M_REND.ImageVisible(newId, true);
+		}
+	}
+
 
 	void InGame::Update(HDC p_hdc, HWND p_hwnd)
 	{
@@ -135,10 +189,11 @@ namespace GameState_M {
 		//패 출력
 		m_player.DrawPlayerHand();
 		m_boss.DrawOppHand();
-		string shinyId = "Card_Shiny_";
-		string ripId = "Card_Rip_";
-		m_player.PlayCardEffect(200, 200);
-		m_player.PlayRip(300, 200);
+
+
+		PlayAnimation(m_shiny, m_shinyEffect, m_player.GetIsShiny());
+		PlayAnimation(m_rip, m_ripEffect, m_player.GetIsRip());
+		PlayAnimation(m_skill, m_skillEffect, m_player.GetIsSkill());
 	}
 
 	void InGame::Exit()

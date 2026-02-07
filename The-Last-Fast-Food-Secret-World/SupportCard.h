@@ -1,6 +1,7 @@
-﻿#pragma once
+﻿﻿#pragma once
 
 #include "Card.h"   // CAttribute, CRank, CardManager
+#include "CardManager.h"
 
 class Player;
 class Mob;
@@ -34,11 +35,15 @@ public:
     void Card_Draw_Damage_Doun(Player& player, float dmg = 0.5f); // 2장 드로우 데미지 1/2배로 변경
     void Card_Draw_Disarray(Player& player);                 // 2장 드로우, 그후 1턴 동안 혼란
     void Card_Forsake_Heal_Atk_Change(Player& player, Mob& enemy);       // 자신의 패 1장을 버림 그 후 1턴 동안 회복=>데미지
-    void TwoCard_Get_Enemy_Card_Get(Player& player, Mob& mob); // 카드 2장 상대 1장 획득
+    void TwoCard_Get_Enemy_Card_Get(Player& player, Mob& mob);  // 카드 2장 상대 1장 획득
+    void Card_Draw_Enemy_Damage_UP(Player& player, Mob& mob);             //2장 드로우 및  다음 1턴동안 받는 피해를 2배로 변경
+    void My_Deck_Count_Card_Draw(Player& player); // 자신의 패를 덱에 넣음. 그 후 덱에 넣은 패의 수만큼 드로우
+    void Sure(Player& player); // 자신의 패를 1장 버림,  4장 드로우.후 자신의 패 3장을 원하는 순서대로(또는 무작위 패 3장을) 덱 무작위로 보냄
 
     // --- 공격 강화/변형 ---
     void Next_AtkCard_Damage_Up(Player& player, float mult = 1.5f);  // 다음 공격 피해량 배율
-    void MY_Attiravate_Change(CAttribute ait);                       // TODO: 다음 공격 속성 변경(추가효과는 해석기 필요)
+    void MY_Attiravate_Change(Player& player, CAttribute attr, CAttribute neutral = E_BREAD);   // 자신의 다음 공격 카드의 속성을 임의의 속성(무속성 x)으로 변경
+    void MY_Attiravate_Change_Random(Player& player, CAttribute neutral = E_BREAD);
     void Card_Forsake_Damage_up(Player& player, float dmg = 2.0f);   // 자신의 패 2장을 버린 후 공격 카드의 피해를 2배로 변경
     void Atk_Or_Def(Player* player, Mob* mob);                       // 전 턴에 상대가 마지막으로 사용한 카드에 따라 다음 카드 변경
 
@@ -58,7 +63,7 @@ public:
     void SeeCard(Player& player);                             // 덱 맨 위 3장 보고(현재는 reverse로 재정렬)
 
     // --- 상대 제어(간단 버전) ---
-    void Enemy_Atk_Prohibition(Mob& mob);                     // 상대 '플레이' 금지 1턴(공격만 금지는 분리 구현 필요)
+    void Enemy_Atk_Prohibition(Player& player, Mob& mob);     // 상대 '플레이' 금지 1턴(공격만 금지는 분리 구현 필요)
     void Enemy_Forsake_Card(Mob& enemy);                      // 상대 패에서 1장 강제 버리기(무작위)
 
     // --- 양쪽 패를 덱으로 되돌리고 N장씩 드로우 ---

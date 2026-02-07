@@ -1,7 +1,7 @@
 #pragma once
 #include "Card.h"
-#include "BattleTypes.h"
-#include <random>
+#include "CardRule.h"
+#include "Mob.h"
 
 //공격 5 / 10 / 15
 //? 피해 / 5 / 10 / 15
@@ -10,49 +10,29 @@
 //상대가 방어 카드를 사용했을 시에만 데미지를 주는 카드
 //스플릿 데미지(상태이상 = ? 턴 동안 출혈 ? 독 ? ) 1 / 2 / 3
 
-// ======= 공격 카드 효과 타입 =======
-enum class AtkEffectType
-{
-    NormalDamage,        
-    TrueDamage,          
-    FollowUpMultiplier,  
-    CoinTossDamage,      
-    OnlyIfEnemyDefended, 
-    SplitWithStatus      
-};
-
-struct AtkEffectParam
-{
-    int baseDamage = 0;
-    float multiplier = 0.0f;
-    StatusType statusType = StatusType::None;
-    int statusTurns = 0;
-    int statusDamagePerTurn = 0;
-};
-
 class AtkCard : public Card
 {
-private:
-    AtkEffectType m_effect = AtkEffectType::NormalDamage;
-    AtkEffectParam m_param;
+public:
+	int Damage;
+	int DotDamage;
+	bool TakeDamage; // 데미지를 입었는지 안입었는지 확인
+	bool DefCardUsed;
+	int type;
 
 public:
-    AtkCard(CAttribute attr, CRank rank, AtkEffectType effect);
+	bool Poison; // 독 이 있는지 없는지 확인
 
-    // 카드 효과 적용(WinAPI/게임로직에서 호출)
-    DamageResult Resolve(const BattleContext& ctx, std::mt19937& rng) const;
+	AtkCard();
+	virtual ~AtkCard() = default;
 
-    // ===== 편의 생성 함수 =====
-    static AtkCard MakeNormal(CAttribute a, CRank r);
-    static AtkCard MakeTrueDamage(CAttribute a, CRank r);
-    static AtkCard MakeFollowUp(CAttribute a, CRank r);
-    static AtkCard MakeCoinToss(CAttribute a, CRank r);
-    static AtkCard MakeOnlyIfEnemyDefended(CAttribute a, CRank r);
-    static AtkCard MakeSplitWithPoison(CAttribute a, CRank r, int turns = 3);
-    static AtkCard MakeSplitWithBleed(CAttribute a, CRank r, int turns = 3);
-
-private:
-    static int RankTo_5_10_15(CRank r);
-    static int RankTo_1_2_3(CRank r);
-    static float RankTo_0_25_0_5_0_75(CRank r);
+	// 기본 공격 카드
+	int DefaultAtk(CAttribute attr, Star rank);
+	// 피해 후 공격카드를 사용한 직후 사용 가능 카드
+	int Take_Damage_After_Atk(Mob& player, CAttribute attr, Star rank);
+	// 코인 토스로 데미지 적용
+	int coinAtk(CAttribute attr, Star rank);
+	// 상개가 방어 카드 사용시 공격 가능
+	int DefCard_After_Atk(bool DefCardUsed, Star rank);
+	// 도트데미지 (3턴동안 데미지를 줌)
+	int PoisonDamageCard(Star rank);
 };

@@ -1,5 +1,6 @@
 #pragma once
 #include "Timer.h"
+#include "Animation.h"
 #include <Windows.h>
 #include <vector>
 
@@ -31,12 +32,15 @@ public:
 	void HandSelect(CardManager& player, CardManager& opponent);
 	void StartTurn(CardManager& player, CardManager& opponent);
 	void TimeLimit(CardManager& player, CardManager& opponent);
-	//void TimeLimit(WPARAM wParam, HWND hWnd, CardManager& player, CardManager& opponent);
-	//void OpponentAct(Player& p_player, Boss& p_boss, CardManager& player, CardManager& opponent, HWND hWnd);
 	void BossCardAct(CardManager& player);
 	void SetImage();
-	void PlayCardEffect(int x, int y);
-	void PlayRip(int x, int y);
+	
+	bool* GetIsShiny();
+	bool* GetIsRip();
+	bool* GetIsSkill();
+	void SetIsShiny(bool p_isShiny);
+	void SetIsRip(bool p_isRip);
+	void SetIsSkill(bool p_isSkill);
 
 private:
 	int m_DeckCount;//덱 장수
@@ -47,6 +51,6 @@ private:
 	bool m_IsMyTurn;//턴 확인
 	bool m_IsSelect;//패 카드 선택 확인
 	//AI m_boss;//보스 ai
-	Timer m_timer, m_shiny, m_rip;
-	bool m_isShiny, m_isRip;
+	Timer m_turnTime;
+	bool m_isShiny, m_isRip, m_isSkill;
 };

@@ -84,6 +84,9 @@ public:
 	string GetInfo();
 	void SetInfo(string p_info);
 
+	// 실제 공격카드(AtkCard)에 배율을 적용하고,
+	// 적용 후 m_hasNextAtkMultiplier를 false로 끄는 식으로 "1회성" 처리하는 용도
+	void setAttribute(CAttribute attr) { m_Ait = attr; }
 };
 
 class GameCard : public Card
