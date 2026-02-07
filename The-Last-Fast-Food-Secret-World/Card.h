@@ -62,13 +62,15 @@ protected:
 	CType m_Type;
 	Star m_Star;
 	string m_info;
+public:
+	int x, y;
 
 public:
 	Card();
 	Card(int p_uid);
 	void Init();
 
-	//Get Set �Լ�
+	//Get Set ÇÔ¼ö
 	int GetUid();
 	void SetUid(int p_uid);
 	int GetAtk();
