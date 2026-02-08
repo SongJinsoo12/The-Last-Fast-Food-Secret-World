@@ -11,7 +11,7 @@
 
 
 CardManager::CardManager() : m_DeckCount(25), m_HandCount(0), m_HandSelection(4),
-m_IsMyTurn(false), m_IsSelect(false), m_isShiny(false), m_isRip(false), m_isSkill(false)
+m_IsMyTurn(false), m_IsSelect(false), m_isShiny(false), m_isRip(false), m_isSkill(false), m_isDef(false)
 {
 }
 
@@ -149,6 +149,32 @@ void CardManager::SetImage()
 			GameImage_M::LayerType::UI);
 	}
 
+	INT x, y;
+	INT mx = 0;
+	INT my = 192;
+	for (size_t i = 0; i < 20; i++)
+	{
+		
+		if ((i % 5) == 0 && i != 0)
+		{
+			mx = 0;
+			my += 192;
+		}
+		mx += 192;
+
+		x = (mx - 192);
+		y = (my - 192);
+
+		cout << mx << " " << my << endl;
+
+		string cardId = "Def_Effect_";
+		cardId += to_string(i);
+
+		M_REND.SetImage(L"images/def_effect.png", cardId,
+			Gdiplus::Rect(x, y, mx, my), Gdiplus::Rect(0, 0, 0, 0), false,
+			GameImage_M::LayerType::UI);
+	}
+
 	cout << "이미지 로드 확인\n";
 }
 
@@ -167,19 +193,9 @@ bool* CardManager::GetIsSkill()
 	return &m_isSkill;
 }
 
-void CardManager::SetIsShiny(bool p_isShiny)
+bool* CardManager::GetIsDef()
 {
-	m_isShiny = p_isShiny;
-}
-
-void CardManager::SetIsRip(bool p_isRip)
-{
-	m_isRip = p_isRip;
-}
-
-void CardManager::SetIsSkill(bool p_isSkill)
-{
-	m_isSkill = p_isSkill;
+	return &m_isDef;
 }
 
 
@@ -386,9 +402,11 @@ void CardManager::CardAct(CardManager& player ,CardManager& opponent)
 		break;
 	}
 
+	//임시
 	m_isShiny = true;
 	m_isRip = true;
 	m_isSkill = true;
+	m_isDef = true;
 
 	//이미지 안보이기
 	M_REND.ImageVisible(to_string(m_Hand[m_HandSelection]->GetUid()), false);

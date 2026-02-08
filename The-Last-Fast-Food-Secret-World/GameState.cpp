@@ -137,6 +137,10 @@ namespace GameState_M {
 		m_skillEffect.SetId("Card_Skill_");
 		m_skillEffect.SetImageSize(430, 200, 128, 128);
 		m_skillEffect.SetIndex(27);
+
+		m_defEffect.SetId("Def_Effect_");
+		m_defEffect.SetImageSize(600, 200, 192, 192);
+		m_defEffect.SetIndex(20);
 	}
 
 	void InGame::PlayAnimation(Timer& p_timer, Animation& p_effect, bool* p_isPlay)
@@ -194,6 +198,10 @@ namespace GameState_M {
 		PlayAnimation(m_shiny, m_shinyEffect, m_player.GetIsShiny());
 		PlayAnimation(m_rip, m_ripEffect, m_player.GetIsRip());
 		PlayAnimation(m_skill, m_skillEffect, m_player.GetIsSkill());
+		PlayAnimation(m_def, m_defEffect, m_player.GetIsDef());
+
+		/*M_REND.ImageVisible("Def_Effect_2", true);
+		M_REND.MoveImage("Def_Effect_2", Gdiplus::Rect(192, 192, 192, 192));*/
 	}
 
 	void InGame::Exit()

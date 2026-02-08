@@ -38,9 +38,8 @@ public:
 	bool* GetIsShiny();
 	bool* GetIsRip();
 	bool* GetIsSkill();
-	void SetIsShiny(bool p_isShiny);
-	void SetIsRip(bool p_isRip);
-	void SetIsSkill(bool p_isSkill);
+	bool* GetIsDef();
+
 
 private:
 	int m_DeckCount;//덱 장수
@@ -52,5 +51,5 @@ private:
 	bool m_IsSelect;//패 카드 선택 확인
 	//AI m_boss;//보스 ai
 	Timer m_turnTime;
-	bool m_isShiny, m_isRip, m_isSkill;
+	bool m_isShiny, m_isRip, m_isSkill, m_isDef;
 };
