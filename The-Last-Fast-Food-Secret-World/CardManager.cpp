@@ -74,74 +74,70 @@ void CardManager::SetImage()
 	}
 	for (size_t i = 0; i < 15; i++)
 	{
+		string cardPng = "card_rip_";
+		string cardId = "Card_Rip_";
+		cardPng += to_string(i + 1);
+		cardPng += ".png";
+		cardId += to_string(i);
+
+		wstring wCardPng;
+		wCardPng.assign(cardPng.begin(), cardPng.end());
 		if (i < 12)
 		{
-			string cardPng = "card_rip_";
-			string cardId = "Card_Rip_";
-			cardPng += to_string(i + 1);
-			cardPng += ".png";
-			cardId += to_string(i);
-
-			wstring wCardPng;
-			wCardPng.assign(cardPng.begin(), cardPng.end());
-
 			M_REND.SetImage(wCardPng, cardId,
 				Gdiplus::Rect(0, 0, 100, 128), Gdiplus::Rect(0, 0, 0, 0), false,
 				GameImage_M::LayerType::UI);
 		}
 		else if (i == 12)
 		{
-			string cardPng = "card_rip_";
-			string cardId = "Card_Rip_";
-			cardPng += to_string(i + 1);
-			cardPng += ".png";
-			cardId += to_string(i);
-
-			wstring wCardPng;
-			wCardPng.assign(cardPng.begin(), cardPng.end());
-
 			M_REND.SetImage(wCardPng, cardId,
 				Gdiplus::Rect(0, 0, 108, 155), Gdiplus::Rect(0, 0, 0, 0), false,
 				GameImage_M::LayerType::UI);
 		}
 		else if (i == 13)
 		{
-			string cardPng = "card_rip_";
-			string cardId = "Card_Rip_";
-			cardPng += to_string(i + 1);
-			cardPng += ".png";
-			cardId += to_string(i);
-
-			wstring wCardPng;
-			wCardPng.assign(cardPng.begin(), cardPng.end());
-
 			M_REND.SetImage(wCardPng, cardId,
 				Gdiplus::Rect(0, 0, 113, 177), Gdiplus::Rect(0, 0, 0, 0), false,
 				GameImage_M::LayerType::UI);
 		}
 		else if (i == 14)
 		{
-			string cardPng = "card_rip_";
-			string cardId = "Card_Rip_";
-			cardPng += to_string(i + 1);
-			cardPng += ".png";
-			cardId += to_string(i);
-
-			wstring wCardPng;
-			wCardPng.assign(cardPng.begin(), cardPng.end());
-
 			M_REND.SetImage(wCardPng, cardId,
 				Gdiplus::Rect(0, 0, 122, 182), Gdiplus::Rect(0, 0, 0, 0), false,
 				GameImage_M::LayerType::UI);
 		}
 	}
 
-	int skillId = 0;
-	for (size_t i = 0; i < 10; i++)
+	int index = 0;
+	for (size_t skillId = 0; skillId < 27; skillId++)
 	{
-		string cardPng = "warrior_skill1_frame";
+		string cardPng;
+		if (skillId < 10)
+		{
+			cardPng = "warrior_skill1_frame";
+			index++;
+		}
+		else if (skillId < 20)
+		{
+			if (skillId == 10)
+			{
+				index = 0;
+			}
+			cardPng = "warrior_skill3_frame";
+			index++;
+		}
+		else if (skillId < 27)
+		{
+			if (skillId == 20)
+			{
+				index = 0;
+			}
+			cardPng = "warrior_skill4_frame";
+			index++;
+		}
+
 		string cardId = "Card_Skill_";
-		cardPng += to_string(i + 1);
+		cardPng += to_string(index);
 		cardPng += ".png";
 		cardId += to_string(skillId);
 
@@ -151,39 +147,6 @@ void CardManager::SetImage()
 		M_REND.SetImage(wCardPng, cardId,
 			Gdiplus::Rect(0, 0, 128, 128), Gdiplus::Rect(0, 0, 0, 0), false,
 			GameImage_M::LayerType::UI);
-		skillId++;
-	}
-	for (size_t i = 0; i < 10; i++)
-	{
-		string cardPng = "warrior_skill3_frame";
-		string cardId = "Card_Skill_";
-		cardPng += to_string(i + 1);
-		cardPng += ".png";
-		cardId += to_string(skillId);
-
-		wstring wCardPng;
-		wCardPng.assign(cardPng.begin(), cardPng.end());
-
-		M_REND.SetImage(wCardPng, cardId,
-			Gdiplus::Rect(0, 0, 128, 128), Gdiplus::Rect(0, 0, 0, 0), false,
-			GameImage_M::LayerType::UI);
-		skillId++;
-	}
-	for (size_t i = 0; i < 7; i++)
-	{
-		string cardPng = "warrior_skill4_frame";
-		string cardId = "Card_Skill_";
-		cardPng += to_string(i + 1);
-		cardPng += ".png";
-		cardId += to_string(skillId);
-
-		wstring wCardPng;
-		wCardPng.assign(cardPng.begin(), cardPng.end());
-
-		M_REND.SetImage(wCardPng, cardId,
-			Gdiplus::Rect(0, 0, 128, 128), Gdiplus::Rect(0, 0, 0, 0), false,
-			GameImage_M::LayerType::UI);
-		skillId++;
 	}
 
 	cout << "이미지 로드 확인\n";
