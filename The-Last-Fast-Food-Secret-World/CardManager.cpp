@@ -17,34 +17,34 @@ m_IsMyTurn(false), m_IsSelect(false), m_isShiny(false), m_isRip(false), m_isSkil
 
 void CardManager::SetImage()
 {
-	M_REND.SetImage(L"background_city_night.png", "City_Night",
+	M_REND.SetImage(L"images/background_city_night.png", "City_Night",
 		Gdiplus::Rect(0, 0, 2304, 1296), Gdiplus::Rect(0, 0, 1280, 720), false,
 		GameImage_M::LayerType::Background);
 
-	M_REND.SetImage(L"background_pink_plant.png", "Plant_Pink",
+	M_REND.SetImage(L"images/background_pink_plant.png", "Plant_Pink",
 		Gdiplus::Rect(0, 0, 2304, 1296), Gdiplus::Rect(0, 0, 1280, 720), false,
 		GameImage_M::LayerType::Background);
-	M_REND.SetImage(L"background_orange_plant.png", "Plant_Orange",
+	M_REND.SetImage(L"images/background_orange_plant.png", "Plant_Orange",
 		Gdiplus::Rect(0, 0, 2304, 1296), Gdiplus::Rect(0, 0, 1280, 720), false,
 		GameImage_M::LayerType::Background);
-	M_REND.SetImage(L"background_dark_plant.png", "Plant_Dark",
+	M_REND.SetImage(L"images/background_dark_plant.png", "Plant_Dark",
 		Gdiplus::Rect(0, 0, 2304, 1296), Gdiplus::Rect(0, 0, 1280, 720), true,
 		GameImage_M::LayerType::Background);
-	M_REND.SetImage(L"background_ari_ship.png", "Air_Ship",
+	M_REND.SetImage(L"images/background_ari_ship.png", "Air_Ship",
 		Gdiplus::Rect(0, 0, 2304, 1296), Gdiplus::Rect(0, 0, 1280, 720), false,
 		GameImage_M::LayerType::Background);
 
-	M_REND.SetImage(L"card_zone.png", "Card_Middle_Up",
+	M_REND.SetImage(L"images/card_zone.png", "Card_Middle_Up",
 		Gdiplus::Rect(0, 0, 88, 110), Gdiplus::Rect(0, 0, 0, 0), true,
 		GameImage_M::LayerType::Background);
-	M_REND.SetImage(L"card_zone.png", "Card_Middle_Down",
+	M_REND.SetImage(L"images/card_zone.png", "Card_Middle_Down",
 		Gdiplus::Rect(0, 0, 88, 110), Gdiplus::Rect(0, 0, 0, 0), true,
 		GameImage_M::LayerType::Background);
 
-	M_REND.SetImage(L"card_back_2.png", "Card_Deck_Up",
+	M_REND.SetImage(L"images/card_back_2.png", "Card_Deck_Up",
 		Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), true,
 		GameImage_M::LayerType::Background);
-	M_REND.SetImage(L"card_back.png", "Card_Deck_Down",
+	M_REND.SetImage(L"images/card_back.png", "Card_Deck_Down",
 		Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), true,
 		GameImage_M::LayerType::Background);
 
@@ -53,13 +53,13 @@ void CardManager::SetImage()
 		string cardId = "Card_Boss_Hand_";
 		cardId = cardId + to_string(i);
 
-		M_REND.SetImage(L"card_back_2.png", cardId,
+		M_REND.SetImage(L"images/card_back_2.png", cardId,
 			Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), true,
 			GameImage_M::LayerType::Background);
 	}
 	for (size_t i = 0; i < 10; i++)
 	{
-		string cardPng = "card_shiny_";
+		string cardPng = "images/card_shiny_";
 		string cardId = "Card_Shiny_";
 		cardPng += to_string(i + 1);
 		cardPng += ".png";
@@ -74,7 +74,7 @@ void CardManager::SetImage()
 	}
 	for (size_t i = 0; i < 15; i++)
 	{
-		string cardPng = "card_rip_";
+		string cardPng = "images/card_rip_";
 		string cardId = "Card_Rip_";
 		cardPng += to_string(i + 1);
 		cardPng += ".png";
@@ -114,7 +114,7 @@ void CardManager::SetImage()
 		string cardPng;
 		if (skillId < 10)
 		{
-			cardPng = "warrior_skill1_frame";
+			cardPng = "images/warrior_skill1_frame";
 			index++;
 		}
 		else if (skillId < 20)
@@ -123,7 +123,7 @@ void CardManager::SetImage()
 			{
 				index = 0;
 			}
-			cardPng = "warrior_skill3_frame";
+			cardPng = "images/warrior_skill3_frame";
 			index++;
 		}
 		else if (skillId < 27)
@@ -132,7 +132,7 @@ void CardManager::SetImage()
 			{
 				index = 0;
 			}
-			cardPng = "warrior_skill4_frame";
+			cardPng = "images/warrior_skill4_frame";
 			index++;
 		}
 
