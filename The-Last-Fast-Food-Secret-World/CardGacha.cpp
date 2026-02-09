@@ -93,8 +93,10 @@ void CardGacha::InGacha()
 
 void CardGacha::EnterGacha()
 {
-	RENDER.SetImage(L"rect_button.png", "back", Rect(0, 0, 100, 110), Rect(0, 0, 0, 0), false, GameImage_M::LayerType::UI);
-	btnManager.AddButton(make_shared<RectButton>("back", RECT{ 1250, 600, 1400, 660 }));
+	RENDER.SetImage(L"rect_button.png", "back", Rect(0, 0, 100, 110)
+		, Rect(0, 0, 0, 0), false, GameImage_M::LayerType::UI);
+	//돌아가는 버튼위치 고민중
+	m_GachaBtnM.AddButton(make_shared<RectButton>("back", RECT{ 50, 600, 250, 660 }));
 }
 
 void CardGacha::DrawGacha(HDC p_hdc, int p_mx, int p_my, WCHAR p_text[])
@@ -102,13 +104,11 @@ void CardGacha::DrawGacha(HDC p_hdc, int p_mx, int p_my, WCHAR p_text[])
 	//뽑은카드 출력하게 수정할것///////////////////
 	for (int i = 0; i < draw_card.size(); i++)
 	{
-		RENDER.MoveImage(to_string(draw_card[i].GetUid()), Rect(draw_card[i].x - 50, draw_card[i].y - 66, 100, 132));
+		RENDER.MoveImage(to_string(draw_card[i].GetUid()), Rect(draw_card[i].x - 120, draw_card[i].y - 66, 100, 132));
 		RENDER.ImageVisible(to_string(draw_card[i].GetUid()), true);
-		/*Rectangle(p_hdc, draw_card[i].x - 45, draw_card[i].y - 75, draw_card[i].x + 45, draw_card[i].y + 75);
-		wsprintf(p_text, TEXT("%d"), draw_card[i].GetUid());
-		TextOut(p_hdc, draw_card[i].x - 2, draw_card[i].y, p_text, lstrlen(p_text));*/
 	}
 	RENDER.ImageVisible("back", true);
+	m_GachaBtnM.DrawAll();
 }
 
 void CardGacha::ExitGacha()

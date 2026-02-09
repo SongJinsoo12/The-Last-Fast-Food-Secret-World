@@ -172,7 +172,7 @@ namespace GameState_M {
 			INPUT.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
 
 		//돌아가기 버튼 클릭시 상점으로 이동
-		if (btnManager.HandleClickId(g_MainGame.mx, g_MainGame.my) == "back")
+		if (g_Gacha.m_GachaBtnM.HandleClickId(g_MainGame.mx, g_MainGame.my) == "back")
 		{
 			STATE.ChangeState(GameState_M::E_InGameState::Shop);
 			return;

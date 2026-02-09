@@ -16,6 +16,10 @@ private:
 	//전체카드풀
 	GameCard* allCard[AllCARDMAXSIZE];
 	BOOL isObtain[AllCARDMAXSIZE] = { FALSE, };
+
+public:
+	ButtonManager m_GachaBtnM;
+
 public:
 	CardGacha()
 	{
