@@ -41,6 +41,23 @@ namespace GameState_M {
 	{
 		/*M_REND.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(0, 0, 300, 300)
 			, false, GameImage_M::LayerType::Field);*/
+		
+		/*int x = 0;
+		int y = 12;
+		for (size_t i = 0; i < 80; i++)
+		{
+			if (i > 0) x += 6;
+
+			if (i % 16 == 0 && i != 0)
+			{
+				x = 0;
+				y += 12;
+			}
+			string monoId = "Mono_";
+			monoId += to_string(i);
+			M_REND.SetImage(L"images/monogram-bitmap.png", monoId, Rect(x, y, 6, 12), Rect(0, 0, 0, 0)
+				, false, GameImage_M::LayerType::UI);
+		}*/
 	}
 
 	void Lobby::Update(HDC p_hdc, HWND p_hwn) {
@@ -200,8 +217,10 @@ namespace GameState_M {
 		PlayAnimation(m_skill, m_skillEffect, m_player.GetIsSkill());
 		PlayAnimation(m_def, m_defEffect, m_player.GetIsDef());
 
-		/*M_REND.ImageVisible("Def_Effect_2", true);
-		M_REND.MoveImage("Def_Effect_2", Gdiplus::Rect(192, 192, 192, 192));*/
+
+
+		MonoGram("Song123", "Temp_", 0, 0);
+		MonoGram("Song123", "Hello_", 0, 100);
 	}
 
 	void InGame::Exit()
@@ -219,6 +238,30 @@ namespace GameState_M {
 
 	void InGameResult::Exit()
 	{
+	}
+
+	void State::MonoGram(string p_image, string p_id, int p_x, int p_y)
+	{
+		int tempX = p_x;
+		for (size_t i = 0; i < p_image.size(); i++)
+		{
+			if (i > 0) tempX += 12;
+
+			int imageX, imageY;
+			int temp;
+
+			temp = p_image[i];
+			temp -= 32;
+
+			string tempId = p_id;
+			tempId += to_string(i);
+
+			imageX = ((temp % 16) * 6);
+			imageY = ((temp / 16) * 12);
+
+			M_REND.SetImage(L"images/monogram-bitmap.png", tempId, Rect(imageX, imageY, 6, 12), Rect(tempX, p_y, 12, 24)
+				, true, GameImage_M::LayerType::UI);
+		}
 	}
 
 }

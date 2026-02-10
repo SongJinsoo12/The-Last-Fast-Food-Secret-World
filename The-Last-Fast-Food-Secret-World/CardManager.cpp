@@ -149,31 +149,26 @@ void CardManager::SetImage()
 			GameImage_M::LayerType::UI);
 	}
 
-	INT x, y;
-	INT mx = 0;
-	INT my = 192;
+	int x = 0;
+	int y = 0;
 	for (size_t i = 0; i < 20; i++)
 	{
-		
+		x += 192;
+
 		if ((i % 5) == 0 && i != 0)
 		{
-			mx = 0;
-			my += 192;
+			x = 0;
+			y += 192;
 		}
-		mx += 192;
-
-		x = (mx - 192);
-		y = (my - 192);
-
-		cout << mx << " " << my << endl;
 
 		string cardId = "Def_Effect_";
 		cardId += to_string(i);
 
 		M_REND.SetImage(L"images/def_effect.png", cardId,
-			Gdiplus::Rect(x, y, mx, my), Gdiplus::Rect(0, 0, 0, 0), false,
+			Gdiplus::Rect(x, y, 192, 192), Gdiplus::Rect(0, 0, 0, 0), false,
 			GameImage_M::LayerType::UI);
 	}
+
 
 	cout << "이미지 로드 확인\n";
 }
