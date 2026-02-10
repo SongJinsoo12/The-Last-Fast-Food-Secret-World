@@ -20,6 +20,17 @@ namespace GameInput_M {
 			return 0;
 	}
 
+	bool Input::isOneClick(MouseValue p_value)
+	{
+		if (m_ISMouseClick[(int)p_value])
+		{
+			m_ISMouseClick[(int)p_value] = false;
+			return true;
+		}
+		else
+			return false;
+	}
+
 	int Input::isHeel()
 	{
 		return m_MouseHeelDelta;
@@ -90,7 +101,6 @@ namespace GameInput_M {
 
 		case WM_MOUSEWHEEL:
 			m_MouseHeelDelta = GET_WHEEL_DELTA_WPARAM(wParam);
-			InvalidateRect(hWnd, NULL, FALSE);
 			break;
 
 		case WM_KEYDOWN:

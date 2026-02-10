@@ -5,6 +5,8 @@
 #include <chrono>
 
 //각 화면
+#include "GameLobby.h"
+#include "GameMenu.h"
 #include "Shop.h"
 #include "DeckBuilding.h"
 #include "CardGacha.h"
@@ -44,32 +46,35 @@ namespace GameState_M {
 	void Lobby::Enter()
 	{
 		g_DeckBuild.LoadDeck();//시작시 덱 로드, 세이브는 소멸자에
-		/*M_REND.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(0, 0, 300, 300)
-			, false, GameImage_M::LayerType::Field);*/
+		GameLobby::GetInstance().Enter();
 	}
 
 	void Lobby::Update(HDC p_hdc, HWND p_hwn) {
 		//확인용으로 좌클릭 시 상점이동
-		if (GameInput_M::Input::GetInstance().isClick() == (int)GameInput_M::MouseValue::Left)
-			STATE.ChangeState(GameState_M::E_InGameState::Shop);
+		//if (GameInput_M::Input::GetInstance().isClick() == (int)GameInput_M::MouseValue::Left)
+		//	STATE.ChangeState(GameState_M::E_InGameState::Shop);
+
+		GameLobby::GetInstance().Logic();
 	}
 
 	void Lobby::Exit() {
-		//M_REND.AllRemoveImage();
+		GameLobby::GetInstance().Exit();
 	}
 
 	void Menu::Enter()
 	{
+		GameMenu::GetInstance().Enter();
 		//M_REND.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(100, 0, 300, 300), true, GameImage_M::LayerType::Field);
 	}
 
 	void Menu::Update(HDC p_hdc, HWND p_hwnd)
 	{
-
+		GameMenu::GetInstance().Logic();
 	}
 
 	void Menu::Exit() {
 		//M_REND.RemoveIDIamage("ID_1");
+		GameMenu::GetInstance().Exit();
 	}
 
 	void DeckBuild::Enter() {
@@ -84,7 +89,7 @@ namespace GameState_M {
 		g_DeckBuild.DrawDeckBuild(p_hdc, text);
 
 		//좌클릭시 카드 선택
-		if (INPUT.isClick() == (int)GameInput_M::MouseValue::Left)
+		if (INPUT.isOneClick(GameInput_M::MouseValue::Left))
 		{
 			INPUT.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
 			if (btnManager.HandleClickId(g_MainGame.mx, g_MainGame.my) == "rb1")

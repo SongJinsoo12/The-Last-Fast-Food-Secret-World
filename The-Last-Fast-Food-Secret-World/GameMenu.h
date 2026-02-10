@@ -1,13 +1,13 @@
 #pragma once
 #include "Singleton.h"
 
-
-class GameLobby : public Singleton<GameLobby>
+class GameMenu : public Singleton<GameMenu>
 {
-	friend class Singleton<GameLobby>;
+	friend class Singleton<GameMenu>;
 
 public:
 	void Enter();
 	void Logic();
 	void Exit();
 };
+

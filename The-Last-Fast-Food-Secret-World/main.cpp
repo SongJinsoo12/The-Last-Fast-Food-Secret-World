@@ -74,6 +74,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 #include "RenderManager.h"
 #include "GameState.h"
 #include "InputGame.h"
+#include "ButtonManager.h"
+#include "macroNum.h"
 
 //#define BSIZE 40
 //
@@ -90,15 +92,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
 	HDC hdc;
 	PAINTSTRUCT ps;
-	static RECT rt;
 	HDC memDC;
+	static RECT rect;
 	HBITMAP hOldBitmap;
 
 	INPUT.UpdateProcess(hWnd, iMessage, wParam, lParam);
 
 	switch (iMessage) {
 	case WM_CREATE:
-		GetClientRect(hWnd, &rt);
+		GetClientRect(hWnd, &rect);
 		STATE.ChangeState(GameState_M::E_InGameState::Lobby);
 		//SetTimer(hWnd, 1, 500, NULL);
 		break;
@@ -109,7 +111,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 		// 1. 메모리 DC와 비트맵 생성 (더블 버퍼링용)
 		memDC = CreateCompatibleDC(hdc);
-		hOldBitmap = (HBITMAP)SelectObject(memDC, CreateCompatibleBitmap(hdc, rt.right, rt.bottom));
+		hOldBitmap = (HBITMAP)SelectObject(memDC, CreateCompatibleBitmap(hdc, rect.right, rect.bottom));
 
 		// 2. 메모리 DC 위에 Graphics 생성
 		Graphics graphics(memDC);
@@ -118,9 +120,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		// 3. 모든 이미지 그리기
 		STATE.Update(hdc, hWnd);
 		RENDER.RenderAll(&graphics);
+		btnManager.DrawAll();
 
 		// 4. 메모리에 그린 내용을 실제 화면으로 한 번에 복사 (깜빡임 방지)
-		BitBlt(hdc, 0, 0, rt.right, rt.bottom, memDC, 0, 0, SRCCOPY);
+		BitBlt(hdc, 0, 0, rect.right, rect.bottom, memDC, 0, 0, SRCCOPY);
 
 		// 5. 메모리 해제
 		DeleteObject(SelectObject(memDC, hOldBitmap));
