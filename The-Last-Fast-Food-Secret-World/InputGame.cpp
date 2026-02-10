@@ -20,6 +20,17 @@ namespace GameInput_M {
 			return 0;
 	}
 
+	bool Input::isOneClick(MouseValue p_value)
+	{
+		if (m_ISMouseClick[(int)p_value])
+		{
+			m_ISMouseClick[(int)p_value] = false;
+			return true;
+		}
+		else
+			return false;
+	}
+
 	int Input::isHeel()
 	{
 		return m_MouseHeelDelta;
@@ -54,14 +65,14 @@ namespace GameInput_M {
 			m_ISMouseClick[(int)GameInput_M::MouseValue::Left] = true;
 			m_MousePosX = LOWORD(lParam);
 			m_MousePosY = HIWORD(lParam);
-			std::cout << "¸¶¿ì½º ÁÂÅ¬¸¯ ´©¸£±â" << std::endl;
+			std::cout << "ë§ˆìš°ìŠ¤ ì¢Œí´ë¦­ ëˆ„ë¥´ê¸°" << std::endl;
 			break;
 
 		case WM_LBUTTONUP:
 			m_ISMouseClick[(int)GameInput_M::MouseValue::Left] = false;
 			m_MousePosX = LOWORD(lParam);
 			m_MousePosY = HIWORD(lParam);
-			std::cout << "¸¶¿ì½º ÁÂÅ¬¸¯ ³¡³»±â" << std::endl;
+			std::cout << "ë§ˆìš°ìŠ¤ ì¢Œí´ë¦­ ëë‚´ê¸°" << std::endl;
 			break;
 
 		case WM_RBUTTONDOWN:
@@ -90,7 +101,6 @@ namespace GameInput_M {
 
 		case WM_MOUSEWHEEL:
 			m_MouseHeelDelta = GET_WHEEL_DELTA_WPARAM(wParam);
-			InvalidateRect(hWnd, NULL, FALSE);
 			break;
 
 		case WM_KEYDOWN:
