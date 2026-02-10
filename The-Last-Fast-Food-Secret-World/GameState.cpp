@@ -4,10 +4,12 @@
 #include "CardTableManager.h"
 #include <chrono>
 
-//ê° í™”ë©´
+//°¢ È­¸é
+ 
 #include "Shop.h"
 #include "DeckBuilding.h"
 #include "CardGacha.h"
+#include "Stage.h"
 #include "MainGame.h"
 
 namespace GameState_M {
@@ -22,7 +24,7 @@ namespace GameState_M {
 		StateVector[(int)E_InGameState::InGameResult] = make_shared<InGameResult>();
 	}
 
-	// ê° í™”ë©´ì— ë§ëŠ” Update ë¡œì§
+	// °¢ È­¸é¿¡ ¸Â´Â Update ·ÎÁ÷
 	void Context::Update(HDC p_hdc, HWND p_hwnd)
 	{
 		if (currentState == nullptr)
@@ -43,15 +45,18 @@ namespace GameState_M {
 
 	void Lobby::Enter()
 	{
-		g_DeckBuild.LoadDeck();//ì‹œì‘ì‹œ ë± ë¡œë“œ, ì„¸ì´ë¸ŒëŠ” ì†Œë©¸ìì—
+		g_DeckBuild.LoadDeck();//½ÃÀÛ½Ã µ¦ ·Îµå, ¼¼ÀÌºê´Â ¼Ò¸êÀÚ¿¡
 		/*M_REND.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(0, 0, 300, 300)
 			, false, GameImage_M::LayerType::Field);*/
 	}
 
 	void Lobby::Update(HDC p_hdc, HWND p_hwn) {
-		//í™•ì¸ìš©ìœ¼ë¡œ ì¢Œí´ë¦­ ì‹œ ìƒì ì´ë™
+		//È®ÀÎ¿ëÀ¸·Î ÁÂÅ¬¸¯ ½Ã »óÁ¡ÀÌµ¿
+		/*if (GameInput_M::Input::GetInstance().isClick() == (int)GameInput_M::MouseValue::Left)
+			STATE.ChangeState(GameState_M::E_InGameState::Shop);*/
+		//È®ÀÎ¿ëÀ¸·Î ÁÂÅ¬¸¯ ½Ã ½ºÅ×ÀÌÁö Å¬¸®¾î °á°ú ÀÌµ¿
 		if (GameInput_M::Input::GetInstance().isClick() == (int)GameInput_M::MouseValue::Left)
-			STATE.ChangeState(GameState_M::E_InGameState::Shop);
+			STATE.ChangeState(GameState_M::E_InGameState::InGameResult);
 	}
 
 	void Lobby::Exit() {
@@ -73,28 +78,28 @@ namespace GameState_M {
 	}
 
 	void DeckBuild::Enter() {
-		//ë±ë¹Œë“œì§„ì…
+		//µ¦ºôµåÁøÀÔ
 		g_DeckBuild.EnterDeckBuild();
 	}
 
 	void DeckBuild::Update(HDC p_hdc, HWND p_hwnd) {
 		WCHAR text[256] = L"";
 
-		//í™”ë©´ ê·¸ë¦¬ê¸°
+		//È­¸é ±×¸®±â
 		g_DeckBuild.DrawDeckBuild(p_hdc, text);
 
-		//ì¢Œí´ë¦­ì‹œ ì¹´ë“œ ì„ íƒ
+		//ÁÂÅ¬¸¯½Ã Ä«µå ¼±ÅÃ
 		if (INPUT.isClick() == (int)GameInput_M::MouseValue::Left)
 		{
 			INPUT.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
 			if (btnManager.HandleClickId(g_MainGame.mx, g_MainGame.my) == "rb1")
 			{
-				cout << "ë²„íŠ¼í´ë¦­" << endl;
+				cout << "¹öÆ°Å¬¸¯" << endl;
 				STATE.ChangeState(GameState_M::E_InGameState::Shop);
 			}
 			g_DeckBuild.DeckBuild(g_MainGame.mx, g_MainGame.my, 'L');
 		}
-		//ìš°í´ë¦­ì‹œ ì¹´ë“œ ì´ë™
+		//¿ìÅ¬¸¯½Ã Ä«µå ÀÌµ¿
 		else if (INPUT.isClick() == (int)GameInput_M::MouseValue::Right)
 		{
 			INPUT.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
@@ -104,13 +109,13 @@ namespace GameState_M {
 	}
 
 	void DeckBuild::Exit() {
-		//ë±ë¹Œë“œ í‡´ì¥
+		//µ¦ºôµå ÅğÀå
 		g_DeckBuild.ExitDeckBuild();
 	}
 
 	void Shop::Enter()
 	{
-		//ìƒì  ì§„ì…
+		//»óÁ¡ ÁøÀÔ
 		g_Shop.SetDrawShop();
 		cout << "Shop Enter" << endl;
 	}
@@ -121,17 +126,17 @@ namespace GameState_M {
 
 		if (g_Shop.DrawEnterShop())
 		{
-			//ìƒì  í™”ë©´ ê·¸ë¦¬ê¸°
+			//»óÁ¡ È­¸é ±×¸®±â
 			g_Shop.DrawShop(p_hdc, text);
 
-			//ì¢Œí´ë¦­ì‹œ ìƒìì„ íƒ
+			//ÁÂÅ¬¸¯½Ã »óÀÚ¼±ÅÃ
 			if (INPUT.isClick() == (int)GameInput_M::MouseValue::Left)
 			{
 				INPUT.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
 				g_Shop.SelectChest(g_MainGame.mx, g_MainGame.my);
 			}
 
-			//ìƒìê°€ ì„ íƒëœ ê²½ìš° -> ë½‘ê¸°ë²„íŠ¼ í™œì„±í™” ë° ë½‘ê¸°í™”ë©´ì „í™˜
+			//»óÀÚ°¡ ¼±ÅÃµÈ °æ¿ì -> »Ì±â¹öÆ° È°¼ºÈ­ ¹× »Ì±âÈ­¸éÀüÈ¯
 			if (g_Shop.CheckIsSelection())
 			{
 				if (g_Shop.m_ShopBtnM.HandleClickId(g_MainGame.mx, g_MainGame.my) == "one" && g_Shop.isSucceedGacha(p_hdc, 1))
@@ -147,7 +152,7 @@ namespace GameState_M {
 				g_Shop.DrawGachaButton(p_hdc, g_MainGame.mx, g_MainGame.my, text);
 			}
 
-			//ì„ì‹œ - ìš°í´ë¦­ ì‹œ ë±ë¹Œë”©í™”ë©´ ì „í™˜
+			//ÀÓ½Ã - ¿ìÅ¬¸¯ ½Ã µ¦ºôµùÈ­¸é ÀüÈ¯
 			if (GameInput_M::Input::GetInstance().isClick() == (int)GameInput_M::MouseValue::Right)
 				STATE.ChangeState(GameState_M::E_InGameState::DeckBuild);
 		}
@@ -155,7 +160,7 @@ namespace GameState_M {
 
 	void Shop::Exit()
 	{
-		//ìƒì  í‡´ì¥
+		//»óÁ¡ ÅğÀå
 		g_Shop.ExitShop();
 	}
 
@@ -167,19 +172,19 @@ namespace GameState_M {
 	void LuckyBox::Update(HDC p_hdc, HWND p_hwnd)
 	{
 		WCHAR text[256] = L"";
-		//ì¢Œí´ë¦­ì‹œ ì¢Œí‘œ ë°›ì•„ì˜¤ê³ 
+		//ÁÂÅ¬¸¯½Ã ÁÂÇ¥ ¹Ş¾Æ¿À°í
 		if (INPUT.isClick() == (int)GameInput_M::MouseValue::Left)
 			INPUT.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
 
-		//ëŒì•„ê°€ê¸° ë²„íŠ¼ í´ë¦­ì‹œ ìƒì ìœ¼ë¡œ ì´ë™
+		//µ¹¾Æ°¡±â ¹öÆ° Å¬¸¯½Ã »óÁ¡À¸·Î ÀÌµ¿
 		if (btnManager.HandleClickId(g_MainGame.mx, g_MainGame.my) == "back")
 		{
 			STATE.ChangeState(GameState_M::E_InGameState::Shop);
 			return;
 		}
 
-		g_Gacha.InGacha();//ë½‘ì€ì¹´ë“œ ì¢Œí‘œ ì„¸íŒ…
-		g_Gacha.DrawGacha(p_hdc, g_MainGame.mx, g_MainGame.my, text);//ë½‘ì€ì¹´ë“œ ê·¸ë¦¬ê¸°
+		g_Gacha.InGacha();//»ÌÀºÄ«µå ÁÂÇ¥ ¼¼ÆÃ
+		g_Gacha.DrawGacha(p_hdc, g_MainGame.mx, g_MainGame.my, text);//»ÌÀºÄ«µå ±×¸®±â
 	}
 
 	void LuckyBox::Exit()
@@ -190,8 +195,8 @@ namespace GameState_M {
 
 	void InGame::Enter()
 	{
-		//ì´ë¯¸ì§€ ë¡œë“œ/ë³´ì—¬ê¸°
-		//ê°’ ì´ˆê¸°í™” ê°€ëŠ¥ 
+		//ÀÌ¹ÌÁö ·Îµå/º¸¿©±â
+		//°ª ÃÊ±âÈ­ °¡´É 
 		m_player.SetImage();
 		m_player.DrawBG();
 		CardTableManager::Instance();
@@ -206,10 +211,10 @@ namespace GameState_M {
 	void InGame::Update(HDC p_hdc, HWND p_hwnd)
 	{
 		m_player.TimeLimit(m_player, m_boss);
-		//ê²Œì„ ë¡œì§ í•¨ìˆ˜
+		//°ÔÀÓ ·ÎÁ÷ ÇÔ¼ö
 		m_player.HandSelect(m_player, m_boss);
 
-		//íŒ¨ ì¶œë ¥
+		//ÆĞ Ãâ·Â
 		m_player.DrawPlayerHand();
 		m_boss.DrawOppHand();
 		string shinyId = "Card_Shiny_";
@@ -220,19 +225,31 @@ namespace GameState_M {
 
 	void InGame::Exit()
 	{
-		//ì´ë¯¸ì§€ ì§€ìš°ê¸°
+		//ÀÌ¹ÌÁö Áö¿ì±â
 	}
 
 	void InGameResult::Enter()
 	{
+		g_StageResult.DrawInGameResult();
+		g_StageResult.DrawStageClearButton();
+		cout << "InGameResult Enter" << endl;
 	}
 
 	void InGameResult::Update(HDC p_hdc, HWND p_hwnd)
 	{
+		if (INPUT.isOneClick(GameInput_M::MouseValue::Left))
+			INPUT.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
+		if (g_StageResult.m_StageClearBtn.HandleClickId(g_MainGame.mx, g_MainGame.my) == "StageClearBtn_1")
+		{
+			cout << "¹öÆ° Å¬¸¯µÊ" << endl;
+			g_StageResult.NextStage();
+			STATE.ChangeState(GameState_M::E_InGameState::Lobby);
+			return;
+		}
 	}
-
 	void InGameResult::Exit()
 	{
+		g_StageResult.ExitInGameResult();
 	}
 
 }

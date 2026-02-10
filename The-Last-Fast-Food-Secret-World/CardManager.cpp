@@ -480,14 +480,14 @@ void CardManager::CardAct(CardManager& player ,CardManager& opponent)
 
 void CardManager::HandSelect(CardManager& player, CardManager& opponent)
 {
-	if (GameInput_M::Input::GetInstance().isKeyboard(KEY_LEFT)
+	if (GameInput_M::Input::GetInstance().isKeyboard((int)GameInput_M::KeyboardValue::ArrowLeft)
 		&& !(m_HandSelection <= 0)) m_HandSelection--;
-	else if (GameInput_M::Input::GetInstance().isKeyboard(KEY_RIGHT)
+	else if (GameInput_M::Input::GetInstance().isKeyboard((int)GameInput_M::KeyboardValue::ArrowRight)
 		&& !(m_HandSelection >= m_HandCount - 1)) m_HandSelection++;
 
-	else if (GameInput_M::Input::GetInstance().isKeyboard(KEY_UP)) m_IsSelect = true;
-	else if (GameInput_M::Input::GetInstance().isKeyboard(KEY_DOWN)) m_IsSelect = false;
-	else if (GameInput_M::Input::GetInstance().isKeyboard(KEY_ENTER) 
+	else if (GameInput_M::Input::GetInstance().isKeyboard((int)GameInput_M::KeyboardValue::ArrowUp)) m_IsSelect = true;
+	else if (GameInput_M::Input::GetInstance().isKeyboard((int)GameInput_M::KeyboardValue::ArrowDown)) m_IsSelect = false;
+	else if (GameInput_M::Input::GetInstance().isKeyboard((int)GameInput_M::KeyboardValue::Enter)
 		&& m_IsMyTurn) CardAct(player, opponent);
 }
 

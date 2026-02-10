@@ -99,6 +99,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	switch (iMessage) {
 	case WM_CREATE:
 		GetClientRect(hWnd, &rt);
+		//
 		STATE.ChangeState(GameState_M::E_InGameState::Lobby);
 		//SetTimer(hWnd, 1, 500, NULL);
 		break;

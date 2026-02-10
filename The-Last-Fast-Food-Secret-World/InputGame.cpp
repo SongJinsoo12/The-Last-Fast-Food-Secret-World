@@ -65,14 +65,14 @@ namespace GameInput_M {
 			m_ISMouseClick[(int)GameInput_M::MouseValue::Left] = true;
 			m_MousePosX = LOWORD(lParam);
 			m_MousePosY = HIWORD(lParam);
-			std::cout << "ë§ˆìš°ìŠ¤ ì¢Œí´ë¦­ ëˆ„ë¥´ê¸°" << std::endl;
+			std::cout << "¸¶¿ì½º ÁÂÅ¬¸¯ ´©¸£±â" << std::endl;
 			break;
 
 		case WM_LBUTTONUP:
 			m_ISMouseClick[(int)GameInput_M::MouseValue::Left] = false;
 			m_MousePosX = LOWORD(lParam);
 			m_MousePosY = HIWORD(lParam);
-			std::cout << "ë§ˆìš°ìŠ¤ ì¢Œí´ë¦­ ëë‚´ê¸°" << std::endl;
+			std::cout << "¸¶¿ì½º ÁÂÅ¬¸¯ ³¡³»±â" << std::endl;
 			break;
 
 		case WM_RBUTTONDOWN:

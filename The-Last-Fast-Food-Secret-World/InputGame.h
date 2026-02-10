@@ -12,8 +12,8 @@ namespace GameInput_M {
 	};
 
 	enum class KeyboardValue {
-		Enter=13,
-		ArrowLeft=37,
+		Enter = 13,
+		ArrowLeft = 37,
 		ArrowUp,
 		ArrowRight,
 		ArrowDown

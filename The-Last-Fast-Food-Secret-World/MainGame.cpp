@@ -3,7 +3,7 @@
 MainGame g_MainGame;
 
 MainGame::MainGame() {
-	Coin = 4000;
+	Coin = 0;
 	LargeStage = 1;
 	SmallStage = 1;
 	CardBox = 0;
@@ -26,6 +26,11 @@ bool MainGame::RemoveGold(int v) {
 	}
 }
 
-int MainGame::GetStage() {
-	return LargeStage, SmallStage;
+
+int MainGame::GetLargeStage() {
+	return LargeStage;
+}
+
+int MainGame::GetSmallStage() {
+	return SmallStage;
 }
