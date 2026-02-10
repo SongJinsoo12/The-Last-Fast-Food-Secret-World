@@ -346,12 +346,14 @@ void DeckBuilding::DeckBuild(int p_mx, int p_my, char click_m)
 	else if (click_m == 'L')
 	{
 		this->SelectCard(p_mx, p_my);
-		/*if (InCircle(985, 690, p_mx, p_my)) 
-		else if (InCircle(1245, 690, p_mx, p_my)) this->PageBuff(true);
-		else if (InCircle(965, 45, p_mx, p_my)) this->ChangeFilter();*/
 		if (btnManager.HandleClickId(p_mx, p_my) == "left") this->PageBuff(false);
 		else if (btnManager.HandleClickId(p_mx, p_my) == "right") this->PageBuff(true);
 		else if (btnManager.HandleClickId(p_mx, p_my) == "filter") this->ChangeFilter();
+		else if (btnManager.HandleClickId(p_mx, p_my) == "help")
+		{
+			if(isShowHelper) isShowHelper = false;
+			else isShowHelper = true;
+		}
 	}
 }
 
@@ -385,6 +387,7 @@ void DeckBuilding::ExitDeckBuild()
 	RENDER.RemoveIDIamage("left");
 	RENDER.RemoveIDIamage("right");
 	RENDER.RemoveIDIamage("filter");
+	RENDER.RemoveIDIamage("help");
 	filter = 0;
 }
 
@@ -445,17 +448,11 @@ void DeckBuilding::DrawDeckBuild(HDC p_hdc, WCHAR p_text[])
 
 	RENDER.SetImage(L"rect_button.png", "left"
 		, Rect(0, 0, 100, 101), Rect(0, 0, 0, 0), true, GameImage_M::LayerType::UI);
-	btnManager.AddButton(make_shared<RectButton>("left", RECT{ 920, 620, 1030, 660 }));
-	//Rectangle(p_hdc, 920, 620, 1030, 660);//인벤좌로이동
-	//wsprintf(p_text, TEXT("←"));
-	//TextOut(p_hdc, 985, 680, p_text, lstrlen(p_text));
+	btnManager.AddButton(make_shared<RectButton>("left", RECT{ 920, 620, 1030, 660 }));//인벤좌로이동
 
 	RENDER.SetImage(L"rect_button.png", "right"
 		, Rect(0, 0, 100, 101), Rect(0, 0, 0, 0), true, GameImage_M::LayerType::UI);
-	btnManager.AddButton(make_shared<RectButton>("right", RECT{ 1140, 620, 1250, 660 }));
-	//Rectangle(p_hdc, 1140, 620, 1250, 660);//인벤우로이동
-	//wsprintf(p_text, TEXT("→"));
-	//TextOut(p_hdc, 1245, 680, p_text, lstrlen(p_text));
+	btnManager.AddButton(make_shared<RectButton>("right", RECT{ 1140, 620, 1250, 660 }));//인벤우로이동
 
 	wsprintf(p_text, TEXT("%d / %d"), i_page + 1, max_page + 1);
 	TextOut(p_hdc, 1105, 680, p_text, lstrlen(p_text));
@@ -471,13 +468,12 @@ void DeckBuilding::DrawDeckBuild(HDC p_hdc, WCHAR p_text[])
 	RENDER.SetImage(L"rect_button.png", "filter"
 		, Rect(0, 0, 100, 101), Rect(0, 0, 0, 0), true, GameImage_M::LayerType::UI);
 	btnManager.AddButton(make_shared<RectButton>("filter", RECT{ 915, 20, 1065, 70 }));
-	//Rectangle(p_hdc, 915, 20, 1065, 70);
 	wsprintf(p_text, TEXT("%d"), filter);
 	TextOut(p_hdc, 925, 40, p_text, lstrlen(p_text));
 
-	//Rectangle(p_hdc, 915 + 150, 20, 1115 + 150, 70);
-
-	Rectangle(p_hdc, 915 + 180, 20, 1065 + 180, 70);
+	RENDER.SetImage(L"rect_button.png", "help"
+		, Rect(0, 0, 100, 101), Rect(0, 0, 0, 0), true, GameImage_M::LayerType::UI);
+	btnManager.AddButton(make_shared<RectButton>("help", RECT{ 915 + 180, 20, 1065 + 180, 70 }));
 	wsprintf(p_text, TEXT("?"));
 	TextOut(p_hdc, 960 + 180, 40, p_text, lstrlen(p_text));
 
