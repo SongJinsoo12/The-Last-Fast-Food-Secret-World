@@ -68,7 +68,7 @@ public:
 		for (int i = 0; i < p_cards.size(); i++)
 		{
 			int x = ((i) % 25) % 5, y = ((i) % 25) / 5;
-			p_cards[i].x = x * 82 + 1050, p_cards[i].y = y * 120 + 130;
+			p_cards[i].x = x * 72 + 950, p_cards[i].y = y * 110 + 130;
 			cout << p_cards[i].GetUid() << ": " << p_cards[i].x << " , " << p_cards[i].y << endl;
 		}
 		return p_cards;

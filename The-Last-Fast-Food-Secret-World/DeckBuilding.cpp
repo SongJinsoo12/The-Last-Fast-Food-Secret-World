@@ -125,7 +125,7 @@ void DeckBuilding::LoadDeck()
 
 			// 좌표 복원: 인게임에서 사용하는 위치 규칙과 동일하게 세팅
 			int x = index % 5, y = index / 5;
-			c.x = x * 120 + 460, c.y = y * 140 + 80;
+			c.x = x * 110 + 406, c.y = y * 130 + 80;
 
 			myDeck.push_back(c);
 			++index;
@@ -152,7 +152,7 @@ void DeckBuilding::LoadDeck()
 
 			// 좌표 복원: 인게임에서 사용하는 위치 규칙과 동일하게 세팅
 			int x = (index % 25) % 5, y = (index % 25) / 5;
-			c.x = x * 72 + 950, c.y = y * 120 + 130;
+			c.x = x * 72 + 950, c.y = y * 110 + 130;
 
 			inven_list[0].push_back(c);
 			++index;
@@ -192,10 +192,10 @@ vector<Card> DeckBuilding::EraseDuple(vector<Card> p_cards)
 				p_cards[j].x -= 72;
 				if (p_cards[j].x < 900)
 				{
-					p_cards[j].x = 72 * 4 + 950, p_cards[j].y -= 120;
+					p_cards[j].x = 72 * 4 + 950, p_cards[j].y -= 110;
 					if (p_cards[j].y < 120)
 					{
-						p_cards[j].x = 72 * 4 + 950, p_cards[j].y = 120 * 4 + 130;
+						p_cards[j].x = 72 * 4 + 950, p_cards[j].y = 110 * 4 + 130;
 					}
 				}
 			}
@@ -234,24 +234,24 @@ void DeckBuilding::ItoD(int p_mx, int p_my)
 				cout << "덱 꽉참" << "\n";
 				return;
 			}
-			//덱에 들어갈 수 있는 1성이 최대라면 종료
-			else if (Star_n[0] >= 15)
-			{
-				cout << "1성 꽉참" << "\n";
-				return;
-			}
-			//덱에 들어갈 수 있는 2성이 최대라면 종료
-			else if (Star_n[1] >= 7)
-			{
-				cout << "2성 꽉참" << "\n";
-				return;
-			}
-			//덱에 들어갈 수 있는 3성이 최대라면 종료
-			else if (Star_n[2] >= 3)
-			{
-				cout << "3성 꽉참" << "\n";
-				return;
-			}
+			////덱에 들어갈 수 있는 1성이 최대라면 종료
+			//else if (Star_n[0] >= 15)
+			//{
+			//	cout << "1성 꽉참" << "\n";
+			//	return;
+			//}
+			////덱에 들어갈 수 있는 2성이 최대라면 종료
+			//else if (Star_n[1] >= 7)
+			//{
+			//	cout << "2성 꽉참" << "\n";
+			//	return;
+			//}
+			////덱에 들어갈 수 있는 3성이 최대라면 종료
+			//else if (Star_n[2] >= 3)
+			//{
+			//	cout << "3성 꽉참" << "\n";
+			//	return;
+			//}
 
 			int star = selectedCard.GetStar();
 			++Star_n[star];
@@ -260,7 +260,7 @@ void DeckBuilding::ItoD(int p_mx, int p_my)
 			//(val * 간격 + 젤(왼 / 위)쪽으로부터의 여백)
 			//이동시킬 카드의 좌표를 변경. 출발지 배열에서 제거 후 목적지 배열 맨 뒤에 추가
 			int x = myDeck.size() % 5, y = myDeck.size() / 5;
-			inven_list[0][i].x = x * 120 + 460, inven_list[0][i].y = y * 140 + 80;
+			inven_list[0][i].x = x * 110 + 406, inven_list[0][i].y = y * 130 + 80;
 			myDeck.push_back(inven_list[0][i]);
 			inven_list[0].erase(inven_list[0].begin() + i);
 			SelectedCard = &myDeck[myDeck.size() - 1];
@@ -271,8 +271,8 @@ void DeckBuilding::ItoD(int p_mx, int p_my)
 				inven_list[0][j].x -= 72;
 				if (inven_list[0][j].x < 900)
 				{
-					inven_list[0][j].x = 72 * 4 + 950, inven_list[0][j].y -= 120;
-					if (inven_list[0][j].y < 120) inven_list[0][j].x = 72 * 4 + 950, inven_list[0][j].y = 120 * 4 + 130;
+					inven_list[0][j].x = 72 * 4 + 950, inven_list[0][j].y -= 110;
+					if (inven_list[0][j].y < 120) inven_list[0][j].x = 72 * 4 + 950, inven_list[0][j].y = 110 * 4 + 130;
 				}
 			}
 			return;
@@ -296,7 +296,7 @@ void DeckBuilding::DtoI(int p_mx, int p_my)
 			RENDER.ImageVisible(to_string(myDeck[i].GetUid()), false);
 			//이동시킬 카드의 좌표를 변경. 출발지 배열에서 제거 후 목적지 배열 맨 뒤에 추가
 			int x = (inven_list[0].size() % 25) % 5, y = (inven_list[0].size() % 25) / 5;
-			myDeck[i].x = x * 72 + 950, myDeck[i].y = y * 120 + 130;
+			myDeck[i].x = x * 72 + 950, myDeck[i].y = y * 110 + 130;
 			inven_list[0].push_back(myDeck[i]);
 			myDeck.erase(myDeck.begin() + i);
 			SelectedCard = &inven_list[0][inven_list[0].size() - 1];
@@ -304,10 +304,10 @@ void DeckBuilding::DtoI(int p_mx, int p_my)
 			//이동된 카드의 뒤쪽 카드들을 앞으로 한칸씩 좌표를 변경
 			for (int j = i; j < myDeck.size(); j++)
 			{
-				myDeck[j].x -= 120;
-				if (myDeck[j].x < 400)
+				myDeck[j].x -= 110;
+				if (myDeck[j].x < 350)
 				{
-					myDeck[j].x = 120 * 4 + 460, myDeck[j].y -= 140;
+					myDeck[j].x = 110 * 4 + 406, myDeck[j].y -= 130;
 				}
 			}
 			return;
@@ -346,9 +346,12 @@ void DeckBuilding::DeckBuild(int p_mx, int p_my, char click_m)
 	else if (click_m == 'L')
 	{
 		this->SelectCard(p_mx, p_my);
-		if (InCircle(985, 690, p_mx, p_my)) this->PageBuff(false);
+		/*if (InCircle(985, 690, p_mx, p_my)) 
 		else if (InCircle(1245, 690, p_mx, p_my)) this->PageBuff(true);
-		else if (InCircle(965, 45, p_mx, p_my)) this->ChangeFilter();
+		else if (InCircle(965, 45, p_mx, p_my)) this->ChangeFilter();*/
+		if (btnManager.HandleClickId(p_mx, p_my) == "left") this->PageBuff(false);
+		else if (btnManager.HandleClickId(p_mx, p_my) == "right") this->PageBuff(true);
+		else if (btnManager.HandleClickId(p_mx, p_my) == "filter") this->ChangeFilter();
 	}
 }
 
@@ -376,9 +379,12 @@ void DeckBuilding::EnterDeckBuild()
 void DeckBuilding::ExitDeckBuild()
 {
 	for (int i = 0; i < inven_list[filter].size(); i++) RENDER.ImageVisible(to_string(inven_list[filter][i].GetUid()), false);
-	for (int i = 0; i < myDeck.size(); i++) RENDER.RemoveIDIamage("deck_card" + to_string(i));
+	for (int i = 0; i < myDeck.size(); i++) RENDER.ImageVisible(to_string(myDeck[i].GetUid()), false);
 	RENDER.RemoveIDIamage("s_card");
 	RENDER.RemoveIDIamage("rb1");
+	RENDER.RemoveIDIamage("left");
+	RENDER.RemoveIDIamage("right");
+	RENDER.RemoveIDIamage("filter");
 	filter = 0;
 }
 
@@ -387,7 +393,6 @@ void DeckBuilding::DrawInventory(HDC p_hdc, WCHAR p_text[], vector<Card> p_cardT
 	for (int i = 0; i < DrawOnly_pre.size(); i++)
 	{
 		//마지막카드이동시 배열에서 사라진카드이므로 예외처리
-		//RENDER.RemoveIDIamage("inven_card" + to_string(i));
 		RENDER.ImageVisible(to_string(DrawOnly_pre[i].GetUid()), false);
 	}
 	for (int i = 0; i < 25; i++)
@@ -415,7 +420,7 @@ void DeckBuilding::DrawMyDeck(HDC p_hdc, WCHAR p_text[])
 	
 	for (int i = 0; i < decksize; i++)
 	{
-		RENDER.MoveImage(to_string(myDeck[i].GetUid()), Rect(myDeck[i].x - 50, myDeck[i].y - 66, 100, 132));
+		RENDER.MoveImage(to_string(myDeck[i].GetUid()), Rect(myDeck[i].x - 50, myDeck[i].y - 66, (int)(100 * 0.9f), (int)(132 * 0.9f)));
 		RENDER.ImageVisible(to_string(myDeck[i].GetUid()), true);
 	}
 }
@@ -434,17 +439,24 @@ void DeckBuilding::DrawDeckBuild(HDC p_hdc, WCHAR p_text[])
 		else if (SelectedCard->GetType() == E_Deffense) path += L"_def_";
 		path += to_wstring(SelectedCard->GetStar() + 1) + L".png";
 		if (SelectedCard->GetType() == E_Magic) path = L"card_magic.png";
-		RENDER.SetImage(path, "s_card", Rect(0, 0, 100, 132), Rect(25, 100, 100 * 3.5f, 132 * 3.5f)
+		RENDER.SetImage(path, "s_card", Rect(0, 0, 100, 132), Rect(25, 130, (int)(100 * 3.0f), (int)(132 * 3.0f))
 			, true, GameImage_M::LayerType::Background);
-		RENDER.MoveImage("s_card", Rect(25, 100, 100 * 3.5f, 132 * 3.5f));
 	}
 
-	Rectangle(p_hdc, 920, 670, 1150, 710);//인벤좌로이동
-	Rectangle(p_hdc, 1180, 670, 1410, 710);//인벤우로이동
+	RENDER.SetImage(L"rect_button.png", "left"
+		, Rect(0, 0, 100, 101), Rect(0, 0, 0, 0), true, GameImage_M::LayerType::UI);
+	btnManager.AddButton(make_shared<RectButton>("left", RECT{ 920, 620, 1030, 660 }));
+	//Rectangle(p_hdc, 920, 620, 1030, 660);//인벤좌로이동
 	//wsprintf(p_text, TEXT("←"));
-	TextOut(p_hdc, 985, 680, p_text, lstrlen(p_text));
+	//TextOut(p_hdc, 985, 680, p_text, lstrlen(p_text));
+
+	RENDER.SetImage(L"rect_button.png", "right"
+		, Rect(0, 0, 100, 101), Rect(0, 0, 0, 0), true, GameImage_M::LayerType::UI);
+	btnManager.AddButton(make_shared<RectButton>("right", RECT{ 1140, 620, 1250, 660 }));
+	//Rectangle(p_hdc, 1140, 620, 1250, 660);//인벤우로이동
 	//wsprintf(p_text, TEXT("→"));
-	TextOut(p_hdc, 1245, 680, p_text, lstrlen(p_text));
+	//TextOut(p_hdc, 1245, 680, p_text, lstrlen(p_text));
+
 	wsprintf(p_text, TEXT("%d / %d"), i_page + 1, max_page + 1);
 	TextOut(p_hdc, 1105, 680, p_text, lstrlen(p_text));
 
@@ -456,14 +468,17 @@ void DeckBuilding::DrawDeckBuild(HDC p_hdc, WCHAR p_text[])
 	LineTo(p_hdc, 900, 720);
 	//--인벤토리
 
-	Rectangle(p_hdc, 915, 20, 1115, 70);
-	wsprintf(p_text, TEXT("카드타입 : %d"), filter);
+	RENDER.SetImage(L"rect_button.png", "filter"
+		, Rect(0, 0, 100, 101), Rect(0, 0, 0, 0), true, GameImage_M::LayerType::UI);
+	btnManager.AddButton(make_shared<RectButton>("filter", RECT{ 915, 20, 1065, 70 }));
+	//Rectangle(p_hdc, 915, 20, 1065, 70);
+	wsprintf(p_text, TEXT("%d"), filter);
 	TextOut(p_hdc, 925, 40, p_text, lstrlen(p_text));
 
-	Rectangle(p_hdc, 915 + 150, 20, 1115 + 150, 70);
+	//Rectangle(p_hdc, 915 + 150, 20, 1115 + 150, 70);
 
-	Rectangle(p_hdc, 915 + 300, 20, 1115 + 300, 70);
+	Rectangle(p_hdc, 915 + 180, 20, 1065 + 180, 70);
 	wsprintf(p_text, TEXT("?"));
-	TextOut(p_hdc, 960 + 300, 40, p_text, lstrlen(p_text));
+	TextOut(p_hdc, 960 + 180, 40, p_text, lstrlen(p_text));
 
 }

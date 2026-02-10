@@ -74,6 +74,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 #include "RenderManager.h"
 #include "GameState.h"
 #include "InputGame.h"
+#include "ButtonManager.h"
 
 //#define BSIZE 40
 //
@@ -118,6 +119,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		// 3. 모든 이미지 그리기
 		STATE.Update(hdc, hWnd);
 		GameImage_M::RenderManager::GetInstance().RenderAll(&graphics);
+		btnManager.DrawAll();
 
 		// 4. 메모리에 그린 내용을 실제 화면으로 한 번에 복사 (깜빡임 방지)
 		BitBlt(hdc, 0, 0, rt.right, rt.bottom, memDC, 0, 0, SRCCOPY);
