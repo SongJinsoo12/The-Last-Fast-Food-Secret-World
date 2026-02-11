@@ -11,7 +11,8 @@
 
 
 CardManager::CardManager() : m_DeckCount(25), m_HandCount(0), m_HandSelection(4),
-m_IsMyTurn(false), m_IsSelect(false), m_isShiny(false), m_isRip(false), m_isSkill(false), m_isDef(false)
+m_IsMyTurn(false), m_IsSelect(false), m_isShiny(false), m_isRip(false), m_isSkill(false), 
+m_isDef(false), m_monoId(0)
 {
 }
 
@@ -168,10 +169,58 @@ void CardManager::SetImage()
 			Gdiplus::Rect(x, y, 192, 192), Gdiplus::Rect(0, 0, 0, 0), false,
 			GameImage_M::LayerType::UI);
 	}
-
-
+	
+	M_REND.SetImage(L"images/card_blank.png", "Card_Blank",
+		Gdiplus::Rect(0, 0, 102, 130), Gdiplus::Rect(0, 0, 0, 0), false,
+		GameImage_M::LayerType::Card);
 	cout << "이미지 로드 확인\n";
 }
+
+void CardManager::LoadMonoGram(string p_image, string p_id, int p_x, int p_y)
+{
+	int tempX = p_x;
+	int tempY = p_y;
+	int index = 0;
+	for (size_t i = 0; i < p_image.size(); i++)
+	{
+		index++;
+		if (i > 0) tempX += 8;
+
+		int imageX, imageY;
+		int temp;
+
+		temp = p_image[i];
+		temp -= 32;
+
+		string tempId = p_id;
+		tempId += to_string(i);
+
+		imageX = ((temp % 16) * 6);
+		imageY = ((temp / 16) * 12);
+
+		if (i % 27 == 0 && i != 0)
+		{
+			tempX = p_x;
+			tempY += 16;
+		}
+
+		M_REND.SetImage(L"images/monogram-bitmap.png", tempId, Rect(imageX, imageY, 6, 12), 
+			Rect(tempX, tempY, 8, 16)
+			, true, GameImage_M::LayerType::UI);
+	}
+	m_monoId = index;
+}
+
+void CardManager::RemoveMonoGram(string p_id)
+{
+	for (size_t i = 0; i < m_monoId + 1; i++)
+	{
+		string tempId = p_id;
+		tempId += to_string(i);
+		M_REND.RemoveIDIamage(tempId);
+	}
+}
+
 
 bool* CardManager::GetIsShiny()
 {
@@ -320,10 +369,15 @@ void CardManager::DrawPlayerHand()
 			if (m_IsSelect)
 			{
 				M_REND.MoveImage(to_string(m_Hand[m_HandSelection]->GetUid()),
-					Gdiplus::Rect(70, 380, CARDX * 2, CARDY * 2));
+					Gdiplus::Rect(50, 330, CARDX * 2.5, CARDY * 2.5));
+
+				M_REND.ImageVisible("Card_Blank", true);
+				M_REND.MoveImage("Card_Blank",
+					Gdiplus::Rect(startPos, posY - 10, CARDX, CARDY));
 			}
 			else
 			{
+				M_REND.ImageVisible("Card_Blank", false);
 				M_REND.MoveImage(to_string(m_Hand[i]->GetUid()),
 					Gdiplus::Rect(startPos, posY - 10, CARDX, CARDY));
 			}
@@ -336,6 +390,17 @@ void CardManager::DrawPlayerHand()
 
 		//카드 출력 순서
 		M_REND.LayerMoveToBack(to_string(m_Hand[i]->GetUid()));
+	}
+
+	if (m_IsSelect)
+	{
+		RemoveMonoGram("Mono_Card");
+
+		LoadMonoGram(m_Hand[m_HandSelection]->GetInfo(), "Mono_Card", 67, 570);
+	}
+	else
+	{
+		RemoveMonoGram("Mono_Card");
 	}
 }
 

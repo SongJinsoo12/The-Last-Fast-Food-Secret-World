@@ -219,8 +219,8 @@ namespace GameState_M {
 
 
 
-		MonoGram("Song123", "Temp_", 0, 0);
-		MonoGram("Song123", "Hello_", 0, 100);
+		/*MonoGram("Song123", "Temp_", 0, 0);
+		MonoGram("Song123", "Hello_", 0, 100);*/
 	}
 
 	void InGame::Exit()

@@ -171,19 +171,84 @@ void CardTableManager::CardImageLoad(int uid, CAttribute  ait, CType type, Star 
 		switch (star)
 		{
 		case E_ONE:
-			M_REND.SetImage(L"images/card_atk_1.png", to_string(uid),
-				Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false, 
-				GameImage_M::LayerType::Card);
+			switch (ait)
+			{
+			case E_BULGOGI:
+				M_REND.SetImage(L"images/cards/attack_1_1.png", to_string(uid),
+					Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
+					GameImage_M::LayerType::Card);
+				break;
+			case E_CHESSE:
+				M_REND.SetImage(L"images/cards/attack_1_2.png", to_string(uid),
+					Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
+					GameImage_M::LayerType::Card);
+				break;
+			case E_VEGAT:
+				M_REND.SetImage(L"images/cards/attack_1_3.png", to_string(uid),
+					Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
+					GameImage_M::LayerType::Card);
+				break;
+			case E_SOURCE:
+				M_REND.SetImage(L"images/cards/attack_1_4.png", to_string(uid),
+					Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
+					GameImage_M::LayerType::Card);
+				break;
+			}
 			break;
 		case E_TWO:
-			M_REND.SetImage(L"images/card_atk_2.png", to_string(uid),
-				Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
-				GameImage_M::LayerType::Card);
+			switch (ait)
+			{
+			case E_BULGOGI:
+				M_REND.SetImage(L"images/cards/attack_2_1.png", to_string(uid),
+					Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
+					GameImage_M::LayerType::Card);
+				break;
+			case E_CHESSE:
+				M_REND.SetImage(L"images/cards/attack_2_2.png", to_string(uid),
+					Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
+					GameImage_M::LayerType::Card);
+				break;
+			case E_VEGAT:
+				M_REND.SetImage(L"images/cards/attack_2_3.png", to_string(uid),
+					Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
+					GameImage_M::LayerType::Card);
+				break;
+			case E_SOURCE:
+				M_REND.SetImage(L"images/cards/attack_2_4.png", to_string(uid),
+					Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
+					GameImage_M::LayerType::Card);
+				break;
+			case E_BREAD:
+				M_REND.SetImage(L"images/cards/attack_2_5.png", to_string(uid),
+					Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
+					GameImage_M::LayerType::Card);
+				break;
+			}
 			break;
 		case E_THREE:
-			M_REND.SetImage(L"images/card_atk_3.png", to_string(uid),
-				Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
-				GameImage_M::LayerType::Card);
+			switch (ait)
+			{
+			case E_BULGOGI:
+				M_REND.SetImage(L"images/cards/attack_3_1.png", to_string(uid),
+					Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
+					GameImage_M::LayerType::Card);
+				break;
+			case E_CHESSE:
+				M_REND.SetImage(L"images/cards/attack_3_2.png", to_string(uid),
+					Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
+					GameImage_M::LayerType::Card);
+				break;
+			case E_VEGAT:
+				M_REND.SetImage(L"images/cards/attack_3_3.png", to_string(uid),
+					Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
+					GameImage_M::LayerType::Card);
+				break;
+			case E_SOURCE:
+				M_REND.SetImage(L"images/cards/attack_3_4.png", to_string(uid),
+					Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
+					GameImage_M::LayerType::Card);
+				break;
+			}
 			break;
 		}
 		break;
@@ -191,40 +256,91 @@ void CardTableManager::CardImageLoad(int uid, CAttribute  ait, CType type, Star 
 		switch (star)
 		{
 		case E_ONE:
-			M_REND.SetImage(L"images/card_def_1.png", to_string(uid),
-				Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
-				GameImage_M::LayerType::Card);
+			switch (ait)
+			{
+			case E_BULGOGI:
+				M_REND.SetImage(L"images/cards/def_1_1.png", to_string(uid),
+					Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
+					GameImage_M::LayerType::Card);
+				break;
+			case E_CHESSE:
+				M_REND.SetImage(L"images/cards/def_1_2.png", to_string(uid),
+					Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
+					GameImage_M::LayerType::Card);
+				break;
+			case E_VEGAT:
+				M_REND.SetImage(L"images/cards/def_1_3.png", to_string(uid),
+					Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
+					GameImage_M::LayerType::Card);
+				break;
+			case E_SOURCE:
+				M_REND.SetImage(L"images/cards/def_1_4.png", to_string(uid),
+					Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
+					GameImage_M::LayerType::Card);
+				break;
+			}
 			break;
 		case E_TWO:
-			M_REND.SetImage(L"images/card_def_2.png", to_string(uid),
-				Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
-				GameImage_M::LayerType::Card);
+			switch (ait)
+			{
+			case E_BULGOGI:
+				M_REND.SetImage(L"images/cards/def_2_1.png", to_string(uid),
+					Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
+					GameImage_M::LayerType::Card);
+				break;
+			case E_CHESSE:
+				M_REND.SetImage(L"images/cards/def_2_2.png", to_string(uid),
+					Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
+					GameImage_M::LayerType::Card);
+				break;
+			case E_VEGAT:
+				M_REND.SetImage(L"images/cards/def_2_3.png", to_string(uid),
+					Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
+					GameImage_M::LayerType::Card);
+				break;
+			case E_SOURCE:
+				M_REND.SetImage(L"images/cards/def_2_4.png", to_string(uid),
+					Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
+					GameImage_M::LayerType::Card);
+				break;
+			case E_BREAD:
+				M_REND.SetImage(L"images/cards/def_2_5.png", to_string(uid),
+					Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
+					GameImage_M::LayerType::Card);
+				break;
+			}
 			break;
 		case E_THREE:
-			M_REND.SetImage(L"images/card_def_3.png", to_string(uid),
-				Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
-				GameImage_M::LayerType::Card);
+			switch (ait)
+			{
+			case E_BULGOGI:
+				M_REND.SetImage(L"images/cards/def_3_1.png", to_string(uid),
+					Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
+					GameImage_M::LayerType::Card);
+				break;
+			case E_CHESSE:
+				M_REND.SetImage(L"images/cards/def_3_2.png", to_string(uid),
+					Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
+					GameImage_M::LayerType::Card);
+				break;
+			case E_VEGAT:
+				M_REND.SetImage(L"images/cards/def_3_3.png", to_string(uid),
+					Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
+					GameImage_M::LayerType::Card);
+				break;
+			case E_SOURCE:
+				M_REND.SetImage(L"images/cards/def_3_4.png", to_string(uid),
+					Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
+					GameImage_M::LayerType::Card);
+				break;
+			}
 			break;
 		}
 		break;
 	case E_Magic:
-		M_REND.SetImage(L"images/card_magic.png", to_string(uid),
+		M_REND.SetImage(L"images/cards/magic_3.png", to_string(uid),
 			Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
 			GameImage_M::LayerType::Card);
-		break;
-	}
-
-	switch (ait)
-	{
-	case E_BULGOGI:
-		break;
-	case E_SOURCE:
-		break;
-	case E_CHESSE:
-		break;
-	case E_VEGAT:
-		break;
-	case E_BREAD:
 		break;
 	}
 }

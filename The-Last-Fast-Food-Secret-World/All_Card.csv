@@ -1,116 +1,116 @@
 UID,ATK,DEF,AIT,TYPE,STAR,EXPLAIN
-1,5,0,E_BULGOGI,E_Attack,E_ONE,기본 공격 카드.
-2,5,0,E_BULGOGI,E_Attack,E_ONE,기본 공격 카드.
-3,5,0,E_BULGOGI,E_Attack,E_ONE,기본 공격 카드.
-4,5,0,E_BULGOGI,E_Attack,E_ONE,기본 공격 카드.
-5,5,0,E_BULGOGI,E_Attack,E_ONE,기본 공격 카드.
-6,5,0,E_SOURCE,E_Attack,E_ONE,기본 공격 카드.
-7,5,0,E_SOURCE,E_Attack,E_ONE,기본 공격 카드.
-8,5,0,E_SOURCE,E_Attack,E_ONE,기본 공격 카드.
-9,5,0,E_SOURCE,E_Attack,E_ONE,기본 공격 카드.
-10,5,0,E_SOURCE,E_Attack,E_ONE,기본 공격 카드.
-11,5,0,E_CHESSE,E_Attack,E_ONE,기본 공격 카드.
-12,5,0,E_CHESSE,E_Attack,E_ONE,기본 공격 카드.
-13,5,0,E_CHESSE,E_Attack,E_ONE,기본 공격 카드.
-14,5,0,E_CHESSE,E_Attack,E_ONE,기본 공격 카드.
-15,5,0,E_CHESSE,E_Attack,E_ONE,기본 공격 카드.
-16,5,0,E_VEGAT,E_Attack,E_ONE,기본 공격 카드.
-17,5,0,E_VEGAT,E_Attack,E_ONE,기본 공격 카드.
-18,5,0,E_VEGAT,E_Attack,E_ONE,기본 공격 카드.
-19,5,0,E_VEGAT,E_Attack,E_ONE,기본 공격 카드.
-20,5,0,E_VEGAT,E_Attack,E_ONE,기본 공격 카드.
-21,10,0,E_BULGOGI,E_Attack,E_TWO,기본 공격 카드.
-22,10,0,E_BULGOGI,E_Attack,E_TWO,기본 공격 카드.
-23,10,0,E_BULGOGI,E_Attack,E_TWO,기본 공격 카드.
-24,10,0,E_SOURCE,E_Attack,E_TWO,기본 공격 카드.
-25,10,0,E_SOURCE,E_Attack,E_TWO,기본 공격 카드.
-26,10,0,E_SOURCE,E_Attack,E_TWO,기본 공격 카드.
-27,10,0,E_CHESSE,E_Attack,E_TWO,기본 공격 카드.
-28,10,0,E_CHESSE,E_Attack,E_TWO,기본 공격 카드.
-29,10,0,E_CHESSE,E_Attack,E_TWO,기본 공격 카드.
-30,10,0,E_VEGAT,E_Attack,E_TWO,기본 공격 카드.
-31,10,0,E_VEGAT,E_Attack,E_TWO,기본 공격 카드.
-32,10,0,E_VEGAT,E_Attack,E_TWO,기본 공격 카드.
-33,15,0,E_BULGOGI,E_Attack,E_THREE,기본 공격 카드.
-34,15,0,E_SOURCE,E_Attack,E_THREE,기본 공격 카드.
-35,15,0,E_CHESSE,E_Attack,E_THREE,기본 공격 카드.
-36,15,0,E_VEGAT,E_Attack,E_THREE,기본 공격 카드.
-37,0,0,E_BREAD,E_Attack,E_TWO,이번에 사용하는 기본 공격 카드의 피해량이 50% 증가. 이 카드의 사용 횟수는 차감되지 않음.
-38,10,0,E_BREAD,E_Attack,E_TWO,코인 토스를 해서 앞면이면 데미지를 주고 뒷면이면 실패함.
-39,10,0,E_BREAD,E_Attack,E_TWO,상대가 방어 카드를 사용했을 시에만 데미지를 줌.
-40,0,0,E_BREAD,E_Attack,E_TWO,2턴에 나눠서 2데미지를 주는 상태이상에 걸리게 함.
-101,0,5,E_BULGOGI,E_Deffense,E_ONE,기본 방어 카드.
-102,0,5,E_BULGOGI,E_Deffense,E_ONE,기본 방어 카드.
-103,0,5,E_BULGOGI,E_Deffense,E_ONE,기본 방어 카드.
-104,0,5,E_BULGOGI,E_Deffense,E_ONE,기본 방어 카드.
-105,0,5,E_BULGOGI,E_Deffense,E_ONE,기본 방어 카드.
-106,0,5,E_SOURCE,E_Deffense,E_ONE,기본 방어 카드.
-107,0,5,E_SOURCE,E_Deffense,E_ONE,기본 방어 카드.
-108,0,5,E_SOURCE,E_Deffense,E_ONE,기본 방어 카드.
-109,0,5,E_SOURCE,E_Deffense,E_ONE,기본 방어 카드.
-110,0,5,E_SOURCE,E_Deffense,E_ONE,기본 방어 카드.
-111,0,5,E_CHESSE,E_Deffense,E_ONE,기본 방어 카드.
-112,0,5,E_CHESSE,E_Deffense,E_ONE,기본 방어 카드.
-113,0,5,E_CHESSE,E_Deffense,E_ONE,기본 방어 카드.
-114,0,5,E_CHESSE,E_Deffense,E_ONE,기본 방어 카드.
-115,0,5,E_CHESSE,E_Deffense,E_ONE,기본 방어 카드.
-116,0,5,E_VEGAT,E_Deffense,E_ONE,기본 방어 카드.
-117,0,5,E_VEGAT,E_Deffense,E_ONE,기본 방어 카드.
-118,0,5,E_VEGAT,E_Deffense,E_ONE,기본 방어 카드.
-119,0,5,E_VEGAT,E_Deffense,E_ONE,기본 방어 카드.
-120,0,5,E_VEGAT,E_Deffense,E_ONE,기본 방어 카드.
-121,0,10,E_BULGOGI,E_Deffense,E_TWO,기본 방어 카드.
-122,0,10,E_BULGOGI,E_Deffense,E_TWO,기본 방어 카드.
-123,0,10,E_BULGOGI,E_Deffense,E_TWO,기본 방어 카드.
-124,0,10,E_SOURCE,E_Deffense,E_TWO,기본 방어 카드.
-125,0,10,E_SOURCE,E_Deffense,E_TWO,기본 방어 카드.
-126,0,10,E_SOURCE,E_Deffense,E_TWO,기본 방어 카드.
-127,0,10,E_CHESSE,E_Deffense,E_TWO,기본 방어 카드.
-128,0,10,E_CHESSE,E_Deffense,E_TWO,기본 방어 카드.
-129,0,10,E_CHESSE,E_Deffense,E_TWO,기본 방어 카드.
-130,0,10,E_VEGAT,E_Deffense,E_TWO,기본 방어 카드.
-131,0,10,E_VEGAT,E_Deffense,E_TWO,기본 방어 카드.
-132,0,10,E_VEGAT,E_Deffense,E_TWO,기본 방어 카드.
-133,0,15,E_BULGOGI,E_Deffense,E_TRHEE,기본 방어 카드.
-134,0,15,E_SOURCE,E_Deffense,E_TRHEE,기본 방어 카드.
-135,0,15,E_CHESSE,E_Deffense,E_TRHEE,기본 방어 카드.
-136,0,15,E_VEGAT,E_Deffense,E_TRHEE,기본 방어 카드.
-137,0,10,E_BULGOGI,E_Deffense,E_TWO,불리 상성 속성을 제외한 나머지 속성 공격 방어. 무속성 공격은 방어 불가.
-138,0,10,E_SOURCE,E_Deffense,E_TWO,불리 상성 속성을 제외한 나머지 속성 공격 방어. 무속성 공격은 방어 불가.
-139,0,10,E_CHESSE,E_Deffense,E_TWO,불리 상성 속성을 제외한 나머지 속성 공격 방어. 무속성 공격은 방어 불가.
-140,0,10,E_VEGAT,E_Deffense,E_TWO,불리 상성 속성을 제외한 나머지 속성 공격 방어. 무속성 공격은 방어 불가.
-141,0,10,E_BREAD,E_Deffense,E_TWO,무속성 방어 카드.
-142,0,999,E_BREAD,E_Deffense,E_TWO,무적 방어.
-143,0,0,E_BREAD,E_Deffense,E_TWO,데미지 30% 반사.
-201,0,0,E_BREAD,E_Magic,E_TWO,10 회복.
-202,0,0,E_BREAD,E_Magic,E_TWO,10 회복.
-203,0,0,E_BREAD,E_Magic,E_TWO,10 회복.
-204,0,0,E_BREAD,E_Magic,E_TWO,30 회복 후 3턴 뒤 체력 75% 감소.
-205,0,0,E_BREAD,E_Magic,E_TWO,상태 이상 제거.
-206,0,0,E_BREAD,E_Magic,E_TWO,상대 덱에서 내 패로 카드 1장 드로우.
-207,0,0,E_BREAD,E_Magic,E_TWO,다음 턴 공격 피해량 30% 증가.
-208,0,0,E_BREAD,E_Magic,E_TWO,3턴 후 카드 3장 연속으로 사용 가능.
-209,0,0,E_BREAD,E_Magic,E_TWO,2턴 후 20 회복.
-210,0,0,E_BREAD,E_Magic,E_TWO,패에서 카드 1장을 버리고 덱에서 1장 드로우.
-211,0,0,E_BREAD,E_Magic,E_TWO,전 턴에 상대가 사용한 카드의 종류(공격/방어)에 따라 이하를 적용. 공격-상대의 마지막 공격 피해의 50% 데미지를 줌. 방어-자신의 다음 공격 피해량 50% 증가.
-212,0,0,E_BREAD,E_Magic,E_TWO,자신의 패 2장을 버린 후 상대의 패에서 무작위 카드 1장 가져오기.
-213,0,0,E_BREAD,E_Magic,E_TWO,자신의 다음 공격 카드의 속성을 임의의 속성(무속성 x)으로 변경. 바뀐 속성의 추가 효과 부여(약점 속성에 추가 피해).
-214,0,0,E_BREAD,E_Magic,E_TWO,자신의 패 2장을 버린 후 자신의 다음 공격 카드의 피해를 2배로 변경.
-215,0,0,E_BREAD,E_Magic,E_TWO,최근에 버려진 또는 사용한 2장의 카드가 같은 종류(공격/방어)일 경우에 2장 드로우.
-216,0,0,E_BREAD,E_Magic,E_TWO,1장 드로우. 상대의 체력 5회복.
-217,0,0,E_BREAD,E_Magic,E_TWO,3장 드로우 후 20회복. 그 후 자신의 덱에 '바퀴벌레 카드'를 추가. *바퀴벌레 카드(보조) - 이 카드를 획득할 경우 자신의 덱에 바퀴벌레 카드를 추가. 이 카드는 발동 불가. 자신이 피해를 받을 시 패에 존재하는 바퀴벌레 카드소멸.
-218,0,0,E_BREAD,E_Magic,E_TWO,체력 5 감소. 카드 1장 드로우.
-219,0,0,E_BREAD,E_Magic,E_TWO,자신의 패를 1장 버림. 그 후 자신의 덱 맨 위의 카드 3장을 보고 그 3장의 순서를 원하는대로 변경.
-220,0,0,E_BREAD,E_Magic,E_TWO,2장 드로우. 다음 공격 카드의 피해 50% 저하.
-221,0,0,E_BREAD,E_Magic,E_TWO,공격 카드 1장을 버림. 카드 2장 더 사용가능.
-222,0,0,E_BREAD,E_Magic,E_TWO,2장 드로우. 그 후 다음 1턴동안 혼란 상태에 걸림. *혼란 - 무작위 카드 사용.
-223,0,0,E_BREAD,E_Magic,E_TWO,2장 드로우. 다음 1턴동안 받는 피해를 2배로 증가.
-224,0,0,E_BREAD,E_Magic,E_TWO,패에서 카드 1장 버림. 4장 드로우하고 원하는 카드 1장을 제외하고 나머지 3장은 덱으로 무작위로 돌려보냄.
-225,0,0,E_BREAD,E_Magic,E_TWO,자신의 패 1장을 버림. 그 후 다음 1턴 동안 상대가 회복할 때 회복 대신 피해로 변경.
-226,0,0,E_BREAD,E_Magic,E_TWO,지금 턴에 카드 2장 더 사용가능. 다음 자신 2턴동안 드로우 불가.
-227,0,0,E_BREAD,E_Magic,E_TWO,자신의 패를 덱에 돌려보냄. 그 후 원래 패의 카드 수만큼 드로우.
-228,0,0,E_BREAD,E_Magic,E_TWO,1턴 동안 상대 공격 카드 사용 불가.
-229,0,0,E_BREAD,E_Magic,E_TWO,카드 2장 드로우. 상대는 1장 드로우.
-230,0,0,E_BREAD,E_Magic,E_TWO,상대 패의 무작위 카드 1장 버리기.
-231,0,0,E_BREAD,E_Magic,E_TWO,X턴 뒤에 발동하는 카드 효과 즉시 발동.
-232,0,0,E_BREAD,E_Magic,E_TWO,자신과 상대의 패의 카드 모두 덱으로 되돌리고 각자 3장의 카드를 드로우.
+1,5,0,E_BULGOGI,E_Attack,E_ONE,Basic attack card.
+2,5,0,E_BULGOGI,E_Attack,E_ONE,Basic attack card.
+3,5,0,E_BULGOGI,E_Attack,E_ONE,Basic attack card.
+4,5,0,E_BULGOGI,E_Attack,E_ONE,Basic attack card.
+5,5,0,E_BULGOGI,E_Attack,E_ONE,Basic attack card.
+6,5,0,E_SOURCE,E_Attack,E_ONE,Basic attack card.
+7,5,0,E_SOURCE,E_Attack,E_ONE,Basic attack card.
+8,5,0,E_SOURCE,E_Attack,E_ONE,Basic attack card.
+9,5,0,E_SOURCE,E_Attack,E_ONE,Basic attack card.
+10,5,0,E_SOURCE,E_Attack,E_ONE,Basic attack card.
+11,5,0,E_CHESSE,E_Attack,E_ONE,Basic attack card.
+12,5,0,E_CHESSE,E_Attack,E_ONE,Basic attack card.
+13,5,0,E_CHESSE,E_Attack,E_ONE,Basic attack card.
+14,5,0,E_CHESSE,E_Attack,E_ONE,Basic attack card.
+15,5,0,E_CHESSE,E_Attack,E_ONE,Basic attack card.
+16,5,0,E_VEGAT,E_Attack,E_ONE,Basic attack card.
+17,5,0,E_VEGAT,E_Attack,E_ONE,Basic attack card.
+18,5,0,E_VEGAT,E_Attack,E_ONE,Basic attack card.
+19,5,0,E_VEGAT,E_Attack,E_ONE,Basic attack card.
+20,5,0,E_VEGAT,E_Attack,E_ONE,Basic attack card.
+21,10,0,E_BULGOGI,E_Attack,E_TWO,Basic attack card.
+22,10,0,E_BULGOGI,E_Attack,E_TWO,Basic attack card.
+23,10,0,E_BULGOGI,E_Attack,E_TWO,Basic attack card.
+24,10,0,E_SOURCE,E_Attack,E_TWO,Basic attack card.
+25,10,0,E_SOURCE,E_Attack,E_TWO,Basic attack card.
+26,10,0,E_SOURCE,E_Attack,E_TWO,Basic attack card.
+27,10,0,E_CHESSE,E_Attack,E_TWO,Basic attack card.
+28,10,0,E_CHESSE,E_Attack,E_TWO,Basic attack card.
+29,10,0,E_CHESSE,E_Attack,E_TWO,Basic attack card.
+30,10,0,E_VEGAT,E_Attack,E_TWO,Basic attack card.
+31,10,0,E_VEGAT,E_Attack,E_TWO,Basic attack card.
+32,10,0,E_VEGAT,E_Attack,E_TWO,Basic attack card.
+33,15,0,E_BULGOGI,E_Attack,E_THREE,Basic attack card.
+34,15,0,E_SOURCE,E_Attack,E_THREE,Basic attack card.
+35,15,0,E_CHESSE,E_Attack,E_THREE,Basic attack card.
+36,15,0,E_VEGAT,E_Attack,E_THREE,Basic attack card.
+37,0,0,E_BREAD,E_Attack,E_TWO,Increases damage of the basic attack card used this turn by 50%. This card's usage count is not consumed.
+38,10,0,E_BREAD,E_Attack,E_TWO,"Flip a coin. If heads, deal damage; if tails, fail."
+39,10,0,E_BREAD,E_Attack,E_TWO,Deals damage only when the opponent uses a defense card.
+40,0,0,E_BREAD,E_Attack,E_TWO,Inflicts a status effect dealing 2 damage over 2 turns.
+101,0,5,E_BULGOGI,E_Deffense,E_ONE,Basic defense card.
+102,0,5,E_BULGOGI,E_Deffense,E_ONE,Basic defense card.
+103,0,5,E_BULGOGI,E_Deffense,E_ONE,Basic defense card.
+104,0,5,E_BULGOGI,E_Deffense,E_ONE,Basic defense card.
+105,0,5,E_BULGOGI,E_Deffense,E_ONE,Basic defense card.
+106,0,5,E_SOURCE,E_Deffense,E_ONE,Basic defense card.
+107,0,5,E_SOURCE,E_Deffense,E_ONE,Basic defense card.
+108,0,5,E_SOURCE,E_Deffense,E_ONE,Basic defense card.
+109,0,5,E_SOURCE,E_Deffense,E_ONE,Basic defense card.
+110,0,5,E_SOURCE,E_Deffense,E_ONE,Basic defense card.
+111,0,5,E_CHESSE,E_Deffense,E_ONE,Basic defense card.
+112,0,5,E_CHESSE,E_Deffense,E_ONE,Basic defense card.
+113,0,5,E_CHESSE,E_Deffense,E_ONE,Basic defense card.
+114,0,5,E_CHESSE,E_Deffense,E_ONE,Basic defense card.
+115,0,5,E_CHESSE,E_Deffense,E_ONE,Basic defense card.
+116,0,5,E_VEGAT,E_Deffense,E_ONE,Basic defense card.
+117,0,5,E_VEGAT,E_Deffense,E_ONE,Basic defense card.
+118,0,5,E_VEGAT,E_Deffense,E_ONE,Basic defense card.
+119,0,5,E_VEGAT,E_Deffense,E_ONE,Basic defense card.
+120,0,5,E_VEGAT,E_Deffense,E_ONE,Basic defense card.
+121,0,10,E_BULGOGI,E_Deffense,E_TWO,Basic defense card.
+122,0,10,E_BULGOGI,E_Deffense,E_TWO,Basic defense card.
+123,0,10,E_BULGOGI,E_Deffense,E_TWO,Basic defense card.
+124,0,10,E_SOURCE,E_Deffense,E_TWO,Basic defense card.
+125,0,10,E_SOURCE,E_Deffense,E_TWO,Basic defense card.
+126,0,10,E_SOURCE,E_Deffense,E_TWO,Basic defense card.
+127,0,10,E_CHESSE,E_Deffense,E_TWO,Basic defense card.
+128,0,10,E_CHESSE,E_Deffense,E_TWO,Basic defense card.
+129,0,10,E_CHESSE,E_Deffense,E_TWO,Basic defense card.
+130,0,10,E_VEGAT,E_Deffense,E_TWO,Basic defense card.
+131,0,10,E_VEGAT,E_Deffense,E_TWO,Basic defense card.
+132,0,10,E_VEGAT,E_Deffense,E_TWO,Basic defense card.
+133,0,15,E_BULGOGI,E_Deffense,E_TRHEE,Basic defense card.
+134,0,15,E_SOURCE,E_Deffense,E_TRHEE,Basic defense card.
+135,0,15,E_CHESSE,E_Deffense,E_TRHEE,Basic defense card.
+136,0,15,E_VEGAT,E_Deffense,E_TRHEE,Basic defense card.
+137,0,10,E_BULGOGI,E_Deffense,E_TWO,Blocks attribute attacks except disadvantaged ones. Cannot block non-attribute attacks.
+138,0,10,E_SOURCE,E_Deffense,E_TWO,Blocks attribute attacks except disadvantaged ones. Cannot block non-attribute attacks.
+139,0,10,E_CHESSE,E_Deffense,E_TWO,Blocks attribute attacks except disadvantaged ones. Cannot block non-attribute attacks.
+140,0,10,E_VEGAT,E_Deffense,E_TWO,Blocks attribute attacks except disadvantaged ones. Cannot block non-attribute attacks.
+141,0,10,E_BREAD,E_Deffense,E_TWO,Non-attribute defense card.
+142,0,999,E_BREAD,E_Deffense,E_TWO,Invincible defense.
+143,0,0,E_BREAD,E_Deffense,E_TWO,Reflects 30% of damage.
+201,0,0,E_BREAD,E_Magic,E_TWO,Recover 10 HP.
+202,0,0,E_BREAD,E_Magic,E_TWO,Recover 10 HP.
+203,0,0,E_BREAD,E_Magic,E_TWO,Recover 10 HP.
+204,0,0,E_BREAD,E_Magic,E_TWO,"Recover 30 HP, then lose 75% of HP after 3 turns."
+205,0,0,E_BREAD,E_Magic,E_TWO,Remove status effects.
+206,0,0,E_BREAD,E_Magic,E_TWO,Draw 1 card from opponent's deck to your hand.
+207,0,0,E_BREAD,E_Magic,E_TWO,Increase attack damage by 30% next turn.
+208,0,0,E_BREAD,E_Magic,E_TWO,Can use 3 cards consecutively after 3 turns.
+209,0,0,E_BREAD,E_Magic,E_TWO,Recover 20 HP after 2 turns.
+210,0,0,E_BREAD,E_Magic,E_TWO,Discard 1 card from hand and draw 1 card from deck.
+211,0,0,E_BREAD,E_Magic,E_TWO,Applies effect based on card type opponent used last turn. Attack: Deal 50% of opponent's last attack damage. Defense: Increase your next attack damage by 50%.
+212,0,0,E_BREAD,E_Magic,E_TWO,"Discard 2 cards from hand, then take 1 random card from opponent's hand."
+213,0,0,E_BREAD,E_Magic,E_TWO,Change next attack card's attribute to random (excluding non-attribute). Grants additional effect of changed attribute (extra damage to weak attribute).
+214,0,0,E_BREAD,E_Magic,E_TWO,"Discard 2 cards from hand, then double the damage of next attack card."
+215,0,0,E_BREAD,E_Magic,E_TWO,Draw 2 cards if the last 2 discarded or used cards are of same type (Attack/Defense).
+216,0,0,E_BREAD,E_Magic,E_TWO,Draw 1 card. Opponent recovers 5 HP.
+217,0,0,E_BREAD,E_Magic,E_TWO,"Draw 3 cards and recover 20 HP. Then add a 'Cockroach Card' to deck. *Cockroach Card (Support) - When obtained, adds another Cockroach Card to deck. Cannot act. Destroys a Cockroach Card in hand when taking damage."
+218,0,0,E_BREAD,E_Magic,E_TWO,Lose 5 HP. Draw 1 card.
+219,0,0,E_BREAD,E_Magic,E_TWO,Discard 1 card. Look at top 3 cards of deck and rearrange them.
+220,0,0,E_BREAD,E_Magic,E_TWO,Draw 2 cards. Next attack card damage reduced by 50%.
+221,0,0,E_BREAD,E_Magic,E_TWO,Discard 1 attack card. Can use 2 more cards.
+222,0,0,E_BREAD,E_Magic,E_TWO,Draw 2 cards. Inflicted with Confusion for 1 turn. *Confusion - Uses a random card.
+223,0,0,E_BREAD,E_Magic,E_TWO,Draw 2 cards. Damage taken doubled for next 1 turn.
+224,0,0,E_BREAD,E_Magic,E_TWO,"Discard 1 card. Draw 4 cards, keep 1, and return 3 to deck randomly."
+225,0,0,E_BREAD,E_Magic,E_TWO,"Discard 1 card. For next 1 turn, opponent takes damage instead of healing."
+226,0,0,E_BREAD,E_Magic,E_TWO,Can use 2 more cards this turn. Cannot draw for next 2 turns.
+227,0,0,E_BREAD,E_Magic,E_TWO,Shuffle hand into deck. Draw cards equal to original hand size.
+228,0,0,E_BREAD,E_Magic,E_TWO,Opponent cannot use attack cards for 1 turn.
+229,0,0,E_BREAD,E_Magic,E_TWO,Draw 2 cards. Opponent draws 1 card.
+230,0,0,E_BREAD,E_Magic,E_TWO,Discard 1 random card from opponent's hand.
+231,0,0,E_BREAD,E_Magic,E_TWO,Immediately activate card effects that trigger after X turns.
+232,0,0,E_BREAD,E_Magic,E_TWO,Both players shuffle hands into decks and draw 3 cards each.

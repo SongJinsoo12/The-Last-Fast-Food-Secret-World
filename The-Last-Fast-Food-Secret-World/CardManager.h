@@ -34,6 +34,8 @@ public:
 	void TimeLimit(CardManager& player, CardManager& opponent);
 	void BossCardAct(CardManager& player);
 	void SetImage();
+	void LoadMonoGram(string p_image, string p_id, int p_x, int p_y);
+	void RemoveMonoGram(string p_id);
 	
 	bool* GetIsShiny();
 	bool* GetIsRip();
@@ -52,4 +54,5 @@ private:
 	//AI m_boss;//º¸½º ai
 	Timer m_turnTime;
 	bool m_isShiny, m_isRip, m_isSkill, m_isDef;
+	int m_monoId;
 };
