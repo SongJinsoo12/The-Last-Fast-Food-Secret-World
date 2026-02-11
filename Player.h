@@ -276,6 +276,17 @@ public:
     bool IsPlayProhibited() const;
     bool IsAttackPlayProhibited() const;
 
+    // 코드 확인용
+    int GetPlayLimitThisTurn() const { return m_playLimitThisTurn; }
+
+
+
+    // --- Bridge accessors for CardManager syncing (int cardId deck/hand) ---
+    const std::vector<int>& Debug_GetDeckIds() const { return m_deck; }
+    const std::vector<int>& Debug_GetHandIds() const { return m_hand; }
+    void Debug_SetDeckIds(const std::vector<int>& ids) { m_deck = ids; }
+    void Debug_SetHandIds(const std::vector<int>& ids) { m_hand = ids; }
+
 private:
     // 플레이어 표시용 이름
     std::wstring m_name = L"Player";

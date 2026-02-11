@@ -32,6 +32,7 @@ int DefCard::DefaultDef(CAttribute attr, Star rank)
 // (실제 적용은: 받은 피해 - BreadDef(...) 같은 형태로 사용하세요)
 int DefCard::BreadDef(CAttribute /*atkAttr*/, Star rank)
 {
+    // UID: 141
     switch (rank)
     {
     case E_ONE:
@@ -47,16 +48,7 @@ int DefCard::BreadDef(CAttribute /*atkAttr*/, Star rank)
 
 //int DefCard::invincibility(CAttribute attr, Star rank)
 //{
-//    if (attr == E_BREAD) return 0;
-//
-//    switch (rank)
-//    {
-//    case E_ONE:
-//    case E_TWO:
-//    case E_THREE:
-//    default:
-//        return 9999;
-//    }
+//    return 999;
 //}
 
 // ----------------------
@@ -64,6 +56,7 @@ int DefCard::BreadDef(CAttribute /*atkAttr*/, Star rank)
 // ----------------------
 int DefCard::DamageReflection(CAttribute /*attr*/, Star rank)
 {
+    // UID: 143
     switch (rank)
     {
     case E_ONE:

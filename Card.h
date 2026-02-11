@@ -73,17 +73,17 @@ public:
 	void Init();
 
 	//Get Set 함수
-	int GetUid();
+	int GetUid() const;
 	void SetUid(int p_uid);
-	int GetAtk();
+	int GetAtk() const;
 	void SetAtk(int p_atk);
-	int GetDef();
+	int GetDef() const;
 	void SetDef(int p_def);
-	CAttribute GetAit();
+	CAttribute GetAit() const;
 	void SetAit(CAttribute p_Ait);
-	CType GetType();
+	CType GetType() const;
 	void SetType(CType p_Type);
-	Star GetStar();
+	Star GetStar() const;
 	void SetStar(Star p_Star);
 
 	// 실제 공격카드(AtkCard)에 배율을 적용하고,

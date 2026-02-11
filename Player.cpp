@@ -336,6 +336,7 @@ void Player::AddDelayedHpLoss(int turnsLater, int healAmount)
 
     // (heal + 25%) 버림
     m_delayedHpLossAmount = static_cast<int>(healAmount * 1.25f);
+    cout << "데미지를 입고 말거다." << endl;
 }
 
 void Player::AddDelayedHeal(int turnsLater, int amount)
@@ -350,6 +351,7 @@ void Player::SchedulePlayLimit(int turnsLater, int playLimit)
     m_hasScheduledPlayLimit = true;
     m_scheduledPlayLimitTurnsLeft = turnsLater;
     m_scheduledPlayLimit = playLimit;
+    cout << "3턴 뒤에 왔다" << endl;
 }
 
 void Player::AddExtraPlaysThisTurn(int extraPlays)
