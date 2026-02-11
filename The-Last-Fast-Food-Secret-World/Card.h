@@ -13,11 +13,6 @@ using namespace std;
 	mt19937 gen(rd()); \
 	uniform_int_distribution<int> cookRandom(start, end)
 
-enum class CardId : int
-{
-	Cockroach = 9999
-};
-
 enum CAttribute {
 	E_BULGOGI,
 	E_SOURCE,
@@ -66,29 +61,31 @@ protected:
 	CAttribute m_Ait;
 	CType m_Type;
 	Star m_Star;
+	string m_info;
+public:
+	int x, y;
 
 public:
 	Card();
 	Card(int p_uid);
 	void Init();
 
-	//Get Set 함수
-	int GetUid() const;
+	//Get Set 횉횚쩌철
+	int GetUid();
 	void SetUid(int p_uid);
-	int GetAtk() const;
+	int GetAtk();
 	void SetAtk(int p_atk);
-	int GetDef() const;
+	int GetDef();
 	void SetDef(int p_def);
-	CAttribute GetAit() const;
+	CAttribute GetAit();
 	void SetAit(CAttribute p_Ait);
-	CType GetType() const;
+	CType GetType();
 	void SetType(CType p_Type);
-	Star GetStar() const;
+	Star GetStar();
 	void SetStar(Star p_Star);
+	string GetInfo();
+	void SetInfo(string p_info);
 
-	// 실제 공격카드(AtkCard)에 배율을 적용하고,
-	// 적용 후 m_hasNextAtkMultiplier를 false로 끄는 식으로 "1회성" 처리하는 용도
-	void setAttribute(CAttribute attr) { m_Ait = attr; }
 };
 
 class GameCard : public Card
