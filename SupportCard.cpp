@@ -109,15 +109,22 @@ void SupportCard::Card_Forsake_Card_Draw(Player& player)
 
 void SupportCard::Same_Card(Player& player)
 {
-    if (/*최근 사용 카드가 같은 카드인지 확인*/ true)
+    // If the most recent two non-support cards (Attack/Defence) that were
+    // discarded or played are the same type -> draw 2.
+    if (player.HasRecentTwoSameCombatType())
     {
         player.DrawCards(2);
     }
 }
 
+
+CardManager cm;
+Card cd;
 void SupportCard::Card_Draw_Enemy_Heal(Player& player, Mob& mob)
 {
+    // 카드 1장 드로우
     player.DrawCards(1);
+    //player.DrawCard(1);
     mob.Heal(10);
 }
 
@@ -142,19 +149,8 @@ void SupportCard::Card_Draw_Damage_Doun(Player& player, float dmg)
 void SupportCard::Card_Draw_Disarray(Player& player)
 {
     player.DrawCards(2);
-    int Disarray = rand() % 3 + 1;
-    if (Disarray == 1)
-    {
+    player.AddDisarrayTurns(1);
 
-    }
-    else if (Disarray == 2)
-    {
-
-    }
-    else if (Disarray == 3)
-    {
-
-    }
 }
 
 void SupportCard::Card_Forsake_Heal_Atk_Change(Player& player, Mob& enemy)
@@ -176,15 +172,61 @@ void SupportCard::TwoCard_Get_Enemy_Card_Get(Player& player, Mob& mob)
     mob.DrawCards(1);
 }
 
+void SupportCard::Card_Draw_Enemy_Damage_UP(Player& player, Mob& mob)
+{
+    player.DrawCards(2);
+    player.Damage(2);
+}
+
+void SupportCard::My_Deck_Count_Card_Draw(Player& player)
+{
+    player.ReturnHandToDeckAndRedraw(true);
+}
+
+void SupportCard::Sure(Player& player)
+{
+    // 패 1장 버림
+    if (player.GetHandSize() > 0)
+    {
+        if (!player.DiscardHandCardAt(player.ChooseCardIndex()))
+        {
+            player.DiscardRandomHandCards(1);
+        }
+    }
+
+    // 4장 드로우
+    player.DrawCards(4);
+
+    // 패 3장 덱으로 되돌림
+    int sendCount = std::min(3, player.GetHandSize());
+    for (int i = 0; i < sendCount; ++i)
+    {
+        int id = -1;
+        if (!player.PopRandomHandCard(id))
+        {
+            break;
+        }
+        player.AddCardToDeck(id, false);
+    }
+
+    // 덱 무작위로 보내기
+    player.ShuffleDeck();
+}
+
 void SupportCard::Next_AtkCard_Damage_Up(Player& player, float mult)
 {
     if (mult <= 0.0f) mult = 1.0f;
     player.SetNextAtkMultiplier(mult);
 }
 
-void SupportCard::MY_Attiravate_Change(CAttribute ait)
+void SupportCard::MY_Attiravate_Change(Player& player, CAttribute attr, CAttribute neutral)
 {
-    (void)ait;
+    player.SetNextAtkAttribute(attr, neutral);
+}
+
+void SupportCard::MY_Attiravate_Change_Random(Player& player, CAttribute neutral)
+{
+    player.SetNextAtkAttributeRandom(neutral);
 }
 
 void SupportCard::Card_Forsake_Damage_up(Player& player, float dmg)
@@ -202,7 +244,7 @@ void SupportCard::Atk_Or_Def(Player* player, Mob* mob)
 
     if (playerLastCard != nullptr)
     {
-        CType lastType = playerLastCard->getType();
+        CType lastType = playerLastCard->GetType();
 
         if (lastType == CType::E_Attack)
         {
@@ -210,7 +252,7 @@ void SupportCard::Atk_Or_Def(Player* player, Mob* mob)
             int reflect = lastDamage / 2;
             player->takeDamage(reflect);
         }
-        else if (lastType == CType::E_Deffence)
+        else if (lastType == CType::E_Deffense)
         {
             player->boostNextAttack(20);
         }
@@ -241,10 +283,7 @@ void SupportCard::AtkCard_Forsake_Used_TwoCard(Player& player, CardManager& cm)
 
 void SupportCard::Instant_Turn_Card(Player& player)
 {
-    if (true)
-    {
-        player.AddDelayedHeal(1, heal);
-    }
+    player.TriggerScheduledEffectsNow();
 }
 
 void SupportCard::Two_Turn_Heal(Player& player)
@@ -276,12 +315,11 @@ void SupportCard::SeeCard(Player& player)
     player.ReorderTopDeck(top);
 }
 
-//void SupportCard::Enemy_Atk_Prohibition(Player& player, Mob& mob)
-//{
-//    // 공격 카드만 금지하려면 cardId -> 타입 해석이 필요합니다.
-//    // 간단 버전: "다음 1턴동안 어떤 카드도 못 냄"
-//    player.ProhibitPlay(1);
-//}
+void SupportCard::Enemy_Atk_Prohibition(Player& player, Mob& mob)
+{
+    // mob 으로 변경
+    player.ProhibitPlay(1);
+}
 
 void SupportCard::Enemy_Forsake_Card(Mob& enemy)
 {

@@ -2,76 +2,77 @@
 #include "CardRule.h"
 #include "Mob.h"
 
-// AtkCard.cpp¿Í µ¿ÀÏÇÏ°Ô "Ä«µå È¿°ú ¼öÄ¡ °è»ê"¿¡¼­ CardRuleÀ» »ç¿ë
+// AtkCard.cppì™€ ë™ì¼í•˜ê²Œ "ì¹´ë“œ íš¨ê³¼ ìˆ˜ì¹˜ ê³„ì‚°"ì—ì„œ CardRuleì„ ì‚¬ìš©
 static CardRule g_rule;
 
-DefCard::DefCard() 
+DefCard::DefCard()
 {
-    type = Card::Rdc;
+    type = Card::m_Def;
 }
 
 // ----------------------
-// ±âº» ¹æ¾î(¡Ù1/¡Ù2/¡Ù3)
+// ê¸°ë³¸ ë°©ì–´(â˜†1/â˜†2/â˜†3)
 // ----------------------
-int DefCard::DefaultDef(CAttribute attr, CRank rank)
+int DefCard::DefaultDef(CAttribute attr, Star rank)
 {
-    // »§ ¼Ó¼ºÀº '¹«È¿/Áß¸³' Ãë±Ş(¿øÇÏ¸é ±ÔÄ¢ º¯°æ °¡´É)
+    // ë¹µ ì†ì„±ì€ 'ë¬´íš¨/ì¤‘ë¦½' ì·¨ê¸‰(ì›í•˜ë©´ ê·œì¹™ ë³€ê²½ ê°€ëŠ¥)
     if (attr == E_BREAD)
         return 0;
 
-    // ÇÁ·ÎÁ§Æ®¿¡¼­ RankValue(¡Ù1=5, ¡Ù2=10, ¡Ù3=15)¸¦ ÀÌ¹Ì ¾²°í ÀÖÀ¸´Ï
-    // ±âº» ¹æ¾îµµ µ¿ÀÏÇÏ°Ô ¹İÈ¯(¹æ¾î¸·/°¨¼Ò ½Ã½ºÅÛÀÌ »ı±â¸é ±×´ë·Î È°¿ë °¡´É)
+    // í”„ë¡œì íŠ¸ì—ì„œ RankValue(â˜†1=5, â˜†2=10, â˜†3=15)ë¥¼ ì´ë¯¸ ì“°ê³  ìˆìœ¼ë‹ˆ
+    // ê¸°ë³¸ ë°©ì–´ë„ ë™ì¼í•˜ê²Œ ë°˜í™˜(ë°©ì–´ë§‰/ê°ì†Œ ì‹œìŠ¤í…œì´ ìƒê¸°ë©´ ê·¸ëŒ€ë¡œ í™œìš© ê°€ëŠ¥)
     return g_rule.RankValue(rank);
 }
 
 // ----------------------
-// »§ ¹æ¾î(Áß¸³ °¨¼Ò)
+// ë¹µ ë°©ì–´(ì¤‘ë¦½ ê°ì†Œ)
 // ----------------------
-// ¿øº» Æ²¿¡ ÀÖ´ø ÇÔ¼ö·Î º¸ÀÌ¸ç, ÇöÀç ±¸Á¶¿¡¼­´Â 'µé¾î¿À´Â ÇÇÇØ·®' Á¤º¸°¡ ¾øÀ¸¹Ç·Î
-// ·©Å©¿¡ µû¸¥ "°íÁ¤ °¨¼Ò·®"À» ¹İÈ¯ÇÏµµ·Ï ±¸ÇöÇß½À´Ï´Ù.
-// (½ÇÁ¦ Àû¿ëÀº: ¹ŞÀº ÇÇÇØ - BreadDef(...) °°Àº ÇüÅÂ·Î »ç¿ëÇÏ¼¼¿ä)
-int DefCard::BreadDef(CAttribute /*atkAttr*/, CRank rank)
+// ì›ë³¸ í‹€ì— ìˆë˜ í•¨ìˆ˜ë¡œ ë³´ì´ë©°, í˜„ì¬ êµ¬ì¡°ì—ì„œëŠ” 'ë“¤ì–´ì˜¤ëŠ” í”¼í•´ëŸ‰' ì •ë³´ê°€ ì—†ìœ¼ë¯€ë¡œ
+// ë­í¬ì— ë”°ë¥¸ "ê³ ì • ê°ì†ŒëŸ‰"ì„ ë°˜í™˜í•˜ë„ë¡ êµ¬í˜„í–ˆìŠµë‹ˆë‹¤.
+// (ì‹¤ì œ ì ìš©ì€: ë°›ì€ í”¼í•´ - BreadDef(...) ê°™ì€ í˜•íƒœë¡œ ì‚¬ìš©í•˜ì„¸ìš”)
+int DefCard::BreadDef(CAttribute /*atkAttr*/, Star rank)
 {
     switch (rank)
     {
-    case Star_1: return 1;
-    case Star_2: return 2;
-    case Star_3: return 3;
-    default:     return 1;
+    case E_ONE:
+        return 2;
+    case E_TWO:
+        return 3;
+    case E_THREE:
+        return 4;
+    default:
+        return 2;
     }
 }
 
-// ----------------------
-// ¹«Àû(ÀÓ½Ã ±¸Çö)
-// ----------------------
-// ÇöÀç Mob/Player Å¬·¡½º¿¡ "¹«Àû ÅÏ" °°Àº »óÅÂ ÇÊµå°¡ ¾ø´Ù¸é
-//  - (ÃßÃµ) Mob/Player¿¡ invincibleTurns °°Àº »óÅÂ¸¦ Ãß°¡ÇÏ°í,
-//          ¿©±â¼­´Â ±× °ªÀ» ¼¼ÆÃÇÏ´Â ¹æ½ÄÀÌ °¡Àå ±ò²ûÇÕ´Ï´Ù.
-//  - Áö±İÀº "¾öÃ» Å« ¹æ¾î°ª"À» ¹İÈ¯ÇØ¼­, Àû¿ëºÎ¿¡¼­ ±× ÅÏ ÇÇÇØ°¡ 0ÀÌ µÇµµ·Ï Ã³¸®ÇÒ ¼ö ÀÖ°Ô Çß½À´Ï´Ù.
-int DefCard::invincibility(Mob& /*mob*/, CAttribute attr, CRank rank)
-{
-    if (attr == E_BREAD)
-        return 0;
-
-    switch (rank)
-    {
-    case Star_1: return 9999;
-    case Star_2: return 9999;
-    case Star_3: return 9999;
-    default:     return 9999;
-    }
-}
+//int DefCard::invincibility(CAttribute attr, Star rank)
+//{
+//    if (attr == E_BREAD) return 0;
+//
+//    switch (rank)
+//    {
+//    case E_ONE:
+//    case E_TWO:
+//    case E_THREE:
+//    default:
+//        return 9999;
+//    }
+//}
 
 // ----------------------
-// ÇÇÇØ ¹İ»ç(¡Ù1/¡Ù2/¡Ù3)
+// í”¼í•´ ë°˜ì‚¬(â˜†1/â˜†2/â˜†3)
 // ----------------------
-int DefCard::DamageReflection(CAttribute /*attr*/, CRank rank)
+int DefCard::DamageReflection(CAttribute /*attr*/, Star rank)
 {
     switch (rank)
     {
-    case Star_1: return 2;
-    case Star_2: return 3;
-    case Star_3: return 4;
-    default:     return 2;
+    case E_ONE:
+        return 2;
+    case E_TWO:
+        return 3;
+    case E_THREE:
+        return 4;
+    default:
+        return 2;
     }
 }

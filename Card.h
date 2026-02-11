@@ -1,11 +1,13 @@
 #pragma once
-#include <vector>
-#include <Windows.h>
+
 #include <random>
 #include <iostream>
+
 using namespace std;
 
 #define TURNTIME 777
+#define CARDX 100
+#define CARDY 132
 #define randomInit(start, end)  \
 	random_device rd; \
 	mt19937 gen(rd()); \
@@ -26,61 +28,78 @@ enum CAttribute {
 
 enum CType {
 	E_Attack,
-	E_Deffence,
+	E_Deffense,
 	E_Magic
 };
 
-enum CRank {
-	Star_1,
-	Star_2,
-	Star_3
+enum ALLCARDEnum
+{
+	BASEATK = 0,
+	ATK01,
+	ATK02,
+	ATKLIMIT = 41,
+
+	BASEDEF = 100,
+	DEF01,
+	DEF02,
+	DEFLIMIT = 144,
+
+	BASEMAGIC = 200,
+	MAGIC01,
+	MAGIC02,
+	MAGICLIMIT = 233,
+};
+
+enum Star
+{
+	E_ONE = 0,
+	E_TWO,
+	E_THREE,
 };
 
 class Card
 {
 protected:
-	int Atk;
-	int Rdc;
-	CAttribute Ait;
-	CType Type;
-	CRank Rank;
+	int m_Uid;
+	int m_Atk;
+	int m_Def;
+	CAttribute m_Ait;
+	CType m_Type;
+	Star m_Star;
 
 public:
 	Card();
-	CType getType() const { return Type; }
-	//카드 위치
-	int x;
-	int y;
+	Card(int p_uid);
+	void Init();
+
+	//Get Set 함수
+	int GetUid();
+	void SetUid(int p_uid);
+	int GetAtk();
+	void SetAtk(int p_atk);
+	int GetDef();
+	void SetDef(int p_def);
+	CAttribute GetAit();
+	void SetAit(CAttribute p_Ait);
+	CType GetType();
+	void SetType(CType p_Type);
+	Star GetStar();
+	void SetStar(Star p_Star);
+
+	// 실제 공격카드(AtkCard)에 배율을 적용하고,
+	// 적용 후 m_hasNextAtkMultiplier를 false로 끄는 식으로 "1회성" 처리하는 용도
+	void setAttribute(CAttribute attr) { m_Ait = attr; }
 };
 
-//덱 및 패
-class CardManager
+class GameCard : public Card
 {
 public:
-	CardManager();
-	~CardManager();
-
-	int GetDeckCount();
-	int GetHandCount();
-	vector<Card> GetHand();
-	void CardDraw();
-	void CardAct(CardManager& opponent, HWND hWnd);
-
-	void DrawLine(HDC hdc, int startX, int startY, int lengthX, int lengthY);
-	void DrawBG(HDC hdc, RECT rect, int cardX, int cardY);
-	void DrawDeckCount(HDC hdc, int rtX, int rtY, int cardX, int cardY);
-	void DrawHand(HDC hdc, int rtX, int rtY, int cardX, int cardY, bool isPlayer);
-	void HandSelect(WPARAM wParam, CardManager& opponent, HWND hWnd);
-	void StartTurn(CardManager& player, CardManager& opponent);
-	void TimeLimit(WPARAM wParam, CardManager& opponent);
-
-	// 공격 2장 버리고 2턴 사용
-	bool DiscardFirstAttackCard();
+	GameCard();
+	GameCard(Card* p_Card);
+	virtual ~GameCard();
 
 private:
-	unsigned int deckCount;//덱 장수
-	unsigned int handCount;//패 장수
-	int handSelection;//패 카드 선택
-	vector<Card> hand;//패 카드
-	bool isMyTurn;//턴 확인
+
 };
+
+

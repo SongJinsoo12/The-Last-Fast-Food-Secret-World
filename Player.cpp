@@ -1,4 +1,4 @@
-ï»¿#include "Player.h"
+#include "Player.h"
 #include "Mob.h"
 #include "AtkCard.h"
 #include "Card.h"
@@ -6,12 +6,60 @@
 #include <algorithm>
 #include <random>
 #include <sstream>
+#include <unordered_map>
 
 static int ClampInt(int v, int lo, int hi)
 {
     if (v < lo) return lo;
     if (v > hi) return hi;
     return v;
+}
+
+// ===== CardId -> CType registry (needed for history checks) =====
+static std::unordered_map<int, CType>& CardTypeTable()
+{
+    static std::unordered_map<int, CType> table;
+    // Minimal default: Cockroach behaves like support (ignored in history).
+    table[(int)CardId::Cockroach] = CType::E_Magic;
+    return table;
+}
+
+void Player::RegisterCardType(int cardId, CType type)
+{
+    CardTypeTable()[cardId] = type;
+}
+
+CType Player::ResolveCardTypeById(int cardId)
+{
+    auto& t = CardTypeTable();
+    auto it = t.find(cardId);
+    if (it != t.end())
+        return it->second;
+    return CType::E_Magic; // unknown -> treat as support (ignored)
+}
+
+void Player::RecordCardHistory(int cardId)
+{
+    const CType t = ResolveCardTypeById(cardId);
+    if (t == CType::E_Magic)
+        return; // support ignored
+
+    if (m_recentCombatCount < 2)
+    {
+        m_recentCombatTypes[m_recentCombatCount++] = t;
+    }
+    else
+    {
+        m_recentCombatTypes[0] = m_recentCombatTypes[1];
+        m_recentCombatTypes[1] = t;
+    }
+}
+
+bool Player::HasRecentTwoSameCombatType() const
+{
+    if (m_recentCombatCount < 2)
+        return false;
+    return m_recentCombatTypes[0] == m_recentCombatTypes[1];
 }
 
 Player::Player() {}
@@ -67,11 +115,11 @@ void Player::BeginTurn(int currentTurn)
 {
     m_turn = currentTurn;
 
-    // ---- í”Œë ˆì´ íšŸìˆ˜ ì´ˆê¸°í™” ----
+    // ---- ÇÃ·¹ÀÌ È½¼ö ÃÊ±âÈ­ ----
     m_playsUsedThisTurn = 0;
     m_playLimitThisTurn = 1;
 
-    // ì˜ˆì •ëœ "ní„´ í›„ í”Œë ˆì´ ì œí•œ ë³€ê²½" ì²˜ë¦¬
+    // ¿¹Á¤µÈ "nÅÏ ÈÄ ÇÃ·¹ÀÌ Á¦ÇÑ º¯°æ" Ã³¸®
     if (m_hasScheduledPlayLimit)
     {
         --m_scheduledPlayLimitTurnsLeft;
@@ -84,10 +132,10 @@ void Player::BeginTurn(int currentTurn)
 
     m_playedThisTurn = (m_playsUsedThisTurn >= m_playLimitThisTurn);
 
-    // í„´ ì‹œì‘ ì‹œ ì„ íƒ ì´ˆê¸°í™”(ê¶Œì¥)
+    // ÅÏ ½ÃÀÛ ½Ã ¼±ÅÃ ÃÊ±âÈ­(±ÇÀå)
     m_selectedIndex = -1;
 
-    // ---- ë“œë¡œìš° ì²˜ë¦¬ (ë“œë¡œìš° ê¸ˆì§€ í„´ì´ë©´ ìŠ¤í‚µ) ----
+    // ---- µå·Î¿ì Ã³¸® (µå·Î¿ì ±İÁö ÅÏÀÌ¸é ½ºÅµ) ----
     if (m_noDrawTurns > 0)
     {
         --m_noDrawTurns;
@@ -98,7 +146,7 @@ void Player::BeginTurn(int currentTurn)
             DrawCards(1);
     }
 
-    // ---- ì§€ì—° HP ê°ì†Œ ì²˜ë¦¬ ----
+    // ---- Áö¿¬ HP °¨¼Ò Ã³¸® ----
     if (m_hasDelayedHpLoss)
     {
         --m_delayedHpLossTurnsLeft;
@@ -109,7 +157,7 @@ void Player::BeginTurn(int currentTurn)
         }
     }
 
-    // ---- ì§€ì—° í ì²˜ë¦¬ ----
+    // ---- Áö¿¬ Èú Ã³¸® ----
     if (m_hasDelayedHeal)
     {
         --m_delayedHealTurnsLeft;
@@ -127,7 +175,20 @@ void Player::EndTurn()
     {
         --m_healToDamageTurnsLeft;
     }
-    // ë‹¤ë¥¸ í„´ ì¢…ë£Œ ì²˜ë¦¬ë“¤
+
+    if (m_disarrayTurnsLeft > 0)
+    {
+        --m_disarrayTurnsLeft;
+    }
+    if (m_playProhibitTurnsLeft > 0)
+    {
+        --m_playProhibitTurnsLeft;
+    }
+    if (m_attackProhibitTurnsLeft > 0)
+    {
+        --m_attackProhibitTurnsLeft;
+    }
+    // ´Ù¸¥ ÅÏ Á¾·á Ã³¸®µé
 }
 
 bool Player::CanPlayCard() const
@@ -135,10 +196,10 @@ bool Player::CanPlayCard() const
     if (!IsAlive()) return false;
     if (m_hand.empty()) return false;
 
-    // í”Œë ˆì´ ì œí•œ
+    // ÇÃ·¹ÀÌ Á¦ÇÑ
     if (m_playsUsedThisTurn >= m_playLimitThisTurn) return false;
 
-    // í”Œë ˆì´ì–´ëŠ” ì„ íƒ ê¸°ë°˜
+    // ÇÃ·¹ÀÌ¾î´Â ¼±ÅÃ ±â¹İ
     if (m_selectedIndex < 0 || m_selectedIndex >= (int)m_hand.size()) return false;
     return true;
 }
@@ -159,6 +220,12 @@ void Player::ShuffleDeck()
     std::shuffle(m_deck.begin(), m_deck.end(), gen);
 }
 
+//CardManager cm;
+//void Player::DrawCard(int drawNum)
+//{
+//    cm.CardDraw(drawNum);
+//}
+
 void Player::DrawCards(int count)
 {
     for (int i = 0; i < count; ++i)
@@ -168,7 +235,7 @@ void Player::DrawCards(int count)
 
         if (m_deck.empty())
         {
-            // ë±ì´ ë¹„ë©´ ë²„ë¦¼ë”ë¯¸ë¥¼ ë±ìœ¼ë¡œ
+            // µ¦ÀÌ ºñ¸é ¹ö¸²´õ¹Ì¸¦ µ¦À¸·Î
             if (m_discard.empty())
                 return;
 
@@ -186,7 +253,10 @@ void Player::DrawCards(int count)
 void Player::DiscardHand()
 {
     for (int id : m_hand)
+    {
         m_discard.push_back(id);
+        RecordCardHistory(id);
+    }
     m_hand.clear();
     m_selectedIndex = -1;
 }
@@ -210,37 +280,53 @@ int Player::ChooseCardIndex() const
 
 bool Player::TryPlayOneCard(Mob& mob, const CardResolver_PlayerVsMob& resolver)
 {
-    if (!CanPlayCard())
-        return false;
+    // Basic checks
+    if (!IsAlive()) return false;
+    if (m_hand.empty()) return false;
+    if (m_playsUsedThisTurn >= m_playLimitThisTurn) return false;
 
-    int idx = ChooseCardIndex();
-    if (idx < 0 || idx >= (int)m_hand.size())
-        return false;
+    int idx = -1;
+
+    // Disarray: pick random card
+    if (IsDisarray())
+    {
+        static std::random_device rd;
+        static std::mt19937 gen(rd());
+        std::uniform_int_distribution<int> dist(0, (int)m_hand.size() - 1);
+        idx = dist(gen);
+    }
+    else
+    {
+        idx = ChooseCardIndex();
+        if (idx < 0 || idx >= (int)m_hand.size())
+            return false;
+    }
 
     const int cardId = m_hand[idx];
 
-    // ì†íŒ¨ì—ì„œ ì œê±° -> ë²„ë¦¼ë”ë¯¸ë¡œ
-    m_hand.erase(m_hand.begin() + idx);
-    m_discard.push_back(cardId);
-
-    // ì„ íƒ ì¸ë±ìŠ¤ ê°±ì‹ 
-    m_selectedIndex = -1;
-
-    // ì‹¤ì œ íš¨ê³¼ëŠ” ì™¸ë¶€ì—ì„œ ì²˜ë¦¬
-    if (resolver)
-        resolver(cardId, *this, mob);
-
-    // í”Œë ˆì´ ì¹´ìš´íŠ¸
-    ++m_playsUsedThisTurn;
-    m_playedThisTurn = (m_playsUsedThisTurn >= m_playLimitThisTurn);
-    return true;
-
-    // ë°”í€´ë²Œë ˆ ë°œë™ ë¶ˆê°€
+    // Cockroach: cannot be played (keep in hand)
     if (cardId == (int)CardId::Cockroach)
     {
         m_selectedIndex = -1;
         return false;
     }
+
+    // Move hand -> discard
+    m_hand.erase(m_hand.begin() + idx);
+    m_discard.push_back(cardId);
+    RecordCardHistory(cardId);
+
+    // Reset selection
+    m_selectedIndex = -1;
+
+    // Resolve effect externally
+    if (resolver)
+        resolver(cardId, *this, mob);
+
+    // Count play
+    ++m_playsUsedThisTurn;
+    m_playedThisTurn = (m_playsUsedThisTurn >= m_playLimitThisTurn);
+    return true;
 }
 
 void Player::AddDelayedHpLoss(int turnsLater, int healAmount)
@@ -248,7 +334,7 @@ void Player::AddDelayedHpLoss(int turnsLater, int healAmount)
     m_hasDelayedHpLoss = true;
     m_delayedHpLossTurnsLeft = turnsLater;
 
-    // (heal + 25%) ë²„ë¦¼
+    // (heal + 25%) ¹ö¸²
     m_delayedHpLossAmount = static_cast<int>(healAmount * 1.25f);
 }
 
@@ -276,7 +362,7 @@ void Player::AddExtraPlaysThisTurn(int extraPlays)
 void Player::AddNoDrawTurns(int turns)
 {
     if (turns <= 0) return;
-    // ëˆ„ì  (ë” ê¸´ ìª½ ìš°ì„ )
+    // ´©Àû (´õ ±ä ÂÊ ¿ì¼±)
     m_noDrawTurns = std::max(m_noDrawTurns, turns);
 }
 
@@ -296,11 +382,16 @@ void Player::ApplyNextAttackModifiers(AtkCard& atk)
 {
     if (!m_hasNextAtkMultiplier) return;
 
-    // DamageëŠ” intë¼ê³  ê°€ì •
     atk.Damage = static_cast<int>(atk.Damage * m_nextAtkMultiplier);
-
     m_hasNextAtkMultiplier = false;
     m_nextAtkMultiplier = 1.0f;
+
+    if (m_hasNextAtkAttributeOverride)
+    {
+        atk.setAttribute(m_nextAtkAttributeOverride);
+        m_hasNextAtkAttributeOverride = false;
+        m_nextAtkAttributeOverride = E_BREAD;
+    }
 }
 
 bool Player::HasPoison() const { return m_hasPoison; }
@@ -314,16 +405,16 @@ void Player::AddCardToHand(int cardId)
 {
     if ((int)m_hand.size() >= m_maxHandSize)
     {
-        // ì†íŒ¨ê°€ ê°€ë“ì´ë©´ ë²„ë¦¼ ë”ë¯¸ë¡œ 
+        // ¼ÕÆĞ°¡ °¡µæÀÌ¸é ¹ö¸² ´õ¹Ì·Î 
         m_discard.push_back(cardId);
 
-        // ë²„ë¦¼ìœ¼ë¡œ ê°€ë„ íšë“ì€ íšë“ìœ¼ë¯€ë¡œ íŠ¸ë¦¬ê±° ì ìš©
+        // ¹ö¸²À¸·Î °¡µµ È¹µæÀº È¹µæÀ¸¹Ç·Î Æ®¸®°Å Àû¿ë
         OnAcquireCard(cardId);
         return;
     }
     m_hand.push_back(cardId);
 
-    // ì†ì— ë“¤ì–´ì˜¨ ê²ƒë„ íšë“ì´ë¯€ë¡œ íŠ¸ë¦¬ê±°
+    // ¼Õ¿¡ µé¾î¿Â °Íµµ È¹µæÀÌ¹Ç·Î Æ®¸®°Å
     OnAcquireCard(cardId);
 }
 
@@ -381,6 +472,7 @@ bool Player::DiscardRandomHandCards(int count)
         if (!PopRandomHandCard(dummy))
             return false;
         m_discard.push_back(dummy);
+        RecordCardHistory(dummy);
     }
     return true;
 }
@@ -406,11 +498,11 @@ bool Player::ReorderTopDeck(const std::vector<int>& newOrder)
     if (n <= 0) return false;
     if ((int)m_deck.size() < n) return false;
 
-    // ê¸°ì¡´ top n ì œê±°
+    // ±âÁ¸ top n Á¦°Å
     for (int i = 0; i < n; ++i)
         m_deck.pop_back();
 
-    // newOrder[0]ê°€ topì´ ë˜ë„ë¡ ì—­ìˆœ push
+    // newOrder[0]°¡ topÀÌ µÇµµ·Ï ¿ª¼ø push
     for (int i = n - 1; i >= 0; --i)
         m_deck.push_back(newOrder[i]);
 
@@ -433,7 +525,7 @@ void Player::Draw(HDC hdc, const RECT& area) const
 {
     DrawPanel(hdc, area);
 
-    // ì†íŒ¨ í‘œì‹œ ì˜ì—­(íŒ¨ë„ ì•„ë˜ìª½)
+    // ¼ÕÆĞ Ç¥½Ã ¿µ¿ª(ÆĞ³Î ¾Æ·¡ÂÊ)
     RECT handArea = area;
     handArea.top = area.bottom - 40;
     DrawHand(hdc, handArea);
@@ -444,14 +536,14 @@ void Player::DrawPanel(HDC hdc, const RECT& area) const
     Rectangle(hdc, area.left, area.top, area.right, area.bottom);
     SetBkMode(hdc, TRANSPARENT);
 
-    // ì´ë¦„
+    // ÀÌ¸§
     RECT nameRc = area;
     nameRc.left += 8;
     nameRc.top += 6;
     nameRc.bottom = nameRc.top + 20;
     DrawTextW(hdc, m_name.c_str(), -1, &nameRc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 
-    // HP í…ìŠ¤íŠ¸
+    // HP ÅØ½ºÆ®
     std::wstringstream ss;
     ss << L"HP: " << m_hp << L"/" << m_maxHp;
 
@@ -462,7 +554,7 @@ void Player::DrawPanel(HDC hdc, const RECT& area) const
     const std::wstring hpText = ss.str();
     DrawTextW(hdc, hpText.c_str(), -1, &hpTextRc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 
-    // í„´ í…ìŠ¤íŠ¸
+    // ÅÏ ÅØ½ºÆ®
     std::wstringstream ts;
     ts << L"Turn: " << m_turn << L" (" << m_playsUsedThisTurn << L"/" << m_playLimitThisTurn << L")";
     RECT turnRc = area;
@@ -472,7 +564,7 @@ void Player::DrawPanel(HDC hdc, const RECT& area) const
     const std::wstring turnText = ts.str();
     DrawTextW(hdc, turnText.c_str(), -1, &turnRc, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 
-    // HP ë°”
+    // HP ¹Ù
     RECT barRc = area;
     barRc.left += 8;
     barRc.right -= 8;
@@ -527,7 +619,7 @@ void Player::DrawHand(HDC hdc, const RECT& area) const
     const std::wstring s = ss.str();
     DrawTextW(hdc, s.c_str(), -1, &textRc, DT_LEFT | DT_TOP | DT_SINGLELINE);
 }
-
+// ---------------------------------------------------------------------------
 void Player::AddCardToDeck(int cardId, bool triggerAcuire)
 {
     m_deck.push_back(cardId);
@@ -552,12 +644,112 @@ bool Player::HasHealToDamageDebuff() const
     return m_healToDamageTurnsLeft > 0;
 }
 
+void Player::AddDisarrayTurns(int turns)
+{
+    if (turns <= 0)
+    {
+        return;
+    }
+    m_disarrayTurnsLeft = std::max(m_disarrayTurnsLeft, turns);
+}
+
+bool Player::IsDisarray() const
+{
+    return m_disarrayTurnsLeft > 0;
+}
+
+int Player::GetDisarrayTurnLeft() const
+{
+    return m_disarrayTurnsLeft;
+}
+
+void Player::ReturnHandToDeckAndRedraw(bool shuffleAfter)
+{
+    const int n = GetHandSize();
+    ReturnHandToDeck(shuffleAfter);
+    DrawCards(n);
+}
+
+void Player::TriggerScheduledEffectsNow()
+{
+    if (m_hasDelayedHpLoss)
+    {
+        Damage(m_delayedHpLossAmount);
+        m_hasDelayedHpLoss = false;
+        m_delayedHpLossTurnsLeft = 0;
+        m_delayedHpLossAmount = 0;
+    }
+
+    if (m_hasDelayedHeal)
+    {
+        Heal(m_delayedHealAmount);
+        m_hasDelayedHeal = false;
+        m_delayedHealTurnsLeft = 0;
+        m_delayedHealAmount = 0;
+    }
+
+    if (m_hasScheduledPlayLimit)
+    {
+        m_playLimitThisTurn = std::max(1, m_scheduledPlayLimit);
+        m_hasScheduledPlayLimit = false;
+        m_scheduledPlayLimitTurnsLeft = 0;
+        m_scheduledPlayLimit = 1;
+    }
+}
+
+void Player::SetNextAtkAttribute(CAttribute attr, CAttribute neutral)
+{
+    if (attr == neutral) return;
+    m_hasNextAtkAttributeOverride = true;
+    m_nextAtkAttributeOverride = attr;
+}
+
+void Player::SetNextAtkAttributeRandom(CAttribute neutral)
+{
+    std::vector<CAttribute> pool = { E_BULGOGI, E_SOURCE, E_CHESSE, E_VEGAT, E_BREAD };
+    pool.erase(std::remove(pool.begin(), pool.end(), neutral), pool.end());
+    if (pool.empty()) return;
+
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    std::uniform_int_distribution<int> dist(0, (int)pool.size() - 1);
+
+    SetNextAtkAttribute(pool[dist(gen)], neutral);
+}
+
+bool Player::HasNextAtkAttributeOverride() const
+{
+    return m_hasNextAtkAttributeOverride;
+}
+
+void Player::ProhibitPlay(int turns)
+{
+    if (turns <= 0) return;
+    m_playProhibitTurnsLeft = std::max(m_playProhibitTurnsLeft, turns);
+}
+
+void Player::ProhibitAttackPlay(int turns)
+{
+    if (turns <= 0) return;
+    m_attackProhibitTurnsLeft = std::max(m_attackProhibitTurnsLeft, turns);
+}
+
+bool Player::IsPlayProhibited() const
+{
+    return m_playProhibitTurnsLeft > 0;
+}
+
+bool Player::IsAttackPlayProhibited() const
+{
+    return m_attackProhibitTurnsLeft > 0;
+}
+
 void Player::OnAcquireCard(int cardId)
 {
     if (cardId == (int)CardId::Cockroach)
     {
-        // ë°”í€´ë²Œë ˆ íšë“í•˜ë©´ ë±ì— ì¶”ê°€
-        // ë¬´í•œ ì¦ì‹ ë°©ì§€
+        // ¹ÙÄû¹ú·¹ È¹µæÇÏ¸é µ¦¿¡ Ãß°¡
+        // ¹«ÇÑ Áõ½Ä ¹æÁö
         AddCardToDeck((int)CardId::Cockroach, false);
     }
 }

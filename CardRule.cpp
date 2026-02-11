@@ -5,22 +5,22 @@ CardRule::CardRule()
 	Status = false;
 }
 
-int CardRule::RankValue(CRank rank)
+int CardRule::RankValue(Star rank)
 {
 	switch (rank)
 	{
-	case Star_1:
-		return 5;
-	case Star_2:
-		return 10;
-	case Star_3:
-		return 15;
+	case E_ONE:
+		return 2;
+	case E_TWO:
+		return 3;
+	case E_THREE:
+		return 4;
 	default:
-		return 1;
+		return 2;
 	}
 }
 
-int CardRule::RankMatchUp(CRank Atk, CRank Def)
+int CardRule::RankMatchUp(Star Atk, Star Def)
 {
 	if (Atk <= Def)
 	{

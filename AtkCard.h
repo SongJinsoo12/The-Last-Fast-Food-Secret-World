@@ -10,7 +10,6 @@
 //상대가 방어 카드를 사용했을 시에만 데미지를 주는 카드
 //스플릿 데미지(상태이상 = ? 턴 동안 출혈 ? 독 ? ) 1 / 2 / 3
 
-
 class AtkCard : public Card
 {
 public:
@@ -27,13 +26,13 @@ public:
 	virtual ~AtkCard() = default;
 
 	// 기본 공격 카드
-	int DefaultAtk(CAttribute attr, CRank rank);
+	int DefaultAtk(CAttribute attr, Star rank);
 	// 피해 후 공격카드를 사용한 직후 사용 가능 카드
-	int Take_Damage_After_Atk(Mob& player, CAttribute attr, CRank rank);
+	int Take_Damage_After_Atk(Mob& player, CAttribute attr, Star rank);
 	// 코인 토스로 데미지 적용
-	int coinAtk(CAttribute attr, CRank rank);
+	int coinAtk(CAttribute attr, Star rank);
 	// 상개가 방어 카드 사용시 공격 가능
-	int DefCard_After_Atk(bool DefCardUsed, CRank rank);
+	int DefCard_After_Atk(bool DefCardUsed, Star rank);
 	// 도트데미지 (3턴동안 데미지를 줌)
-	int PoisonDamageCard(CRank rank);
+	int PoisonDamageCard(Star rank);
 };

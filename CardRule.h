@@ -17,9 +17,9 @@ public:
     virtual ~CardRule() = default;
 
     // 공격이랑 방어쪽 기본 데미지 및 실드량
-    static int RankValue(CRank rank);
+    static int RankValue(Star rank);
     // 계급끼리의 대미지
-    static int RankMatchUp(CRank Atk, CRank Def);
+    static int RankMatchUp(Star Atk, Star Def);
     // 상성끼리의 대미지
     static bool IsCounterAttribute(CAttribute Atk, CAttribute Def);;
 };

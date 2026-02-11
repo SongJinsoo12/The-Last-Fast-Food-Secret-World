@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <functional>
+#include <unordered_map>
 #include "Card.h"
 
 // WinAPI headers define min/max macros that break std::min/std::max.
@@ -91,7 +92,8 @@ public:
 
     // 덱에서 count장 뽑아서 손패(hand)에 추가
     // - draw 금지 턴(m_noDrawTurns)일 때는 아무것도 안 뽑도록 구현 가능
-    void DrawCards(int count);
+    //void DrawCard(int drawNum); // CardManager을 이용한 Draw
+    void DrawCards(int count); // 자체적으로 만든 Draw
 
     // 손패를 전부 버림 더미(discard)로 이동
     // - 라운드 종료/특정 카드 효과(손패 전부 버리기) 등에 사용
@@ -211,6 +213,19 @@ public:
     // 마지막 사용 카드 포인터 반환
     Card* getLastUsedCard() const { return lastUsedCard; }
 
+
+
+    // Recent combat-type history (Attack/Defence only). Support (E_Magic) is ignored.
+    // You must register cardId -> CType somewhere at init time so the engine can classify cards.
+    // Example:
+    //   Player::RegisterCardType(101, CType::E_Attack);
+    //   Player::RegisterCardType(201, CType::E_Deffence);
+    static void RegisterCardType(int cardId, CType type);
+
+    // Returns true if the most recent two non-support (Attack/Defence) cards that were
+    // discarded OR played are the same type.
+    bool HasRecentTwoSameCombatType() const;
+
     // 상대의 마지막 데미지 저장
     void getLastAttackDamage() const { return; }
     void takeDamage(int damage)
@@ -238,6 +253,28 @@ public:
     // 다음 N턴 동안 (턴 종료 시 1씩 감소) Heal이 Damage로 변환
     void AddHealToDamageTurns(int turns);
     bool HasHealToDamageDebuff() const;
+
+    // 상태이상 혼란
+    void AddDisarrayTurns(int turns);
+    bool IsDisarray() const;
+    int GetDisarrayTurnLeft() const;
+
+    // 패를 덱에 넣고, 넣은 수만큼 다시 드로우
+    void ReturnHandToDeckAndRedraw(bool shuffleAfter = true);
+
+    // 턴 즉시 발동
+    void TriggerScheduledEffectsNow();
+
+    // 속성 변환
+    void SetNextAtkAttribute(CAttribute attr, CAttribute neutral = E_BREAD);
+    void SetNextAtkAttributeRandom(CAttribute neutral = E_BREAD);
+    bool HasNextAtkAttributeOverride() const;
+
+    // 공격 금지
+    void ProhibitPlay(int turns);
+    void ProhibitAttackPlay(int turns);
+    bool IsPlayProhibited() const;
+    bool IsAttackPlayProhibited() const;
 
 private:
     // 플레이어 표시용 이름
@@ -317,4 +354,27 @@ private:
 
     // 힐 -> 데미지
     int m_healToDamageTurnsLeft = 0;
+
+    // 상태이상 혼란
+    int m_disarrayTurnsLeft = 0;
+
+    // 속성변환
+    bool m_hasNextAtkAttributeOverride = false;
+    CAttribute m_nextAtkAttributeOverride = E_BREAD;
+
+    // --- Recent combat-type history ---
+    // Stores the last two non-support card types that were moved to discard (by playing or discarding).
+    // m_recentCombatCount is 0..2.
+    CType m_recentCombatTypes[2] = { CType::E_Magic, CType::E_Magic };
+    int   m_recentCombatCount = 0;
+
+    // Internal: record one cardId into recent history (Attack/Defence only).
+    void RecordCardHistory(int cardId);
+
+    // Internal: resolve cardId -> CType (returns E_Magic if unknown).
+    static CType ResolveCardTypeById(int cardId);
+
+    // 공격 카드 금지
+    int m_playProhibitTurnsLeft = 0;
+    int m_attackProhibitTurnsLeft = 0;
 };
