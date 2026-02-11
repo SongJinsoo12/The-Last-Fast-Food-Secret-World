@@ -65,7 +65,7 @@ namespace GameInput_M {
 			m_ISMouseClick[(int)GameInput_M::MouseValue::Left] = true;
 			m_MousePosX = LOWORD(lParam);
 			m_MousePosY = HIWORD(lParam);
-			std::cout << "마우스 좌클릭 누르기" << std::endl;
+			std::cout << "마우스 좌클릭 : " << m_MousePosX << ", " << m_MousePosY << std::endl;
 			break;
 
 		case WM_LBUTTONUP:

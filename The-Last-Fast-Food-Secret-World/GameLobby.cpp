@@ -6,19 +6,20 @@
 #include "macroNum.h"
 
 void GameLobby::Enter(){
-
 	int x, y;
-	//x = (rect.right - rect.left) / 2;
-	//y = (rect.bottom - rect.top) / 2 + 100;
+	
+	x = 460, y = 575;
 
-	x = (1280 - 100) / 2-50;
-	y = (720-0) / 2 + 250;
+	//RENDER.SetImage(L"rect_button.png", "Start_Button_Pos"
+	//	, Rect(0, 0, 100, 100), Rect(x, y, 380, 100)
+	//	, true, GameImage_M::LayerType::UI);
+
 
 	RENDER.SetImage(L"background_lobby.jpg", "Lobby_Button_BackGround"
 		, Rect(0, 0, 1360, 752), Rect(0, 0, 1280, 720)
 		, true, GameImage_M::LayerType::Background);
 
-	btnManager.AddButton(make_shared<RectButton>("start", RECT{ x,y,x+200,y+50 }));
+	btnManager.AddButton(make_shared<RectButton>("start", RECT{ x,y,x+380,y+100 }));
 }
 
 void GameLobby::Logic()
