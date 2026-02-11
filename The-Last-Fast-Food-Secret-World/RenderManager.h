@@ -1,21 +1,21 @@
 #pragma once
 
+#define RENDER GameImage_M::RenderManager::GetInstance()
+
 #include "ImageLoad.h"
 #include "ImageManager.h"
 #include "Singleton.h"
 
 #include <unordered_map>
 
-#define m_rend GameImage_M::RenderManager::GetInstance()
-
 namespace GameImage_M {
 
 	enum class LayerType {
-		Background = 0,
+		Background=0,
 		Field,
 		Card,
 		UI,
-		Max,
+		Max
 	};
 
 	class RenderManager : public Singleton<RenderManager>
@@ -48,3 +48,5 @@ namespace GameImage_M {
 		void LayerMoveToBack(string p_id);
 	};
 }
+
+

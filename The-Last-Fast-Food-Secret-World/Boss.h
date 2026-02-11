@@ -1,7 +1,7 @@
 #pragma once
 #include "Status.h"
 
-class Boss : public Status
+class Boss : public CardPlayerStatus
 {
 public:
 	Boss();
@@ -41,4 +41,3 @@ public:
 private:
 
 };
-

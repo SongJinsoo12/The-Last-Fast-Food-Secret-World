@@ -4,37 +4,46 @@
 #include "ImageLoad.h"
 #include "ImageManager.h"
 #include "CardTableManager.h"
+#include "Boss.h"
+#include "Player.h"
+#include "InputGame.h"
+
+
+CardManager::CardManager() : m_DeckCount(25), m_HandCount(0), m_HandSelection(4),
+m_IsMyTurn(false), m_IsSelect(false), m_isShiny(false), m_isRip(false)
+{
+}
 
 void CardManager::SetImage()
 {
-	m_rend.SetImage(L"background_city_night.png", "City_Night",
+	RENDER.SetImage(L"background_city_night.png", "City_Night",
 		Gdiplus::Rect(0, 0, 2304, 1296), Gdiplus::Rect(0, 0, 1280, 720), false,
 		GameImage_M::LayerType::Background);
 
-	m_rend.SetImage(L"background_pink_plant.png", "Plant_Pink",
+	RENDER.SetImage(L"background_pink_plant.png", "Plant_Pink",
 		Gdiplus::Rect(0, 0, 2304, 1296), Gdiplus::Rect(0, 0, 1280, 720), false,
 		GameImage_M::LayerType::Background);
-	m_rend.SetImage(L"background_orange_plant.png", "Plant_Orange",
+	RENDER.SetImage(L"background_orange_plant.png", "Plant_Orange",
 		Gdiplus::Rect(0, 0, 2304, 1296), Gdiplus::Rect(0, 0, 1280, 720), false,
 		GameImage_M::LayerType::Background);
-	m_rend.SetImage(L"background_dark_plant.png", "Plant_Dark",
+	RENDER.SetImage(L"background_dark_plant.png", "Plant_Dark",
 		Gdiplus::Rect(0, 0, 2304, 1296), Gdiplus::Rect(0, 0, 1280, 720), true,
 		GameImage_M::LayerType::Background);
-	m_rend.SetImage(L"background_ari_ship.png", "Air_Ship",
+	RENDER.SetImage(L"background_ari_ship.png", "Air_Ship",
 		Gdiplus::Rect(0, 0, 2304, 1296), Gdiplus::Rect(0, 0, 1280, 720), false,
 		GameImage_M::LayerType::Background);
 
-	m_rend.SetImage(L"card_zone.png", "Card_Middle_Up",
+	RENDER.SetImage(L"card_zone.png", "Card_Middle_Up",
 		Gdiplus::Rect(0, 0, 88, 110), Gdiplus::Rect(0, 0, 0, 0), true,
 		GameImage_M::LayerType::Background);
-	m_rend.SetImage(L"card_zone.png", "Card_Middle_Down",
+	RENDER.SetImage(L"card_zone.png", "Card_Middle_Down",
 		Gdiplus::Rect(0, 0, 88, 110), Gdiplus::Rect(0, 0, 0, 0), true,
 		GameImage_M::LayerType::Background);
 
-	m_rend.SetImage(L"card_back_2.png", "Card_Deck_Up",
+	RENDER.SetImage(L"card_back_2.png", "Card_Deck_Up",
 		Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), true,
 		GameImage_M::LayerType::Background);
-	m_rend.SetImage(L"card_back.png", "Card_Deck_Down",
+	RENDER.SetImage(L"card_back.png", "Card_Deck_Down",
 		Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), true,
 		GameImage_M::LayerType::Background);
 
@@ -43,17 +52,200 @@ void CardManager::SetImage()
 		string cardId = "Card_Boss_Hand_";
 		cardId = cardId + to_string(i);
 
-		m_rend.SetImage(L"card_back_2.png", cardId,
+		RENDER.SetImage(L"card_back_2.png", cardId,
 			Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), true,
 			GameImage_M::LayerType::Background);
+	}
+	for (size_t i = 0; i < 10; i++)
+	{
+		string cardPng = "card_shiny_";
+		string cardId = "Card_Shiny_";
+		cardPng += to_string(i + 1);
+		cardPng += ".png";
+		cardId += to_string(i);
+
+		wstring wCardPng;
+		wCardPng.assign(cardPng.begin(), cardPng.end());
+
+		RENDER.SetImage(wCardPng, cardId,
+			Gdiplus::Rect(0, 0, 100, 128), Gdiplus::Rect(0, 0, 0, 0), false,
+			GameImage_M::LayerType::UI);
+	}
+	for (size_t i = 0; i < 15; i++)
+	{
+		if (i < 12)
+		{
+			string cardPng = "card_rip_";
+			string cardId = "Card_Rip_";
+			cardPng += to_string(i + 1);
+			cardPng += ".png";
+			cardId += to_string(i);
+
+			wstring wCardPng;
+			wCardPng.assign(cardPng.begin(), cardPng.end());
+
+			RENDER.SetImage(wCardPng, cardId,
+				Gdiplus::Rect(0, 0, 100, 128), Gdiplus::Rect(0, 0, 0, 0), false,
+				GameImage_M::LayerType::UI);
+		}
+		else if (i == 12)
+		{
+			string cardPng = "card_rip_";
+			string cardId = "Card_Rip_";
+			cardPng += to_string(i + 1);
+			cardPng += ".png";
+			cardId += to_string(i);
+
+			wstring wCardPng;
+			wCardPng.assign(cardPng.begin(), cardPng.end());
+
+			RENDER.SetImage(wCardPng, cardId,
+				Gdiplus::Rect(0, 0, 108, 155), Gdiplus::Rect(0, 0, 0, 0), false,
+				GameImage_M::LayerType::UI);
+		}
+		else if (i == 13)
+		{
+			string cardPng = "card_rip_";
+			string cardId = "Card_Rip_";
+			cardPng += to_string(i + 1);
+			cardPng += ".png";
+			cardId += to_string(i);
+
+			wstring wCardPng;
+			wCardPng.assign(cardPng.begin(), cardPng.end());
+
+			RENDER.SetImage(wCardPng, cardId,
+				Gdiplus::Rect(0, 0, 113, 177), Gdiplus::Rect(0, 0, 0, 0), false,
+				GameImage_M::LayerType::UI);
+		}
+		else if (i == 14)
+		{
+			string cardPng = "card_rip_";
+			string cardId = "Card_Rip_";
+			cardPng += to_string(i + 1);
+			cardPng += ".png";
+			cardId += to_string(i);
+
+			wstring wCardPng;
+			wCardPng.assign(cardPng.begin(), cardPng.end());
+
+			RENDER.SetImage(wCardPng, cardId,
+				Gdiplus::Rect(0, 0, 122, 182), Gdiplus::Rect(0, 0, 0, 0), false,
+				GameImage_M::LayerType::UI);
+		}
 	}
 
 	cout << "이미지 로드 확인\n";
 }
 
-CardManager::CardManager() : m_DeckCount(25), m_HandCount(0), m_HandSelection(4),
-m_IsMyTurn(false), m_IsSelect(false)
+//카드 이펙트 애니메이션
+void CardManager::PlayCardEffect(int x, int y)
 {
+	if (!m_isShiny) return;
+
+	if (!m_shiny.GetIsStart())
+	{
+		m_shiny.StartTimer();
+		m_shiny.SetIsStart(true);
+	}
+
+	string cardId = "Card_Shiny_";
+	cardId += to_string(m_shiny.GetIndex());
+	RENDER.MoveImage(cardId, Gdiplus::Rect(x, y, 100, 128));
+	RENDER.ImageVisible(cardId, true);
+
+	m_shiny.UpdateTimer();
+	if (m_shiny.CheckTimer(0.05))
+	{
+		RENDER.ImageVisible(cardId, false);
+
+		//이펙트 끝
+		if (m_shiny.GetIndex() >= 10)
+		{
+			m_shiny.SetIndex(0);
+			m_isShiny = false;
+			return;
+		}
+
+		m_shiny.StartTimer();
+		m_shiny.PlusIndex();
+		string newId = "Card_Shiny_";
+		newId += to_string(m_shiny.GetIndex());
+		RENDER.MoveImage(newId, Gdiplus::Rect(x, y, 100, 128));
+		RENDER.ImageVisible(newId, true);
+	}
+}
+
+void CardManager::PlayRip(int x, int y)
+{
+	if (!m_isRip) return;
+
+	if (!m_rip.GetIsStart())
+	{
+		m_rip.StartTimer();
+		m_rip.SetIsStart(true);
+	}
+	string cardId = "Card_Rip_";
+	cardId += to_string(m_rip.GetIndex());
+	if (m_rip.GetIndex() < 12)
+	{
+		RENDER.MoveImage(cardId, Gdiplus::Rect(x, y, 108, 128));
+		RENDER.ImageVisible(cardId, true);
+	}
+	else if (m_rip.GetIndex() == 12)
+	{
+		RENDER.MoveImage(cardId, Gdiplus::Rect(x, y, 108, 155));
+		RENDER.ImageVisible(cardId, true);
+	}
+	else if (m_rip.GetIndex() == 13)
+	{
+		RENDER.MoveImage(cardId, Gdiplus::Rect(x, y, 113, 177));
+		RENDER.ImageVisible(cardId, true);
+	}
+	else if (m_rip.GetIndex() == 14)
+	{
+		RENDER.MoveImage(cardId, Gdiplus::Rect(x, y, 122, 182));
+		RENDER.ImageVisible(cardId, true);
+	}
+
+	m_rip.UpdateTimer();
+	if (m_rip.CheckTimer(0.03))
+	{
+		RENDER.ImageVisible(cardId, false);
+
+		//이펙트 끝
+		if (m_rip.GetIndex() >= 15)
+		{
+			m_rip.SetIndex(0);
+			m_isRip = false;
+			return;
+		}
+
+		m_rip.StartTimer();
+		m_rip.PlusIndex();
+		string newId = "Card_Rip_";
+		newId += to_string(m_rip.GetIndex());
+		if (m_rip.GetIndex() < 12)
+		{
+			RENDER.MoveImage(newId, Gdiplus::Rect(x, y, 108, 128));
+			RENDER.ImageVisible(newId, true);
+		}
+		else if (m_rip.GetIndex() == 12)
+		{
+			RENDER.MoveImage(newId, Gdiplus::Rect(x, y, 108, 155));
+			RENDER.ImageVisible(newId, true);
+		}
+		else if (m_rip.GetIndex() == 13)
+		{
+			RENDER.MoveImage(newId, Gdiplus::Rect(x, y, 113, 177));
+			RENDER.ImageVisible(newId, true);
+		}
+		else if (m_rip.GetIndex() == 14)
+		{
+			RENDER.MoveImage(newId, Gdiplus::Rect(x, y, 122, 182));
+			RENDER.ImageVisible(newId, true);
+		}
+	}
 }
 
 void CardManager::StartGame()
@@ -106,7 +298,7 @@ void CardManager::CardDraw(int drawNum)
 
 
 		m_Hand.push_back(m_Deck[m_DeckCount]);
-		m_rend.ImageVisible(to_string(m_Deck[m_DeckCount]->GetUid()), true);
+		RENDER.ImageVisible(to_string(m_Deck[m_DeckCount]->GetUid()), true);
 	}
 
 	//패 카드 임시 확인
@@ -137,14 +329,14 @@ void CardManager::DrawBG()
 
 	/*g_renderManager.MoveImage("City_Night",
 		Gdiplus::Rect(0, 0, 1280, 720));*/
-	m_rend.MoveImage("Card_Middle_Up",
+	RENDER.MoveImage("Card_Middle_Up",
 		Gdiplus::Rect(midX - cardMidX, midY - (deckY + 10), deckX, deckY));
-	m_rend.MoveImage("Card_Middle_Down",
+	RENDER.MoveImage("Card_Middle_Down",
 		Gdiplus::Rect(midX - cardMidX, (midY + 10), deckX, deckY));
 
-	m_rend.MoveImage("Card_Deck_Up",
+	RENDER.MoveImage("Card_Deck_Up",
 		Gdiplus::Rect(0, 0, deckX, deckY));
-	m_rend.MoveImage("Card_Deck_Down",
+	RENDER.MoveImage("Card_Deck_Down",
 		Gdiplus::Rect(1265 - deckX, 682 - deckY, deckX, deckY));
 
 
@@ -181,23 +373,23 @@ void CardManager::DrawPlayerHand()
 			//카드 정보 확대 보기
 			if (m_IsSelect)
 			{
-				m_rend.MoveImage(to_string(m_Hand[m_HandSelection]->GetUid()),
+				RENDER.MoveImage(to_string(m_Hand[m_HandSelection]->GetUid()),
 					Gdiplus::Rect(70, 380, CARDX * 2, CARDY * 2));
 			}
 			else
 			{
-				m_rend.MoveImage(to_string(m_Hand[i]->GetUid()),
+				RENDER.MoveImage(to_string(m_Hand[i]->GetUid()),
 					Gdiplus::Rect(startPos, posY - 10, CARDX, CARDY));
 			}
 		}
 		else
 		{
-			m_rend.MoveImage(to_string(m_Hand[i]->GetUid()),
+			RENDER.MoveImage(to_string(m_Hand[i]->GetUid()),
 				Gdiplus::Rect(startPos, posY + 10, CARDX, CARDY));
 		}
 
 		//카드 출력 순서
-		m_rend.LayerMoveToBack(to_string(m_Hand[i]->GetUid()));
+		RENDER.LayerMoveToBack(to_string(m_Hand[i]->GetUid()));
 	}
 }
 
@@ -228,49 +420,13 @@ void CardManager::DrawOppHand()
 		int startPos = handMidX + (sliceHand * i);
 		string cardId = "Card_Boss_Hand_";
 		cardId = cardId + to_string(i);
-		m_rend.MoveImage(cardId,
+		RENDER.MoveImage(cardId,
 			Gdiplus::Rect(startPos, posY + 10, CARDX, CARDY));
 	}
 }
 
-//패 카드 선택
-void CardManager::HandSelect(WPARAM wParam, CardManager& player, CardManager& opponent, HWND hWnd)
-{
-	switch (wParam)
-	{
-	case VK_LEFT:
-		if (m_HandSelection <= 0)
-			return;
-		m_HandSelection--;
-		break;
-	case VK_RIGHT:
-		if (m_HandSelection >= m_HandCount - 1)
-			return;
-		m_HandSelection++;
-		break;
-		//임시 카드 정보 보기 버트
-	case VK_UP:
-		//CardInfo();
-		m_IsSelect = true;
-		break;
-	case VK_DOWN:
-		m_IsSelect = false;
-		break;
-
-		//임시 카드 내기 버튼
-	case VK_RETURN:
-		//자신의 턴이 아니면 행동 불가능
-		if (!m_IsMyTurn)
-			return;
-		CardAct(player, opponent, hWnd);
-		break;
-	default:
-		break;
-	}
-}
-
 //패 카드 사용
-void CardManager::CardAct(CardManager& player ,CardManager& opponent, HWND hWnd)
+void CardManager::CardAct(CardManager& player ,CardManager& opponent)
 {
 	//패에 카드가 없으면 리턴
 	if (m_HandCount <= 0)
@@ -278,6 +434,9 @@ void CardManager::CardAct(CardManager& player ,CardManager& opponent, HWND hWnd)
 	//선택 중이지 않으면 리턴
 	if (m_HandSelection < 0)
 		return;
+	
+	//타이머 초기화
+	m_timer.SetIsStart(false);
 
 	switch (m_Hand[m_HandSelection]->GetType())
 	{
@@ -292,8 +451,19 @@ void CardManager::CardAct(CardManager& player ,CardManager& opponent, HWND hWnd)
 		break;
 	}
 
+	m_isShiny = true;
+	m_isRip = true;
+
 	//이미지 안보이기
-	m_rend.ImageVisible(to_string(m_Hand[m_HandSelection]->GetUid()), false);
+	RENDER.ImageVisible(to_string(m_Hand[m_HandSelection]->GetUid()), false);
+	/*int midX = 1280 * 0.5;
+	int midY = 720 * 0.5;
+	int cardMidX = CARDX * 0.5;
+	int deckX = CARDX;
+	int deckY = CARDY;
+	M_REND.MoveImage(to_string(m_Hand[m_HandSelection]->GetUid()),
+		Gdiplus::Rect(midX - cardMidX, (midY + 10), deckX, deckY));
+	ShinyEffect(midX - cardMidX, (midY + 10));*/
 
 	m_Hand.erase(m_Hand.begin() + m_HandSelection);
 	m_HandCount--;
@@ -304,13 +474,25 @@ void CardManager::CardAct(CardManager& player ,CardManager& opponent, HWND hWnd)
 	//턴 엔드
 	player.m_IsMyTurn = !player.m_IsMyTurn;
 	opponent.m_IsMyTurn = !opponent.m_IsMyTurn;
-	SetTimer(hWnd, TURNTIME, 7000, NULL);
-	opponent.OpponentAct(player, opponent, hWnd);
+	opponent.BossCardAct(player);
 	cout << "턴 교체.\n";
 }
 
+void CardManager::HandSelect(CardManager& player, CardManager& opponent)
+{
+	if (GameInput_M::Input::GetInstance().isKeyboard((int)GameInput_M::KeyboardValue::ArrowLeft)
+		&& !(m_HandSelection <= 0)) m_HandSelection--;
+	else if (GameInput_M::Input::GetInstance().isKeyboard((int)GameInput_M::KeyboardValue::ArrowRight)
+		&& !(m_HandSelection >= m_HandCount - 1)) m_HandSelection++;
+
+	else if (GameInput_M::Input::GetInstance().isKeyboard((int)GameInput_M::KeyboardValue::ArrowUp)) m_IsSelect = true;
+	else if (GameInput_M::Input::GetInstance().isKeyboard((int)GameInput_M::KeyboardValue::ArrowDown)) m_IsSelect = false;
+	else if (GameInput_M::Input::GetInstance().isKeyboard((int)GameInput_M::KeyboardValue::Enter)
+		&& m_IsMyTurn) CardAct(player, opponent);
+}
+
 //시작 턴 정하기
-void CardManager::StartTurn(CardManager& player, CardManager& opponent, HWND hWnd)
+void CardManager::StartTurn(CardManager& player, CardManager& opponent)
 {
 	randomInit(0, 100);
 	int randTurn;
@@ -325,18 +507,22 @@ void CardManager::StartTurn(CardManager& player, CardManager& opponent, HWND hWn
 	{
 		opponent.m_IsMyTurn = !opponent.m_IsMyTurn;
 		cout << "상대방의 턴\n";
-		opponent.OpponentAct(player, opponent, hWnd);
+		//opponent.OpponentAct(player, opponent, hWnd);
+		//opponent.BossCardAct(player);
 	}
-
 }
 
-//턴 시간 제한
-void CardManager::TimeLimit(WPARAM wParam, HWND hWnd, CardManager& player, CardManager& opponent)
+void CardManager::TimeLimit(CardManager& player, CardManager& opponent)
 {
-	switch (wParam)
+	if (!m_timer.GetIsStart())
 	{
-	case TURNTIME:
-		//턴 엔드
+		m_timer.StartTimer();
+		m_timer.SetIsStart(true);
+	}
+	
+	m_timer.UpdateTimer();
+	if (m_timer.CheckTimer(5))
+	{
 		player.m_IsMyTurn = !player.m_IsMyTurn;
 		opponent.m_IsMyTurn = !opponent.m_IsMyTurn;
 
@@ -349,55 +535,80 @@ void CardManager::TimeLimit(WPARAM wParam, HWND hWnd, CardManager& player, CardM
 		else
 		{
 			cout << "상대방의 턴\n";
-			opponent.OpponentAct(player, opponent, hWnd);
+			//opponent.BossCardAct(player);
 		}
-
-		player.DrawPlayerHand();
-		opponent.DrawOppHand();
-		break;
-	default:
-		break;
+		m_timer.SetIsStart(false);
 	}
 }
+
+//턴 시간 제한
+//void CardManager::TimeLimit(WPARAM wParam, HWND hWnd, CardManager& player, CardManager& opponent)
+//{
+//	switch (wParam)
+//	{
+//	case TURNTIME:
+//		//턴 엔드
+//		player.m_IsMyTurn = !player.m_IsMyTurn;
+//		opponent.m_IsMyTurn = !opponent.m_IsMyTurn;
+//
+//		//자신의 차례면 드로우
+//		if (player.m_IsMyTurn)
+//		{
+//			CardDraw(1);
+//			cout << "자신의 턴\n";
+//		}
+//		else
+//		{
+//			cout << "상대방의 턴\n";
+//			//opponent.OpponentAct(player, opponent, hWnd);
+//		}
+//
+//		player.DrawPlayerHand();
+//		opponent.DrawOppHand();
+//		break;
+//	default:
+//		break;
+//	}
+//}
 
 //보스 / 몬스터 행동
-void CardManager::OpponentAct(CardManager& player, CardManager& opponent, HWND hWnd)
-{
-	/*
-	* 1. 카드 드로우
-	* 2. hp가 절반 이상일 경우 --> 공격 카드 서칭 --> 가장 공격력이 높은 카드 사용
-	*						--> 공격 카드가 없을 경우 --> 방어 카드 서칭 --> 가장 방어력 높은 카드 사용
-	*						--> 방어 카드 없을 경우 --> 보조 카드 사용
-	* 3. hp가 절반 이하일 경우 --> 보조 카드 중 회복 카드 서칭 --> 회복력 가장 높은 카드 사용
-	*						--> 회복 카드 없을 경우 방어 카드 서칭 --> 가장 방어력 높은 카드 사용
-	*						--> 방어 카드 없을 경우 공격 카드 서칭 --> 가장 공격력이 높은 카드 사용
-	*						--> 공격 카드 없을 경우 보조 카드 사용
-	*
-	* 공격 카드 우선 순위 ==> 1. 공격력 2.
-	* 방어 카드 우선 순위 ==> 1. 방어력 2.
-	* 보조 카드 우선 순위 ==> 1. 회복 2.
-	*/
+//void CardManager::OpponentAct(Player& p_player, Boss& p_boss, CardManager& player, CardManager& opponent, HWND hWnd)
+//{
+//	//드로우 
+//	CardDraw(1);
+//
+//	//임시 정보 표출
+//	string info;
+//	for (int i = 0; i < m_HandCount; i++)
+//	{
+//		info += (to_string(i) + "번째 카드 정보: ");
+//		info += (to_string(m_Hand[i]->GetStar() + 1) + "성. 공격력 " + to_string(m_Hand[i]->GetAtk())
+//			+ ". 방어력 " + to_string(m_Hand[i]->GetDef()) + ".");
+//		info += m_Hand[i]->GetInfo() + "\n";
+//	}
+//	cout << info << endl;
+//	
+//	//공격 카드로 플레이어를 죽일 수 있다면 1순위 액트
+//	for (int i = 0; i < m_HandCount; i++)
+//	{
+//		if (m_Hand[i]->GetType() == E_Attack)
+//		{
+//			if (m_Hand[i]->GetAtk() >= p_player.GetHP())
+//			{
+//				m_HandSelection = i;
+//				break;
+//			}
+//		}
+//	}
+//
+//	
+//	
+//
+//
+//	BossCardAct(player, hWnd);
+//}
 
-	CardDraw(1);
-	string info;
-	for (size_t i = 0; i < m_HandCount; i++)
-	{
-		info += (to_string(i) + "번째 카드 정보: ");
-		info += (to_string(m_Hand[i]->GetStar() + 1) + "성. 공격력 " + to_string(m_Hand[i]->GetAtk())
-			+ ". 방어력 " + to_string(m_Hand[i]->GetDef()) + ".");
-		info += m_Hand[i]->GetInfo() + "\n";
-	}
-	//m_HandSelection = m_boss.GetBossCardIndex(info);
-
-	cout << info << endl;
-	
-	m_HandSelection = 1; //임시
-
-
-	BossCardAct(player, hWnd);
-}
-
-void CardManager::BossCardAct(CardManager& player, HWND hWnd)
+void CardManager::BossCardAct(CardManager& player)
 {
 	//패에 카드가 없으면 리턴
 	if (m_HandCount <= 0)
@@ -420,7 +631,7 @@ void CardManager::BossCardAct(CardManager& player, HWND hWnd)
 	}
 
 	//이미지 안보이기
-	m_rend.ImageVisible(to_string(m_Hand[m_HandSelection]->GetUid() + BOSSUID), false);
+	RENDER.ImageVisible(to_string(m_Hand[m_HandSelection]->GetUid() + BOSSUID), false);
 
 	m_Hand.erase(m_Hand.begin() + m_HandSelection);
 	m_HandCount--;
@@ -431,7 +642,7 @@ void CardManager::BossCardAct(CardManager& player, HWND hWnd)
 	//턴 엔드
 	player.m_IsMyTurn = !player.m_IsMyTurn;
 	m_IsMyTurn = !m_IsMyTurn;
-	SetTimer(hWnd, TURNTIME, 7000, NULL);
+	//SetTimer(hWnd, TURNTIME, 7000, NULL);
 	player.CardDraw(1);
 	cout << "턴 교체.\n";
 

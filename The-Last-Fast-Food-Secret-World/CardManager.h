@@ -1,7 +1,8 @@
 #pragma once
+#include "Timer.h"
 #include <Windows.h>
 #include <vector>
-#include "BossAI.h"
+
 
 using namespace std;
 class GameCard;
@@ -21,19 +22,21 @@ public:
 	vector<GameCard*> GetHand();
 	void SetDeck();
 	void CardDraw(int drawNum);
-	void CardAct(CardManager& player, CardManager& opponent, HWND hWnd);
+	void CardAct(CardManager& player, CardManager& opponent);
 
 	void DrawLine(HDC hdc, int startX, int startY, int lengthX, int lengthY);
 	void DrawBG();
 	void DrawPlayerHand();
 	void DrawOppHand();
-	void HandSelect(WPARAM wParam, CardManager& player, CardManager& opponent, HWND hWnd);
-	void StartTurn(CardManager& player, CardManager& opponent, HWND hWnd);
-	void TimeLimit(WPARAM wParam, HWND hWnd, CardManager& player, CardManager& opponent);
-	void OpponentAct(CardManager& player, CardManager& opponent, HWND hWnd);
-	void BossCardAct(CardManager& player, HWND hWnd);
-
+	void HandSelect(CardManager& player, CardManager& opponent);
+	void StartTurn(CardManager& player, CardManager& opponent);
+	void TimeLimit(CardManager& player, CardManager& opponent);
+	//void TimeLimit(WPARAM wParam, HWND hWnd, CardManager& player, CardManager& opponent);
+	//void OpponentAct(Player& p_player, Boss& p_boss, CardManager& player, CardManager& opponent, HWND hWnd);
+	void BossCardAct(CardManager& player);
 	void SetImage();
+	void PlayCardEffect(int x, int y);
+	void PlayRip(int x, int y);
 
 private:
 	int m_DeckCount;//덱 장수
@@ -44,4 +47,6 @@ private:
 	bool m_IsMyTurn;//턴 확인
 	bool m_IsSelect;//패 카드 선택 확인
 	//AI m_boss;//보스 ai
+	Timer m_timer, m_shiny, m_rip;
+	bool m_isShiny, m_isRip;
 };
