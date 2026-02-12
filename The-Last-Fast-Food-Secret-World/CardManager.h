@@ -38,6 +38,9 @@ public:
 	void PlayCardEffect(int x, int y);
 	void PlayRip(int x, int y);
 
+	// 공격 2장 버리고 2턴 사용
+	bool DiscardFirstAttackCard();
+
 private:
 	int m_DeckCount;//덱 장수
 	int m_HandCount;//패 장수

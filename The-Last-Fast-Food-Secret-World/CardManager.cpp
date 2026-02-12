@@ -248,6 +248,30 @@ void CardManager::PlayRip(int x, int y)
 	}
 }
 
+bool CardManager::DiscardFirstAttackCard()
+{
+	for (int i = 0; i < (int)m_Hand.size(); ++i)
+	{
+		if (m_Hand[i]->GetType() == CType::E_Attack)
+		{
+			// 버리기
+			m_Hand.erase(m_Hand.begin() + i);
+
+			// 카운트 갱신
+			if (m_HandCount > 0)
+			{
+				m_HandCount--;
+			}
+
+			// 선택 인덱스
+			if (m_HandSelection >= (int)m_Hand.size()) m_HandSelection = (int)m_Hand.size() - 1;
+
+			return true;
+		}
+	}
+	return false;
+}
+
 void CardManager::StartGame()
 {
 	CardDraw(5);
@@ -426,7 +450,7 @@ void CardManager::DrawOppHand()
 }
 
 //패 카드 사용
-void CardManager::CardAct(CardManager& player ,CardManager& opponent)
+void CardManager::CardAct(CardManager& player, CardManager& opponent)
 {
 	//패에 카드가 없으면 리턴
 	if (m_HandCount <= 0)
@@ -434,7 +458,7 @@ void CardManager::CardAct(CardManager& player ,CardManager& opponent)
 	//선택 중이지 않으면 리턴
 	if (m_HandSelection < 0)
 		return;
-	
+
 	//타이머 초기화
 	m_timer.SetIsStart(false);
 
@@ -519,7 +543,7 @@ void CardManager::TimeLimit(CardManager& player, CardManager& opponent)
 		m_timer.StartTimer();
 		m_timer.SetIsStart(true);
 	}
-	
+
 	m_timer.UpdateTimer();
 	if (m_timer.CheckTimer(5))
 	{
