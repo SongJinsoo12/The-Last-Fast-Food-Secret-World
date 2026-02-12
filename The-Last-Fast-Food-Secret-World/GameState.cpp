@@ -2,6 +2,7 @@
 #include "RenderManager.h"
 #include "InputGame.h"
 #include "CardTableManager.h"
+#include "Sound.h"
 
 //°¢ È­¸é
 //#include "Shop.h"
@@ -158,6 +159,9 @@ namespace GameState_M {
 		m_defEffect.SetId("Def_Effect_");
 		m_defEffect.SetImageSize(600, 200, 192, 192);
 		m_defEffect.SetIndex(20);
+
+		//bgm
+		Sound::Instance()->PlayBgm();
 	}
 
 	void InGame::PlayAnimation(Timer& p_timer, Animation& p_effect, bool* p_isPlay)
