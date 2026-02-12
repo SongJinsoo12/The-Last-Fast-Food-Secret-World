@@ -3,7 +3,9 @@
 bool ButtonManager::AddButton(std::shared_ptr<BaseButton> btn) {
     for (auto& b : buttons) {
         if (b->GetId() == btn->GetId()) {
-            return false; // Áßº¹ ID ¡æ Ãß°¡ ½ÇÆĞ
+
+            return false; // ì¤‘ë³µ ID â†’ ì¶”ê°€ ì‹¤íŒ¨
+
         }
     }
     buttons.push_back(btn);
@@ -16,14 +18,19 @@ void ButtonManager::DrawAll() {
     }
 }
 
-BaseButton* ButtonManager::HandleClick(int mx, int my) {
+
+
+
+std::string ButtonManager::HandleClickId(int mx, int my) {
     for (auto& btn : buttons) {
         if (btn->HitTest(mx, my)) {
-            return btn.get();
+            return btn->GetId(); // í´ë¦­ëœ ë²„íŠ¼ì˜ ID ë°˜í™˜
         }
     }
-    return nullptr;
+    return ""; // í´ë¦­ëœ ë²„íŠ¼ ì—†ìŒ
 }
+
+
 
 void ButtonManager::SetVisibleAll(bool v) {
     for (auto& btn : buttons) {
@@ -40,5 +47,12 @@ void ButtonManager::SetVisibleById(const std::string& id, bool v) {
     }
 }
 
-// Àü¿ª °´Ã¼ Á¤ÀÇ
+
+int ButtonManager::GetButtonSize()
+{
+    return buttons.size();
+}
+
+// ì „ì—­ ê°ì²´ ì •ì˜
+
 ButtonManager btnManager;

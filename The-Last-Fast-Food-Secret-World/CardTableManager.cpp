@@ -57,7 +57,7 @@ void CardTableManager::Init()
 			row.push_back(cell);
 		}
 
-		if (row.size() < 6)
+		if (row.size() < 7)
 			continue;
 
 		int uid = stoi(row[0]);
@@ -66,6 +66,7 @@ void CardTableManager::Init()
 		string aitStr = row[3];
 		string typeStr = row[4];
 		string starStr = row[5];
+		string info = row[6];
 
 
 		//카드 생성 및 데이터 세팅
@@ -75,6 +76,7 @@ void CardTableManager::Init()
 		newCard->SetAit(StrToAit(aitStr));
 		newCard->SetType(StrToType(typeStr));
 		newCard->SetStar(StrToStar(starStr));
+		newCard->SetInfo(info);
 		m_AllCardDataVec[uid] = newCard;
 
 		CardImageLoad(uid, StrToAit(aitStr), StrToType(typeStr), StrToStar(starStr));
@@ -169,17 +171,17 @@ void CardTableManager::CardImageLoad(int uid, CAttribute  ait, CType type, Star 
 		switch (star)
 		{
 		case E_ONE:
-			m_rend.SetImage(L"card_atk_1.png", to_string(uid),
+			RENDER.SetImage(L"card_atk_1.png", to_string(uid),
 				Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false, 
 				GameImage_M::LayerType::Card);
 			break;
 		case E_TWO:
-			m_rend.SetImage(L"card_atk_2.png", to_string(uid),
+			RENDER.SetImage(L"card_atk_2.png", to_string(uid),
 				Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
 				GameImage_M::LayerType::Card);
 			break;
 		case E_THREE:
-			m_rend.SetImage(L"card_atk_3.png", to_string(uid),
+			RENDER.SetImage(L"card_atk_3.png", to_string(uid),
 				Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
 				GameImage_M::LayerType::Card);
 			break;
@@ -189,24 +191,24 @@ void CardTableManager::CardImageLoad(int uid, CAttribute  ait, CType type, Star 
 		switch (star)
 		{
 		case E_ONE:
-			m_rend.SetImage(L"card_def_1.png", to_string(uid),
+			RENDER.SetImage(L"card_def_1.png", to_string(uid),
 				Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
 				GameImage_M::LayerType::Card);
 			break;
 		case E_TWO:
-			m_rend.SetImage(L"card_def_2.png", to_string(uid),
+			RENDER.SetImage(L"card_def_2.png", to_string(uid),
 				Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
 				GameImage_M::LayerType::Card);
 			break;
 		case E_THREE:
-			m_rend.SetImage(L"card_def_3.png", to_string(uid),
+			RENDER.SetImage(L"card_def_3.png", to_string(uid),
 				Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
 				GameImage_M::LayerType::Card);
 			break;
 		}
 		break;
 	case E_Magic:
-		m_rend.SetImage(L"card_magic.png", to_string(uid),
+		RENDER.SetImage(L"card_magic.png", to_string(uid),
 			Gdiplus::Rect(0, 0, CARDX, CARDY), Gdiplus::Rect(0, 0, 0, 0), false,
 			GameImage_M::LayerType::Card);
 		break;

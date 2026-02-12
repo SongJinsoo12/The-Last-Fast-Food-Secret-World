@@ -1,3 +1,4 @@
+
 #include "InputGame.h"
 #include <iostream>
 
@@ -19,10 +20,43 @@ namespace GameInput_M {
 		else
 			return 0;
 	}
+
+	bool Input::isOneClick(MouseValue p_value)
+	{
+		if (m_ISMouseClick[(int)p_value])
+		{
+			m_ISMouseClick[(int)p_value] = false;
+			return true;
+		}
+		else
+			return false;
+	}
+
 	int Input::isHeel()
 	{
 		return m_MouseHeelDelta;
 	}
+
+	bool Input::isKeyboard(int p_key)
+	{
+		if (0 > p_key || p_key >= 256)
+			return false;
+
+		if (m_KeyBoardValue[p_key])
+		{
+			m_KeyBoardValue[p_key] = false;
+			return true;
+		}
+		else
+			return false;
+	}
+
+	void Input::GetMousePos(int* p_x, int* p_y)
+	{
+		*p_x = this->m_MousePosX;
+		*p_y = this->m_MousePosY;
+	}
+
 	void Input::UpdateProcess(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	{
 
@@ -68,18 +102,17 @@ namespace GameInput_M {
 
 		case WM_MOUSEWHEEL:
 			m_MouseHeelDelta = GET_WHEEL_DELTA_WPARAM(wParam);
-			InvalidateRect(hWnd, NULL, FALSE);
 			break;
 
 		case WM_KEYDOWN:
-			m_KeyArr[wParam] = true;
+			m_KeyBoardValue[wParam] = true;
 			break;
 
 		case WM_KEYUP:
-			if (m_KeyArr[wParam])
-				m_KeyArr[wParam] = false;
+			m_KeyBoardValue[wParam] = false;
 			break;
 		}
 
 	}
+
 }

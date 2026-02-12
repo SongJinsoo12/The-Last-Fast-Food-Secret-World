@@ -39,3 +39,4 @@ namespace  GameImage_M {
 		bool GetVisible();
 	};
 }
+

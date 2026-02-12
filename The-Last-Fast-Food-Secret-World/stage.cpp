@@ -1,8 +1,10 @@
-#include "stage.h"
+
+#include "Stage.h"
 #include "RenderManager.h"
 #include "MainGame.h"
 #include "ButtonManager.h"
 
+StageClear g_StageResult;
 
 
 
@@ -30,20 +32,20 @@ bool TutorialStage::CheckTutorial() {
     if (Get_LargeStage() <= 1 && Get_SmallStage() <= 3)
     {
         StageState = E_STAGE_TUTORIAL;
-        return IsTutorial = true;
         cout << "튜토리얼 속행" << endl;
+        return IsTutorial = true;
     }
     else
     {
         StageState = E_STAGE_NORMAL;
-        return IsTutorial = false;
         cout << "튜토리얼 종료" << endl;
+        return IsTutorial = false;
     }
-    
+
 }
 
 int Stage::DropReward() {
-    
+	
     if (SmallStage % 5 == 0)
     {
         //팩 뽑기 횟수 변수?
@@ -52,8 +54,10 @@ int Stage::DropReward() {
 
     }
 
-    return LargeStage * SmallStage * 50; // 잡몹
     cout << "골드 드롭됨" << endl;
+    return LargeStage * SmallStage * 50; // 잡몹
+
+
 }
 
 
@@ -62,10 +66,10 @@ bool Stage::IsBossStage() {
     {
         if (IsLastBossStage())
         {
-            
             return true;
         }
-            
+
+
         StageState = E_STAGE_BOSS;
         return true;
     }
@@ -126,7 +130,6 @@ int Stage::StageClear(bool isMonsterLost) {
 
     if (!isMonsterLost) //몬스터 hp = 0 또는 몬스터 비활성화일떄 else 코드 실행
     {
-        
         GameState = E_PVP;
         return GameState;
     }
@@ -137,16 +140,12 @@ int Stage::StageClear(bool isMonsterLost) {
     }
 
     AddGold(DropReward());
-    
-    
-    
     //GameState = E_MENU;
     return GameState;
 
 }
 
 int Stage::NextStage() {
-    
     if (GameState == E_MENU) {
         if (SmallStage != 5)
         {
@@ -182,35 +181,50 @@ bool Stage::GameOver(bool isPlayerLost/* player.h  IsAlive()*/) {
     }
 }
 
-void Stage::SetImage() {
-    m_rend.SetImage(L"StageClear.png", "StageClear",
-        Rect(0, 0, 1024, 1024), Rect(0, 0, 1280, 720), false, GameImage_M::LayerType::UI);
-    m_rend.SetImage(L"StageClearBtn_1.png", "StageClearBtn_1",
-        Rect(0, 0, 200, 100), Rect(0, 0, 1280, 720), false, GameImage_M::LayerType::UI);
-    cout << "스테이지 클리어 화면 로드 확인\n";
+
+
+void StageClear::DrawStageClearButton() {
+    m_StageClearBtn.AddButton(make_shared<RectButton>("StageClearBtn_1", RECT{ 650, 360, 750, 410 }));
 
 }
 
-void Stage::LoadStageClearScreen() {
-   RECT StageClearBtnRect = {340, 360, 540, 460};
+void StageClear::DrawInGameResult() {
     
-    m_rend.ImageVisible("StageClear", true);
-    m_rend.ImageVisible("StageClearBtn_1", true);
-    m_rend.MoveImage("StageClear",
-        Gdiplus::Rect(640, 360, 500, 500));
-    m_rend.MoveImage("StageClearBtn_1",
-        Gdiplus::Rect(500, 360, 500, 500));
-	
-    btnManager.AddButton(make_shared<RectButton>( "StageClearBtn_1", StageClearBtnRect));
-	cout << "스테이지 클리어 화면 출력 확인" << endl;
-    //while?
-    /*if (btnManager.HandleClick(m_Input.m_MousePosX, m_Input.m_MousePosY) && btnManager.HandleClick(mg.mx, mg.my) -> GetId() == "StageClearBtn_1")
-    {
-        GameState = E_MENU;
-        m_rend.ImageVisible("StageClear", false);
+        RENDER.ImageVisible("StageClear", true);//배경
+        RENDER.ImageVisible("StageClearBtn_1", true);//버튼
+        RENDER.MoveImage("StageClear",
+                    Gdiplus::Rect(0, 0, 1280, 720));
+        RENDER.MoveImage("StageClearBtn_1",
+                    Gdiplus::Rect(650, 360, 200, 100));//크기조절 
+        /*RENDER.MoveImage("StageClearBtn_1",
+            Gdiplus::Rect(650, 360, 1950, 1080));*/
         
-		btnManager.SetVisibleById("StageClearBtn_1", false);    
-    }*/
-    
 }
+
+void StageClear::ExitInGameResult() {
+    RENDER.ImageVisible("StageClear", false);
+	RENDER.ImageVisible("StageClearBtn_1", false); 
+}
+//void Stage::LoadStageClearScreen() {
+//    RECT StageClearBtnRect = { 340, 360, 540, 460 };
+//
+//    RENDER.ImageVisible("StageClear", true);
+//    RENDER.ImageVisible("StageClearBtn_1", true);
+//    RENDER.MoveImage("StageClear",
+//        Gdiplus::Rect(640, 360, 500, 500));
+//    RENDER.MoveImage("StageClearBtn_1",
+//        Gdiplus::Rect(500, 360, 500, 500));
+//
+//    btnManager.AddButton(make_shared<RectButton>("StageClearBtn_1", StageClearBtnRect));
+//    cout << "스테이지 클리어 화면 출력 확인" << endl;
+//    while?
+//    /*if (btnManager.HandleClick(m_Input.m_MousePosX, m_Input.m_MousePosY) && btnManager.HandleClick(mg.mx, mg.my) -> GetId() == "StageClearBtn_1")
+//    {
+//        GameState = E_MENU;
+//        m_rend.ImageVisible("StageClear", false);
+//
+//        btnManager.SetVisibleById("StageClearBtn_1", false);
+//    }*/
+//
+//}
 

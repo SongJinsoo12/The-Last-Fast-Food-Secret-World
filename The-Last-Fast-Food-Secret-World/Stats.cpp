@@ -10,3 +10,5 @@ template <typename T>
 int Stats<T>::GetHP() {
 	return health;
 }
+
+

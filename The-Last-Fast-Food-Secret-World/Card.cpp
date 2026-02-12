@@ -9,78 +9,88 @@ Card::Card()
 Card::Card(int p_uid)
 {
 	Init();
-	uid = p_uid;
+	m_Uid = p_uid;
 }
 
 void Card::Init()
 {
-	uid = -1;
-	atk = 0;
-	def = 0;
-	Ait = E_BREAD;
-	Type = E_Attack;
-	star = E_TWO;
-	//SetImage();
+	m_Uid = -1;
+	m_Atk = 0;
+	m_Def = 0;
+	m_Ait = E_BREAD;
+	m_Type = E_Attack;
+	m_Star = E_TWO;
+	m_info = "";
 }
 
-int Card::GetUid()
+int Card::GetUid() const
 {
-	return uid;
+	return m_Uid;
 }
 
 void Card::SetUid(int p_uid)
 {
-	uid = p_uid;
+	m_Uid = p_uid;
 }
 
-int Card::GetAtk()
+int Card::GetAtk() const
 {
-	return atk;
+	return m_Atk;
 }
 
 void Card::SetAtk(int p_atk)
 {
-	atk = p_atk;
+	m_Atk = p_atk;
 }
 
-int Card::GetDef()
+int Card::GetDef() const
 {
-	return def;
+	return m_Def;
 }
 
 void Card::SetDef(int p_def)
 {
-	def = p_def;
+	m_Def = p_def;
 }
-
-CAttribute Card::GetAit()
+ 
+CAttribute Card::GetAit() const
 {
-	return Ait;
+	return m_Ait;
 }
 
 void Card::SetAit(CAttribute p_Ait)
 {
-	Ait = p_Ait;
+	m_Ait = p_Ait;
 }
-
-CType Card::GetType()
+ 
+CType Card::GetType() const
 {
-	return Type;
+	return m_Type;
 }
 
 void Card::SetType(CType p_Type)
 {
-	Type = p_Type;
+	m_Type = p_Type;
 }
 
-Star Card::GetStar()
+Star Card::GetStar() const
 {
-	return star;
+	return m_Star;
 }
 
 void Card::SetStar(Star p_Star)
 {
-	star = p_Star;
+	m_Star = p_Star;
+}
+
+string Card::GetInfo()
+{
+	return m_info;
+}
+
+void Card::SetInfo(string p_info)
+{
+	m_info = p_info;
 }
 
 GameCard::GameCard()
@@ -95,6 +105,7 @@ GameCard::GameCard(Card* p_Card)
 	this->SetAit(p_Card->GetAit());
 	this->SetType(p_Card->GetType());
 	this->SetStar(p_Card->GetStar());
+	this->SetInfo(p_Card->GetInfo());
 }
 
 GameCard::~GameCard()

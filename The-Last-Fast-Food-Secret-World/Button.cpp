@@ -11,7 +11,8 @@ std::string BaseButton::GetId() const { return id; }
 RectButton::RectButton(std::string imgId, RECT r) : BaseButton(imgId), rect(r) {}
 void RectButton::Draw() {
     if (!visible) return;
-    m_rend.MoveImage(id, Gdiplus::Rect(
+
+    RENDER.MoveImage(id, Gdiplus::Rect(
         rect.left, rect.top,
         rect.right - rect.left,
         rect.bottom - rect.top));
@@ -28,7 +29,8 @@ CircleButton::CircleButton(std::string imgId, int x, int y, int r)
 }
 void CircleButton::Draw() {
     if (!visible) return;
-    m_rend.MoveImage(id, Gdiplus::Rect(cx - radius, cy - radius, radius * 2, radius * 2));
+    RENDER.MoveImage(id, Gdiplus::Rect(cx - radius, cy - radius, radius * 2, radius * 2));
+
 }
 bool CircleButton::HitTest(int mx, int my) {
     int dx = mx - cx;
@@ -50,7 +52,9 @@ void PolygonButton::Draw() {
         if (p.x > maxX) maxX = p.x;
         if (p.y > maxY) maxY = p.y;
     }
-    m_rend.MoveImage(id, Gdiplus::Rect(minX, minY, maxX - minX, maxY - minY));
+
+    RENDER.MoveImage(id, Gdiplus::Rect(minX, minY, maxX - minX, maxY - minY));
+
 }
 bool PolygonButton::HitTest(int mx, int my) {
     bool inside = false;

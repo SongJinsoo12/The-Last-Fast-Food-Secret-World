@@ -1,3 +1,4 @@
+
 #pragma once
 enum State {
 	E_START,
@@ -38,3 +39,4 @@ public:
 };
 
 extern MainGame g_MainGame;
+

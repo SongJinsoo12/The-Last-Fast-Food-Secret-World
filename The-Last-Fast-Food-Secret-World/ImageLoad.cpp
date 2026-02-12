@@ -1,4 +1,4 @@
-﻿#include "ImageLoad.h"
+#include "ImageLoad.h"
 #include "ImageManager.h"
 
 namespace GameImage_M {
@@ -18,8 +18,8 @@ namespace GameImage_M {
 	{
 		if (my_loadImage != nullptr && grap != nullptr) {
 			grap->DrawImage(my_loadImage.get(), renderRect,
-				loadRect.X, loadRect.Y,
-				loadRect.Width, loadRect.Height,
+				loadRect.X, loadRect.Y, 
+				loadRect.Width, loadRect.Height, 
 				UnitPixel);
 		}
 	}
@@ -45,3 +45,4 @@ namespace GameImage_M {
 		return isVisible;
 	}
 }
+

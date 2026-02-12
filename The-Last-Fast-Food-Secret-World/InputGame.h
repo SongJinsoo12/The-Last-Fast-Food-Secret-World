@@ -1,8 +1,9 @@
+
 #pragma once
 #include <windows.h>
 #include "Singleton.h"
 
-#define m_Input GameInput_M::Input::GetInstance()
+#define INPUT GameInput_M::Input::GetInstance()
 
 namespace GameInput_M {
 	enum class MouseValue {
@@ -11,13 +12,23 @@ namespace GameInput_M {
 		Right
 	};
 
+	enum class KeyboardValue {
+		Enter = 13,
+		ArrowLeft = 37,
+		ArrowUp,
+		ArrowRight,
+		ArrowDown
+	};
+
 	class Input : public Singleton<Input>
 	{
 		friend class Singleton<Input>;
 	public:
 		virtual int isClick();
+		virtual bool isOneClick(MouseValue p_value);
 		virtual int isHeel();
-		//virtual bool isKeyboard(char p_key);
+		virtual bool isKeyboard(int p_key);
+		virtual void GetMousePos(int* p_x, int* p_y);
 
 		virtual void UpdateProcess(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 
@@ -28,7 +39,8 @@ namespace GameInput_M {
 		int m_MousePosY;
 		int m_MouseHeelDelta;
 
-		bool m_KeyArr[256];
+		bool m_KeyBoardValue[256];
 	};
+
 
 }

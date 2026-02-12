@@ -1,4 +1,4 @@
-ï»¿#include "ImageManager.h"
+#include "ImageManager.h"
 #include "ImageLoad.h"
 
 namespace GameImage_M {
@@ -13,11 +13,11 @@ namespace GameImage_M {
 	}
 	shared_ptr<Image> ImageManager::GetImage(const wstring& p_filepath)
 	{
-		//ï¿½Ì¹ï¿½ ï¿½Ø´ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½Ç¾ï¿½ï¿½Ù¸ï¿½ ï¿½Îµï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
-		if (ImageCache.count(p_filepath))
+		//ÀÌ¹Ì ÇØ´ç ÀÌ¹ÌÁö°¡ ·ÎµåµÇ¾ú´Ù¸é ·ÎµåµÈ ÀÌ¹ÌÁö·Î ¹ÝÈ¯
+		if (ImageCache.count(p_filepath)) 
 			return ImageCache[p_filepath];
 
-		//ï¿½Îµï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ImageCacheï¿½ï¿½ ï¿½ß°ï¿½
+		//·ÎµåµÇÁö ¾ÊÀº ÀÌ¹ÌÁö´Â ImageCache¿¡ Ãß°¡
 		shared_ptr<Image> newImage = make_shared<Image>(p_filepath.c_str());
 		if (newImage->GetLastStatus() == Ok) {
 			ImageCache[p_filepath] = newImage;
@@ -31,7 +31,7 @@ namespace GameImage_M {
 		GdiplusStartupInput si;
 		GdiplusStartup(&m_GDIToken, &si, nullptr);
 	}
-	ImageManager::~ImageManager()
+	ImageManager::~ImageManager() 
 	{
 		ImageCache.clear();
 		GdiplusShutdown(m_GDIToken);

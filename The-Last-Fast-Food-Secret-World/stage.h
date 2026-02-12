@@ -4,6 +4,8 @@
 #include "InputGame.h"
 #include "RenderManager.h"
 #include "ImageManager.h"
+#include "ButtonManager.h"
+
 
 using namespace std;
 
@@ -22,7 +24,9 @@ enum StageName
 };
 
 
-class Stage : MainGame 
+
+class Stage : MainGame
+
 {
 protected:
 
@@ -32,20 +36,21 @@ public:
 	bool IsBossStage(); //º¸½º ½ºÅ×ÀÌÁö È®ÀÎ
 	bool IsLastBossStage(); //¸·º¸ ½ºÅ×ÀÌÁö È®ÀÎ
 
-	//bool GameStart(); //°ÔÀÓ ½ÃÀÛ
-	bool GameOver(bool isPlayerLost); //°ÔÀÓ ¿À¹ö
+	//bool GameStart(); //ê²Œì„ ì‹œì‘
+	bool GameOver(bool isPlayerLost); //ê²Œì„ ì˜¤ë²„
 
-	bool StageStart(); //½ºÅ×ÀÌÁö ½ÃÀÛ
-	int StageClear(bool isMonsterLost); //½ºÅ×ÀÌÁö Å¬¸®¾î
+	bool StageStart(); //ìŠ¤í…Œì´ì§€ ì‹œì‘
+	int StageClear(bool isMonsterLost); //ìŠ¤í…Œì´ì§€ í´ë¦¬ì–´
 
-	bool IsGameClear(); //°ÔÀÓ Å¬¸®¾î È®ÀÎ
-	int NextStage(); //´ÙÀ½ ½ºÅ×ÀÌÁö 
+	bool IsGameClear(); //ê²Œì„ í´ë¦¬ì–´ í™•ì¸
+	int NextStage(); //ë‹¤ìŒ ìŠ¤í…Œì´ì§€ 
 
-	int Get_LargeStage(); //Æ©Åä¸®¾ó Å¬·¡½º¿ë
-	int Get_SmallStage(); //Æ©Åä¸®¾ó Å¬·¡½º¿ë
-	int DropReward(); //½ºÅ×ÀÌÁö¿¡ µû¶ó °ñµå ¼³Á¤
-	void LoadStageClearScreen(); //½ºÅ×ÀÌÁö Å¬¸®¾î È­¸é Ãâ·Â
-	void SetImage(); //½ºÅ×ÀÌÁö Å¬¸®¾î ÀÌ¹ÌÁö 
+	int Get_LargeStage(); //íŠœí† ë¦¬ì–¼ í´ë˜ìŠ¤ìš©
+	int Get_SmallStage(); //íŠœí† ë¦¬ì–¼ í´ë˜ìŠ¤ìš©
+	int DropReward(); //ìŠ¤í…Œì´ì§€ì— ë”°ë¼ ê³¨ë“œ ì„¤ì •
+	
+		
+
 
 };
 
@@ -56,13 +61,35 @@ enum TCardType
 	E_TUTORIAL_MAGIC
 };
 
-class TutorialStage : Stage
+class TutorialStage : public Stage
 {
 private:
 	bool IsTutorial;
 
 public:
 
-	TCardType TutorialCard(); //Æ©Åä¸®¾ó ½ºÅ×ÀÌÁö¿¡ ¸Â´Â Ä«µå ¹İÈ¯
-	bool CheckTutorial(); //Æ©Åä¸®¾ó ½ºÅ×ÀÌÁö È®ÀÎ
+	TCardType TutorialCard(); //íŠœí† ë¦¬ì–¼ ìŠ¤í…Œì´ì§€ì— ë§ëŠ” ì¹´ë“œ ë°˜í™˜
+	bool CheckTutorial(); //íŠœí† ë¦¬ì–¼ ìŠ¤í…Œì´ì§€ í™•ì¸
 };
+
+//extern TutorialStage g_TutorialStage;
+
+class StageClear : public Stage
+{
+public:
+	ButtonManager m_StageClearBtn;
+public:
+	StageClear()
+	{
+		RENDER.SetImage(L"InGameResultBG.png", "StageClear",
+			Rect(0, 0, 1280, 720), Rect(0, 0, 0, 0), false, GameImage_M::LayerType::Background);
+		RENDER.SetImage(L"StageClearBtn1.png", "StageClearBtn_1", //100x50
+			Rect(0, 0, 100, 50), Rect(0, 0, 0, 0), false, GameImage_M::LayerType::UI);
+	}
+	void DrawStageClearButton();
+	void DrawInGameResult();
+	void ExitInGameResult();
+};
+
+extern StageClear g_StageResult;
+

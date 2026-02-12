@@ -1,4 +1,4 @@
-ï»¿#pragma once
+#pragma once
 
 #include <Windows.h>
 #include <gdiplus.h>
@@ -11,7 +11,7 @@
 using namespace Gdiplus;
 using namespace std;
 
-//ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+//ÆÄÀÏ ÀÌ¸§À» ÅëÇÑ ÀÌ¹ÌÁö °ü¸®
 namespace GameImage_M {
 	class ImageManager
 	{
@@ -39,3 +39,4 @@ namespace GameImage_M {
 		virtual ~ImageManager();
 	};
 }
+

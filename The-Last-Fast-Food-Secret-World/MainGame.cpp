@@ -1,4 +1,7 @@
+
 #include "MainGame.h"
+
+MainGame g_MainGame;
 
 MainGame::MainGame() {
 	Coin = 0;
@@ -31,4 +34,5 @@ int MainGame::GetLargeStage() {
 
 int MainGame::GetSmallStage() {
 	return SmallStage;
+
 }
