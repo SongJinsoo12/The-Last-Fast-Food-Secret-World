@@ -69,7 +69,7 @@ void DeckBuilding::SaveDeck()//iscolleted::array
 	}
 }
 
-void DeckBuilding::LoadDeck()
+void DeckBuilding::LoadDeck(vector<GameCard> p_all)
 {
 
 	std::ifstream file("Deck.json", std::ios::in);//같은 경로내에서 파일불러오기
@@ -127,6 +127,25 @@ void DeckBuilding::LoadDeck()
 			int x = index % 5, y = index / 5;
 			c.x = x * 110 + 406, c.y = y * 130 + 80;
 
+			int p_index = -1;
+			switch ((int)(c.GetUid() / 100))
+			{
+			case 0: p_index = c.GetUid(); break;
+			case 1: p_index = c.GetUid() - 59; break;
+			case 2: p_index = c.GetUid() - 116; break;
+			default: break;
+			}
+			c.SetAit(p_all[p_index].GetAit());
+			c.SetStar(p_all[p_index].GetStar());
+			c.SetType(p_all[p_index].GetType());
+			switch (c.GetType())
+			{
+			case E_Attack: c.SetAtk(p_all[p_index].GetAtk()); break;
+			case E_Deffense: c.SetDef(p_all[p_index].GetDef()); break;
+			default: break;
+			}
+			c.SetInfo(p_all[p_index].GetInfo());
+
 			myDeck.push_back(c);
 			++index;
 		}
@@ -153,6 +172,25 @@ void DeckBuilding::LoadDeck()
 			// 좌표 복원: 인게임에서 사용하는 위치 규칙과 동일하게 세팅
 			int x = (index % 25) % 5, y = (index % 25) / 5;
 			c.x = x * 72 + 950, c.y = y * 110 + 130;
+
+			int p_index = -1;
+			switch ((int)(c.GetUid() / 100))
+			{
+			case 0: p_index = c.GetUid(); break;
+			case 1: p_index = c.GetUid() - 59; break;
+			case 2: p_index = c.GetUid() - 116; break;
+			default: break;
+			}
+			c.SetAit(p_all[p_index].GetAit());
+			c.SetStar(p_all[p_index].GetStar());
+			c.SetType(p_all[p_index].GetType());
+			switch (c.GetType())
+			{
+			case E_Attack: c.SetAtk(p_all[p_index].GetAtk()); break;
+			case E_Deffense: c.SetDef(p_all[p_index].GetDef()); break;
+			default: break;
+			}
+			c.SetInfo(p_all[p_index].GetInfo());
 
 			inven_list[0].push_back(c);
 			++index;
@@ -376,6 +414,9 @@ void DeckBuilding::EnterDeckBuild()
 	RENDER.SetImage(L"rect_button.png", "rb1"
 		, Rect(0, 0, 100, 101), Rect(0, 0, 0, 0), false, GameImage_M::LayerType::UI);
 	btnManager.AddButton(make_shared<RectButton>("rb1", RECT{ 10, 10, 100, 60 }));
+
+	RENDER.SetImage(L"Deck_bg1.png", "Deck_bg", Rect(0, 0, 1536, 1024)
+		, Rect(0, 0, 1280, 720), true, GameImage_M::LayerType::Background);
 }
 
 void DeckBuilding::ExitDeckBuild()
@@ -388,6 +429,7 @@ void DeckBuilding::ExitDeckBuild()
 	RENDER.RemoveIDIamage("right");
 	RENDER.RemoveIDIamage("filter");
 	RENDER.RemoveIDIamage("help");
+	RENDER.RemoveIDIamage("Deck_bg");
 	filter = 0;
 }
 
@@ -455,7 +497,7 @@ void DeckBuilding::DrawDeckBuild(HDC p_hdc, WCHAR p_text[])
 	btnManager.AddButton(make_shared<RectButton>("right", RECT{ 1140, 620, 1250, 660 }));//인벤우로이동
 
 	wsprintf(p_text, TEXT("%d / %d"), i_page + 1, max_page + 1);
-	TextOut(p_hdc, 1105, 680, p_text, lstrlen(p_text));
+	TextOut(p_hdc, 1105, 640, p_text, lstrlen(p_text));
 
 	//카드설명화면--
 	MoveToEx(p_hdc, 350, 0, NULL);

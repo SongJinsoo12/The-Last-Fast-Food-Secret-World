@@ -11,26 +11,26 @@ bool Shop::isSucceedGacha(HDC p_hdc, int p_gacha_num)
 	}
 	else
 	{
-		TextOut(p_hdc, 50, 500, TEXT("ëˆì´ ë¶€ì¡±í•©ë‹ˆë‹¤."), 10);
+		TextOut(p_hdc, 50, 500, TEXT("µ·ÀÌ ºÎÁ·ÇÕ´Ï´Ù."), 10);
 		return false;
 	}
 }
 
 void Shop::DrawGachaButton(HDC p_hdc, int p_mx, int p_my, WCHAR p_text[])
 {
-	//ë²„íŠ¼ìƒì„±ìœ„ì¹˜ ì˜®ê¸°ê³  ì—¬ê¸°ì„œëŠ” ì˜¨ì˜¤í”„ë§Œ ê´€ë¦¬
-	//1ë½‘ ë²„íŠ¼
+	//¹öÆ°»ı¼ºÀ§Ä¡ ¿Å±â°í ¿©±â¼­´Â ¿Â¿ÀÇÁ¸¸ °ü¸®
+	//1»Ì ¹öÆ°
 	m_ShopBtnM.AddButton(make_shared<RectButton>("one", RECT{ 600, 595, 915, 665 }));
-	wsprintf(p_text, TEXT("1ê°œ - %dG"), selectedChest.GetPrice());
+	wsprintf(p_text, TEXT("1°³ - %dG"), selectedChest.GetPrice());
 	TextOut(p_hdc, 720, 625, p_text, lstrlen(p_text));
 
-	//10ë½‘ ë²„íŠ¼
+	//10»Ì ¹öÆ°
 	m_ShopBtnM.AddButton(make_shared<RectButton>("ten", RECT{ 935, 595, 1250, 665 }));
-	wsprintf(p_text, TEXT("10ê°œ - %dG"), selectedChest.GetPrice() * 9);
+	wsprintf(p_text, TEXT("10°³ - %dG"), selectedChest.GetPrice() * 9);
 	TextOut(p_hdc, 1055, 625, p_text, lstrlen(p_text));
 }
 
-//ìƒìë¥¼ ì„ íƒí•¨
+//»óÀÚ¸¦ ¼±ÅÃÇÔ
 void Shop::SelectChest(int p_mx, int p_my)
 {
 	for (int i = 0; i < 3; i++)
@@ -40,8 +40,8 @@ void Shop::SelectChest(int p_mx, int p_my)
 			RENDER.ImageVisible("one", true);
 			RENDER.ImageVisible("ten", true);
 			this->isSelect = TRUE;
-			this->selectedChest = chest[i];	//ì¢Œí‘œê°’ì— ë”°ë¼ ìƒìì„ íƒí•˜ê¸°
-			printf("%dë²ˆ ìƒì ì„ íƒ\n", selectedChest.GetChestID());
+			this->selectedChest = chest[i];	//ÁÂÇ¥°ª¿¡ µû¶ó »óÀÚ¼±ÅÃÇÏ±â
+			printf("%d¹ø »óÀÚ ¼±ÅÃ\n", selectedChest.GetChestID());
 			return;
 		}
 	}
@@ -62,11 +62,24 @@ void Shop::CancelSelection()
 
 void Shop::SetDrawShop()
 {
-	RENDER.ImageVisible("shelf1", true);//ìƒì ë³´ê´€ìš© ì„ ë°˜1
-	RENDER.ImageVisible("shelf2", true);//ìƒì ë³´ê´€ìš© ì„ ë°˜2
+	RENDER.SetImage(L"caption.jpg", "bg", Rect(0, 0, 600, 400)
+		, Rect(0, 0, 1280, 720), true, GameImage_M::LayerType::Background);
 
-	//ìƒì ì •ë³´ ë° ìƒì  ì£¼ì¸ ëŒ€ì‚¬ ì¶œë ¥ìš©
-	RENDER.ImageVisible("textbox", true);
+	//»óÀÚ º¸°ü¿ë ¼±¹İ
+	RENDER.SetImage(L"shelf.png", "shelf1"
+		, Rect(0, 0, 651, 101), Rect(mov_sel, 250, 651, 101), true, GameImage_M::LayerType::UI);
+	RENDER.SetImage(L"shelf.png", "shelf2"
+		, Rect(0, 0, 651, 101), Rect(mov_sel, 450, 651, 101), true, GameImage_M::LayerType::UI);
+
+	//»óÀÚ Á¤º¸ ¹× »óÁ¡ ÁÖÀÎ ´ë»ç Ãâ·Â¿ë
+	RENDER.SetImage(L"textbox.png", "textbox"
+		, Rect(0, 0, 500, 200), Rect(50, 450, 500, 200), false, GameImage_M::LayerType::UI);
+
+
+	RENDER.SetImage(L"rect_button.png", "one"
+		, Rect(0, 0, 100, 110), Rect(0, 0, 0, 0), false, GameImage_M::LayerType::UI);
+	RENDER.SetImage(L"rect_button.png", "ten"
+		, Rect(0, 0, 100, 110), Rect(0, 0, 0, 0), false, GameImage_M::LayerType::UI);
 }
 
 void Shop::SetEnterShop()
@@ -77,13 +90,15 @@ void Shop::SetEnterShop()
 
 void Shop::ExitShop()
 {
-	RENDER.ImageVisible("shelf1", false);
-	RENDER.ImageVisible("shelf2", false);
-	RENDER.ImageVisible("employee", false);
-	RENDER.ImageVisible("textbox", false);
-	for (int i = 0; i < 6; i++) RENDER.ImageVisible("chest" + to_string(i), false);
-	RENDER.ImageVisible("one", false);
-	RENDER.ImageVisible("ten", false);
+	RENDER.RemoveIDIamage("bg");
+	RENDER.RemoveIDIamage("shelf1");
+	RENDER.RemoveIDIamage("shelf2");
+	RENDER.RemoveIDIamage("employee");
+	RENDER.RemoveIDIamage("textbox");
+	RENDER.RemoveIDIamage("one");
+	RENDER.RemoveIDIamage("ten");
+	for (int i = 0; i < 3; i++) RENDER.RemoveIDIamage("chest" + to_string(i+1));
+	//RENDER.AllRemoveImage();
 	mov_sel = 1400;
 	this->CancelSelection();
 }
@@ -94,16 +109,17 @@ void Shop::DrawShop(HDC p_hdc, WCHAR p_text[])
 	{
 		for (int i = 0; i < 4; i++)
 		{
-			wsprintf(p_text, TEXT("%dì„± - %d%%"), i + 1, selectedChest.GetProb(i));
+			wsprintf(p_text, TEXT("%d¼º - %d%%"), i + 1, selectedChest.GetProb(i));
 			if (i == 3)
 			{
-				wsprintf(p_text, TEXT("ë§ˆë²• - %d%%"), selectedChest.GetProb(i));
+				wsprintf(p_text, TEXT("¸¶¹ı - %d%%"), selectedChest.GetProb(i));
 			}
 			TextOut(p_hdc, 100 + i * 100, 625, p_text, lstrlen(p_text));
 		}
-		wsprintf(p_text, TEXT("%d"), selectedChest.GetChestID());
-		TextOut(p_hdc, 100, 575, p_text, lstrlen(p_text));
 	}
+	RENDER.SetImage(L"rect_button.png", "back", Rect(0, 0, 100, 101)
+		, Rect(0, 0, 0, 0), true, GameImage_M::LayerType::UI);
+	m_ShopBtnM.AddButton(make_shared<RectButton>("back", RECT{ 10, 10, 60, 40 }));
 
 	m_ShopBtnM.DrawAll();
 }
@@ -117,21 +133,31 @@ bool Shop::DrawEnterShop()
 
 	RENDER.MoveImage("shelf1", Rect(mov_sel - 100, 250, 651, 101));
 	RENDER.MoveImage("shelf2", Rect(mov_sel - 100, 450, 651, 101));
+	RENDER.ImageVisible("textbox", true);
 	RENDER.MoveImage("textbox", Rect((700 - mov_sel) + 50, 450, 500, 200));
 
-	int dur = 10;
+	int dur = 5000;
 
 	if (elapsed < dur)
 	{
-		mov_sel -= (int)((mov_sel - 700) / 10);
-		if (mov_sel <= 710)//ì…ì¥ ì• ë‹ˆë©”ì´ì…˜ì´ ëë‚œ í›„ ë‚˜ë¨¸ì§€ ì´ë¯¸ì§€ í™œì„±í™”
+		int gap = (int)((mov_sel - 700) / 10);
+		mov_sel -= gap;
+		
+		if (mov_sel <= 710)//ÀÔÀå ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ³¡³­ ÈÄ ³ª¸ÓÁö ÀÌ¹ÌÁö È°¼ºÈ­
 		{
-			for (int i = 0; i < 6; i++)
+			//»óÀÚ Ãâ·Â
+			for (int i = 0; i < 3; i++)
 			{
-				m_ShopBtnM.AddButton(make_shared<CircleButton>("chest" + to_string(i), chest[i].x - 85, chest[i].y - 5, 64));
-				RENDER.ImageVisible("chest" + to_string(i), true);//ìƒì ì¶œë ¥
+				wstring path = L"chest_" + to_wstring(i+1) + L".png";
+				RENDER.SetImage(path, "chest" + to_string(i+1)
+					, Rect(0, 0, 300, 300), Rect(0, 0, 0, 0), true, GameImage_M::LayerType::UI);
+				m_ShopBtnM.AddButton(make_shared<CircleButton>("chest" + to_string(i+1), chest[i].x - 85, chest[i].y - 15, 64));
 			}
-			RENDER.ImageVisible("employee", true);// ìƒì  ì£¼ì¸
+
+			//»óÁ¡ ÁÖÀÎ / »óÈ£ÀÛ¿ë Ãß°¡ÇÏ±â
+			RENDER.SetImage(L"employee.png", "employee"
+				, Rect(0, 0, 250, 235), Rect(0, 0, 0, 0), true, GameImage_M::LayerType::UI);
+			m_ShopBtnM.AddButton(make_shared<CircleButton>("employee", 280, 320, 180));
 			return true;
 		}
 	}

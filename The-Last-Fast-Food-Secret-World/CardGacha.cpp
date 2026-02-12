@@ -7,11 +7,11 @@ void CardGacha::one(DeckBuilding& p_deck, MainGame& p_mg)
 	int invensize = p_deck.GetSize();//카드풀에서 랜덤한 카드를 뽑음
 	draw_card.resize(1);
 	int randIdx = rand() % AllCARDMAXSIZE;
-	int ID = allCard[randIdx]->GetUid();
+	int ID = allCard[randIdx].GetUid();
 	draw_card[0].SetUid(ID);
-	Star STAR = allCard[randIdx]->GetStar();
+	Star STAR = allCard[randIdx].GetStar();
 	draw_card[0].SetStar(STAR);
-	CType TYPE = allCard[randIdx]->GetType();
+	CType TYPE = allCard[randIdx].GetType();
 	draw_card[0].SetType(TYPE);
 
 	//카드가 추가될때 중복카드는 뽑기결과에서 나오되, 인벤에서 제외되어야함.
@@ -41,11 +41,11 @@ void CardGacha::ten(DeckBuilding& p_deck, MainGame& p_mg)
 	{
 		//카드풀에서 랜덤한 카드를 뽑음
 		int randIdx = rand() % AllCARDMAXSIZE;
-		int ID = allCard[randIdx]->GetUid();
+		int ID = allCard[randIdx].GetUid();
 		draw_card[i].SetUid(ID);
-		Star STAR = allCard[randIdx]->GetStar();
+		Star STAR = allCard[randIdx].GetStar();
 		draw_card[i].SetStar(STAR);
-		CType TYPE = allCard[randIdx]->GetType();
+		CType TYPE = allCard[randIdx].GetType();
 		draw_card[i].SetType(TYPE);
 
 		//카드가 추가될때 중복카드는 뽑기결과에서 나오되, 인벤에서 제외되어야함.
@@ -93,6 +93,9 @@ void CardGacha::InGacha()
 
 void CardGacha::EnterGacha()
 {
+	cookie_num = 0;
+	RENDER.SetImage(L"gacha_bg.png", "gacha_bg", Rect(0, 0, 864, 576)
+		, Rect(0, 0, 1280, 720), true, GameImage_M::LayerType::Background);
 	RENDER.SetImage(L"rect_button.png", "back", Rect(0, 0, 100, 110)
 		, Rect(0, 0, 0, 0), false, GameImage_M::LayerType::UI);
 	//돌아가는 버튼위치 고민중
@@ -104,6 +107,14 @@ void CardGacha::DrawGacha(HDC p_hdc, int p_mx, int p_my, WCHAR p_text[])
 	//뽑은카드 출력하게 수정할것///////////////////
 	for (int i = 0; i < draw_card.size(); i++)
 	{
+		RENDER.SetImage(L"Rect_button.png", "c_bg" + to_string(i), Rect(0, 0, 100, 100)
+			, Rect(draw_card[i].x - 112 - 15, draw_card[i].y - 58 - 15, 100 + 15, 132 + 15), true, GameImage_M::LayerType::Background);
+		if (draw_card[i].GetUid() == -1)
+		{
+			RENDER.SetImage(L"cookie.png", "cookie" + to_string(this->cookie_num), Rect(0, 0, 250, 250)
+				, Rect(draw_card[i].x - 120, draw_card[i].y - 66, 100, 132), true, GameImage_M::LayerType::Card);
+			++cookie_num;
+		}
 		RENDER.MoveImage(to_string(draw_card[i].GetUid()), Rect(draw_card[i].x - 120, draw_card[i].y - 66, 100, 132));
 		RENDER.ImageVisible(to_string(draw_card[i].GetUid()), true);
 	}
@@ -113,10 +124,10 @@ void CardGacha::DrawGacha(HDC p_hdc, int p_mx, int p_my, WCHAR p_text[])
 
 void CardGacha::ExitGacha()
 {
-	for (int i = 0; i < draw_card.size(); i++)
-	{
-		RENDER.ImageVisible(to_string(draw_card[i].GetUid()), false);
-	}
+	for (int i = 0; i < draw_card.size(); i++) RENDER.ImageVisible(to_string(draw_card[i].GetUid()), false);
+	for (int i = 0; i < cookie_num; i++) RENDER.RemoveIDIamage("cookie" + to_string(i));
+
 	cout << "버튼 삭제" << endl;
 	RENDER.RemoveIDIamage("back");
+	RENDER.RemoveIDIamage("gacha_bg");
 }

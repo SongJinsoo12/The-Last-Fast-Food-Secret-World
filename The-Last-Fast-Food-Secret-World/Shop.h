@@ -87,30 +87,6 @@ public:
 			//상자 위치 설정해줌
 			chest[i].x = 875 + (i % 3) * 150, chest[i].y = 250 + (i / 3) * 200;
 		}
-
-		//상자 보관용 선반
-		RENDER.SetImage(L"shelf.png", "shelf1"
-			, Rect(0, 0, 651, 101), Rect(mov_sel, 250, 651, 101), false, GameImage_M::LayerType::Background);
-		RENDER.SetImage(L"shelf.png", "shelf2"
-			, Rect(0, 0, 651, 101), Rect(mov_sel, 450, 651, 101), false, GameImage_M::LayerType::Background);
-		//상점 주인 / 버튼형식으로 바꿔서 상호작용 추가하기
-		RENDER.SetImage(L"employee.png", "employee"
-			, Rect(0, 0, 250, 235), Rect(0, 0, 0, 0), false, GameImage_M::LayerType::Background);
-		m_ShopBtnM.AddButton(make_shared<CircleButton>("employee", 280, 320, 180));
-		//상자 정보 및 상점 주인 대사 출력용
-		RENDER.SetImage(L"textbox.png", "textbox"
-			, Rect(0, 0, 500, 200), Rect(50, 450, 500, 200), false, GameImage_M::LayerType::Background);
-		//상자 출력
-		for (int i = 0; i < 3; i++)
-		{
-			RENDER.SetImage(L"chest.png", "chest" + to_string(i)
-				, Rect(0, 0, 1024, 1024), Rect(0, 0, 0, 0), false, GameImage_M::LayerType::Background);
-		}
-
-		RENDER.SetImage(L"rect_button.png", "one"
-			, Rect(0, 0, 100, 110), Rect(0, 0, 0, 0), false, GameImage_M::LayerType::UI);
-		RENDER.SetImage(L"rect_button.png", "ten"
-			, Rect(0, 0, 100, 110), Rect(0, 0, 0, 0), false, GameImage_M::LayerType::UI);
 	}
 	virtual ~Shop()
 	{

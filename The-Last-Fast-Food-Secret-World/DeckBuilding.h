@@ -45,7 +45,7 @@ public:
 	}
 
 	void SaveDeck();
-	void LoadDeck();
+	void LoadDeck(vector<GameCard> p_all);
 
 	void PageBuff(bool p_isIncrease);
 	//중복이 존재하면 제거후 뒤의 카드들을 앞으로 이동

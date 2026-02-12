@@ -43,7 +43,7 @@ namespace GameState_M {
 
 	void Lobby::Enter()
 	{
-		g_DeckBuild.LoadDeck();//시작시 덱 로드, 세이브는 소멸자에
+		g_DeckBuild.LoadDeck(g_Gacha.GetAllCard());//시작시 덱 로드, 세이브는 소멸자에
 		/*M_REND.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(0, 0, 300, 300)
 			, false, GameImage_M::LayerType::Field);*/
 	}
