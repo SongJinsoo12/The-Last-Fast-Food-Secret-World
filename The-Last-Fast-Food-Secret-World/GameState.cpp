@@ -35,6 +35,12 @@ namespace GameState_M {
 
 	}
 
+	void Context::Init()
+	{
+		//시작시 덱 로드, 세이브는 소멸자에
+		g_DeckBuild.LoadDeck();
+	}
+
 	void Context::ChangeState(E_InGameState inputState) {
 		if (currentState != nullptr)
 			currentState.get()->Exit();

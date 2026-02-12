@@ -102,7 +102,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	switch (iMessage) {
 	case WM_CREATE:
 		GetClientRect(hWnd, &rect);
-		g_DeckBuild.LoadDeck();//시작시 덱 로드, 세이브는 소멸자에
+		STATE.Init();
+
 		STATE.ChangeState(GameState_M::E_InGameState::Lobby);
 		//SetTimer(hWnd, 1, 500, NULL);
 		break;

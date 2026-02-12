@@ -45,6 +45,8 @@ namespace GameState_M {
 		Context();
 
 	public:
+		void Init();
+
 		void ChangeState(E_InGameState inputState);
 
 		void Update(HDC p_hdc, HWND p_hwnd);
