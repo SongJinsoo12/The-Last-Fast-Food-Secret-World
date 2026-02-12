@@ -13,8 +13,6 @@ void GameLobby::Enter(){
 	//RENDER.SetImage(L"rect_button.png", "Start_Button_Pos"
 	//	, Rect(0, 0, 100, 100), Rect(x, y, 380, 100)
 	//	, true, GameImage_M::LayerType::UI);
-
-
 	RENDER.SetImage(L"background_lobby.jpg", "Lobby_Button_BackGround"
 		, Rect(0, 0, 1360, 752), Rect(0, 0, 1280, 720)
 		, true, GameImage_M::LayerType::Background);

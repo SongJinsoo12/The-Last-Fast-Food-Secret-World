@@ -64,6 +64,13 @@ namespace GameState_M {
 		void Exit() override;
 	};
 
+	class Stage :public State {
+	public:
+		void Enter() override;
+		void Update(HDC p_hdc, HWND p_hwnd) override;
+		void Exit() override;
+	};
+
 	class DeckBuild : public State {
 	public:
 		void Enter() override;

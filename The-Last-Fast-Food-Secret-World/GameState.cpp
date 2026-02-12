@@ -17,6 +17,7 @@ namespace GameState_M {
 		StateVector.resize((int)E_InGameState::InGameResult + 1);
 		StateVector[(int)E_InGameState::Lobby] = make_shared<Lobby>();
 		StateVector[(int)E_InGameState::Menu] = make_shared<Menu>();
+		StateVector[(int)E_InGameState::Stage] = make_shared<Stage>();
 		StateVector[(int)E_InGameState::DeckBuild] = make_shared<DeckBuild>();
 		StateVector[(int)E_InGameState::Shop] = make_shared<Shop>();
 		StateVector[(int)E_InGameState::LuckyBox] = make_shared<LuckyBox>();
@@ -75,6 +76,18 @@ namespace GameState_M {
 	void Menu::Exit() {
 		//M_REND.RemoveIDIamage("ID_1");
 		GameMenu::GetInstance().Exit();
+	}
+
+	void Stage::Enter()
+	{
+	}
+
+	void Stage::Update(HDC p_hdc, HWND p_hwnd)
+	{
+	}
+
+	void Stage::Exit()
+	{
 	}
 
 	void DeckBuild::Enter() {
