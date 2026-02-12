@@ -55,8 +55,11 @@ namespace GameState_M {
 		/*if (GameInput_M::Input::GetInstance().isClick() == (int)GameInput_M::MouseValue::Left)
 			STATE.ChangeState(GameState_M::E_InGameState::Shop);*/
 		//확인용으로 좌클릭 시 스테이지 클리어 결과 이동
+		/*if (GameInput_M::Input::GetInstance().isClick() == (int)GameInput_M::MouseValue::Left)
+			STATE.ChangeState(GameState_M::E_InGameState::InGameResult);*/
+
 		if (GameInput_M::Input::GetInstance().isClick() == (int)GameInput_M::MouseValue::Left)
-			STATE.ChangeState(GameState_M::E_InGameState::InGameResult);
+			STATE.ChangeState(GameState_M::E_InGameState::InGame);
 	}
 
 	void Lobby::Exit() {
