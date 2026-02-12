@@ -46,7 +46,6 @@ namespace GameState_M {
 
 	void Lobby::Enter()
 	{
-		g_DeckBuild.LoadDeck();//시작시 덱 로드, 세이브는 소멸자에
 		GameLobby::GetInstance().Enter();
 	}
 

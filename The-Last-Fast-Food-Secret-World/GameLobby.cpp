@@ -25,7 +25,8 @@ void GameLobby::Logic()
 	int mx, my;
 	INPUT.GetMousePos(&mx, &my);
 
-	if (btnManager.HandleClickId(mx, my) == "start") {
+	if (btnManager.HandleClickId(mx, my) == "start"
+		&& INPUT.isOneClick(GameInput_M::MouseValue::Left)) {
 		STATE.ChangeState(GameState_M::E_InGameState::Menu);
 	}
 }
