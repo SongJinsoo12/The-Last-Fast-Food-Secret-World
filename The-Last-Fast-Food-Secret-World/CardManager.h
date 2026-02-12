@@ -36,6 +36,7 @@ public:
 	void SetImage();
 	void LoadMonoGram(string p_image, string p_id, int p_x, int p_y);
 	void RemoveMonoGram(string p_id);
+	void PuaseGame();
 	
 	bool* GetIsShiny();
 	bool* GetIsRip();

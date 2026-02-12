@@ -221,6 +221,13 @@ void CardManager::RemoveMonoGram(string p_id)
 	}
 }
 
+void CardManager::PuaseGame()
+{
+	m_turnTime.Pause();
+	/*m_turnTime.SetTime(0);*/
+	cout << "게임 일시 정지" << endl;
+}
+
 
 bool* CardManager::GetIsShiny()
 {
@@ -495,14 +502,26 @@ void CardManager::CardAct(CardManager& player ,CardManager& opponent)
 void CardManager::HandSelect(CardManager& player, CardManager& opponent)
 {
 	if (GameInput_M::Input::GetInstance().isKeyboard(KEY_LEFT)
-		&& !(m_HandSelection <= 0)) m_HandSelection--;
+		&& !(m_HandSelection <= 0) && !m_turnTime.GetIsPuase()) m_HandSelection--;
 	else if (GameInput_M::Input::GetInstance().isKeyboard(KEY_RIGHT)
-		&& !(m_HandSelection >= m_HandCount - 1)) m_HandSelection++;
+		&& !(m_HandSelection >= m_HandCount - 1) && !m_turnTime.GetIsPuase()) m_HandSelection++;
 
-	else if (GameInput_M::Input::GetInstance().isKeyboard(KEY_UP)) m_IsSelect = true;
-	else if (GameInput_M::Input::GetInstance().isKeyboard(KEY_DOWN)) m_IsSelect = false;
-	else if (GameInput_M::Input::GetInstance().isKeyboard(KEY_ENTER) 
-		&& m_IsMyTurn) CardAct(player, opponent);
+	else if (GameInput_M::Input::GetInstance().isKeyboard(KEY_UP)
+		&& !m_turnTime.GetIsPuase()) m_IsSelect = true;
+	else if (GameInput_M::Input::GetInstance().isKeyboard(KEY_DOWN)
+		&& !m_turnTime.GetIsPuase()) m_IsSelect = false;
+	else if (GameInput_M::Input::GetInstance().isKeyboard(KEY_ENTER)
+		&& m_IsMyTurn && !m_turnTime.GetIsPuase()) CardAct(player, opponent);
+	else if (GameInput_M::Input::GetInstance().isKeyboard(VK_ESCAPE))
+	{
+		m_turnTime.Pause();
+		cout << "게임 일시 정지\n";
+	}
+	else if (GameInput_M::Input::GetInstance().isKeyboard(VK_DELETE))
+	{
+		m_turnTime.Resume();
+		cout << "게임 일시 정지 해제\n";
+	}
 }
 
 //시작 턴 정하기
@@ -528,6 +547,9 @@ void CardManager::StartTurn(CardManager& player, CardManager& opponent)
 
 void CardManager::TimeLimit(CardManager& player, CardManager& opponent)
 {
+	//일시정지
+	if (m_turnTime.GetIsPuase()) return;
+
 	if (!m_turnTime.GetIsStart())
 	{
 		m_turnTime.StartTimer();
