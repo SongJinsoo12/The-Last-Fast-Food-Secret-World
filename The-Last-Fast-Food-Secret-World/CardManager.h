@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Timer.h"
 #include <Windows.h>
 #include <vector>
@@ -6,10 +6,13 @@
 
 using namespace std;
 class GameCard;
+class Player;
+class Mob;
+
 
 #define LOAD 404
 
-//µ¦ ¹× ÆĞ Ãâ·Â
+//ë± ë° íŒ¨ ì¶œë ¥
 class CardManager
 {
 public:
@@ -38,18 +41,52 @@ public:
 	void PlayCardEffect(int x, int y);
 	void PlayRip(int x, int y);
 
-	// °ø°İ 2Àå ¹ö¸®°í 2ÅÏ »ç¿ë
+	// ê³µê²© 2ì¥ ë²„ë¦¬ê³  2í„´ ì‚¬ìš©
 	bool DiscardFirstAttackCard();
 
+	// CardManagerê°€ ì¡°ì‘í•  ì‹¤ì œ ì „íˆ¬ ê°ì²´(Player/Mob) ì—°ê²°
+	void BindActors(Player* player, Mob* enemy);
+
 private:
-	int m_DeckCount;//µ¦ Àå¼ö
-	int m_HandCount;//ÆĞ Àå¼ö
-	int m_HandSelection;//ÆĞ Ä«µå ¼±ÅÃ
-	vector<GameCard*> m_Hand;//ÆĞ Ä«µå
-	vector<GameCard*> m_Deck;//µ¦ Ä«µå
-	bool m_IsMyTurn;//ÅÏ È®ÀÎ
-	bool m_IsSelect;//ÆĞ Ä«µå ¼±ÅÃ È®ÀÎ
-	//AI m_boss;//º¸½º ai
+	// UID ì¹´ë“œì •ë³´
+	void ApplyUidMapping(GameCard* card);
+
+	int m_DeckCount;//ë± ì¥ìˆ˜
+	int m_HandCount;//íŒ¨ ì¥ìˆ˜
+	int m_HandSelection;//íŒ¨ ì¹´ë“œ ì„ íƒ
+	vector<GameCard*> m_Hand;//íŒ¨ ì¹´ë“œ
+	vector<GameCard*> m_Deck;//ë± ì¹´ë“œ
+	bool m_IsMyTurn;//í„´ í™•ì¸
+	bool m_IsSelect;//íŒ¨ ì¹´ë“œ ì„ íƒ í™•ì¸
+	//AI m_boss;//ë³´ìŠ¤ ai
 	Timer m_timer, m_shiny, m_rip;
 	bool m_isShiny, m_isRip;
+
+	// ===== ì¹´ë“œ íƒ€ì…ë³„ íš¨ê³¼(í…ŒìŠ¤íŠ¸ìš© ê¸°ë³¸ êµ¬í˜„) =====
+	void ApplyAttackTo(CardManager& opponent, GameCard* card);
+	void ApplyDefense(GameCard* card);
+	void ApplySupport(GameCard* card, CardManager& opponent);
+
+	// playerë‘ Mob(Boss) ê°€ì ¸ì˜¤ê¸°
+	Player* m_pPlayer = nullptr;
+	Mob* m_pEnemyMob = nullptr;
+
+	// í—¬í¼ ì¶”ê°€
+	int  ActorHP() const;
+	int  ActorMaxHP() const;
+	int  ActorShield() const;
+
+	void ActorAddShield(int v);
+	int  ActorTakeDamage(int dmg); // TakeDamage í˜¸ì¶œ
+	void ActorAddDot(int dmg, int ticks);
+
+	// í–‰ë„ ì¹´ë“œ í™•ì¸ìš©
+	int m_PlayLimitThisTurn = 1;   // ì´ë²ˆ í„´ ì‚¬ìš© ê°€ëŠ¥ íšŸìˆ˜
+	int m_PlaysUsedThisTurn = 0;   // ì´ë²ˆ í„´ ì‚¬ìš©í•œ íšŸìˆ˜
+
+	void RefreshPlayLimitFromPlayer();
+	void TickDotsAtTurnEnd(CardManager& cur, CardManager& opp);
+	void TryEndTurn(CardManager& opponent, HWND hWnd);
+
+	void OpponentAct(CardManager& player);
 };
