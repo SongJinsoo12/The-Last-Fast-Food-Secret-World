@@ -109,11 +109,84 @@ void Player::Heal(int amount)
     SetHP(m_hp + amount);
 }
 
+int Player::GetShield() const
+{
+    return m_shield;
+}
+
+void Player::SetShield(int v)
+{
+    if (v < 0) v = 0;
+    m_shield = v;
+}
+
+void Player::AddShield(int v)
+{
+    if (v <= 0) return;
+    m_shield += v;
+}
+
+int Player::TakeDamage(int dmg)
+{
+    if (dmg <= 0) return 0;
+
+    int absorbed = 0;
+    if (m_shield > 0)
+    {
+        absorbed = (m_shield >= dmg) ? dmg : m_shield;
+        m_shield -= absorbed;
+        dmg -= absorbed;
+    }
+
+    if (dmg <= 0) return 0;
+
+    // HP 감소는 기존 Damage()로 통일 (Roach 제거 등 부가효과 유지)
+    int before = m_hp;
+    Damage(dmg);
+    return before - m_hp;
+}
+
+void Player::AddDot(int dmg, int ticks)
+{
+    if (dmg <= 0 || ticks <= 0) return;
+    p_dots.push_back({ dmg, ticks });
+}
+
+void Player::TickDots()
+{
+    if (p_dots.empty()) return;
+
+    int total = 0;
+
+    for (size_t i = 0; i < p_dots.size();)
+    {
+        PlayerDotInfo& d = p_dots[i];
+        if (d.ticks > 0)
+        {
+            total += d.dmg;
+            d.ticks--;
+        }
+
+        if (d.ticks <= 0)
+            p_dots.erase(p_dots.begin() + i);
+        else
+            ++i;
+    }
+
+    if (total > 0)
+    {
+        // DOT는 "실드 무시"로 하고 싶으면 Damage(total)만 호출
+        // DOT도 실드에 막히게 하고 싶으면 TakeDamage(total) 호출
+        Damage(total);
+    }
+}
+
 bool Player::IsAlive() const { return m_hp > 0; }
 
 void Player::BeginTurn(int currentTurn)
 {
     m_turn = currentTurn;
+    SetShield(0); // "다음 내 턴 시작 시 실드 사라짐" 규칙
 
     // ---- 플레이 횟수 초기화 ----
     m_playsUsedThisTurn = 0;

@@ -38,6 +38,12 @@ enum class Player_AcquireSource
     SpawnedByRoach // 바퀴벌레 증식으로 생긴 추가분
 };
 
+struct PlayerDotInfo
+{
+    int dmg = 0;
+    int ticks = 0;
+};
+
 class Player
 {
 public:
@@ -62,6 +68,13 @@ public:
 
     // 회복 적용 (HP 증가). 보통 maxHP를 넘지 않도록 제한
     void Heal(int amount);
+
+    int  GetShield() const;
+    void SetShield(int v);
+    void AddShield(int v);
+    int  TakeDamage(int dmg); // 반환: 실제 HP가 깎인 양
+    void AddDot(int dmg, int ticks);
+    void TickDots(); // 턴 끝날 때 호출
 
     // 턴 시작 처리:
     // - 현재 턴 번호 기록
@@ -230,10 +243,7 @@ public:
     void getLastAttackDamage() const { return; }
     void takeDamage(int damage)
     {
-        lastDamageTaken = damage;
-        m_hp -= damage;
-        if (m_hp < 0) m_hp = 0;
-        Damage(damage);
+        TakeDamage(damage);
     }
 
     int getLastdamageTaken() const { return lastDamageTaken; }
@@ -288,12 +298,19 @@ public:
     void Debug_SetHandIds(const std::vector<int>& ids) { m_hand = ids; }
 
 private:
+    // CardManager public으로 사용
     // 플레이어 표시용 이름
     std::wstring m_name = L"Player";
 
     // 현재/최대 HP
     int m_hp = 1;
     int m_maxHp = 1;
+
+   // 실드
+    int m_shield = 0;
+
+    // 도트뎀
+    std::vector<PlayerDotInfo> p_dots;
 
     // 현재 턴 카운터(게임 턴 번호 저장)
     int m_turn = 0;
