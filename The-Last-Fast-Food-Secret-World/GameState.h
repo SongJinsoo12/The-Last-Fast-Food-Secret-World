@@ -45,6 +45,7 @@ namespace GameState_M {
 		Context();
 
 	public:
+		void Init();
 		void ChangeState(E_InGameState inputState);
 
 		void Update(HDC p_hdc, HWND p_hwnd);
@@ -58,6 +59,13 @@ namespace GameState_M {
 	};
 
 	class Menu :public State {
+	public:
+		void Enter() override;
+		void Update(HDC p_hdc, HWND p_hwnd) override;
+		void Exit() override;
+	};
+
+	class Stage :public State {
 	public:
 		void Enter() override;
 		void Update(HDC p_hdc, HWND p_hwnd) override;
@@ -104,4 +112,5 @@ namespace GameState_M {
 		void Exit() override;
 	};
 }
+
 
