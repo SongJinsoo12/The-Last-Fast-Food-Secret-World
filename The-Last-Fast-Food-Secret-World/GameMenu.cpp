@@ -10,24 +10,31 @@ void GameMenu::Enter()
 		, Rect(0, 0, 1360, 752), Rect(0, 0, 1280, 720)
 		, true, GameImage_M::LayerType::Background);
 
-	//¿¸¿Â πˆ∆∞
+	//Ï†ÑÏû• Î≤ÑÌäº
 	int x, y;
-	x = 330, y = 195;
+	x = 330, y = 80;
 	ButtonMenu.AddButton(make_shared<RectButton>("Stage", RECT{ x,y,x + 600,y + 75 }));
-	//RENDER.SetImage(L"rect_button.png", "Stage_Button_Pos"
+	//RENDER.SetImage(L"rect_button.png", "Stag_Button_Pos"
 	//	, Rect(0, 0, 100, 100), Rect(x, y, 600, 75)
 	//	, true, GameImage_M::LayerType::UI);
 
-	//ªÛ¡° πˆ∆∞
+	//Îç±ÎπåÎìú Î≤ÑÌäº
+	y += 110;
+	ButtonMenu.AddButton(make_shared<RectButton>("DeckBuild", RECT{ x,y,x + 600,y + 75 }));
+	//RENDER.SetImage(L"rect_button.png", "DeckBuild_Button_Pos"
+	//	, Rect(0, 0, 100, 100), Rect(x, y, 600, 75)
+	//	, true, GameImage_M::LayerType::UI);
+
+	//ÏÉÅÏ†ê Î≤ÑÌäº
 	y += 125;
 	ButtonMenu.AddButton(make_shared<RectButton>("Shop", RECT{ x,y,x + 600,y + 75 }));
 	//RENDER.SetImage(L"rect_button.png", "Shop_Button_Pos"
 	//	, Rect(0, 0, 100, 100), Rect(x, y, 600, 75)
 	//	, true, GameImage_M::LayerType::UI);
 
-	//∑Œ∫Ò∑Œ µπæ∆∞°±‚ πˆ∆∞
+	//Î°úÎπÑÎ°ú ÎèåÏïÑÍ∞ÄÍ∏∞ Î≤ÑÌäº
 	x += 55;
-	y += 250;
+	y += 255;
 	ButtonMenu.AddButton(make_shared<RectButton>("Lobby", RECT{ x,y,x + 485,y + 75 }));
 	//RENDER.SetImage(L"rect_button.png", "Exit_Button_Pos"
 	//	, Rect(0, 0, 100, 100), Rect(x, y, 485, 75)
@@ -42,7 +49,11 @@ void GameMenu::Logic()
 
 	if (ButtonMenu.HandleClickId(mx, my) == "Stage" 
 		&& INPUT.isOneClick(GameInput_M::MouseValue::Left)) {
-		STATE.ChangeState(GameState_M::E_InGameState::InGame);
+		STATE.ChangeState(GameState_M::E_InGameState::Stage);
+	}
+	if (ButtonMenu.HandleClickId(mx, my) == "DeckBuild"
+		&& INPUT.isOneClick(GameInput_M::MouseValue::Left)) {
+		STATE.ChangeState(GameState_M::E_InGameState::DeckBuild);
 	}
 	if (ButtonMenu.HandleClickId(mx, my) == "Shop"
 		&& INPUT.isOneClick(GameInput_M::MouseValue::Left)) {
