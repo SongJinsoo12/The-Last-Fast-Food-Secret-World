@@ -269,4 +269,16 @@ namespace GameState_M {
 	}
 
 
+	void Stage::Enter()
+	{
+	}
+
+	void Stage::Update(HDC p_hdc, HWND p_hwnd)
+	{
+	}
+
+	void Stage::Exit()
+	{
+	}
+
 }
