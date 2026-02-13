@@ -1,4 +1,4 @@
-﻿﻿#pragma once
+﻿#pragma once
 
 #include "Card.h"   // CAttribute, CRank, CardManager
 #include "CardManager.h"

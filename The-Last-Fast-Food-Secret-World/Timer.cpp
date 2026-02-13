@@ -1,6 +1,6 @@
 #include "Timer.h"
 
-Timer::Timer() : m_time(0), m_puaseTime(0), m_isStart(false), m_isPuase(false), m_index(0)
+Timer::Timer() : m_time(0), m_isStart(false), m_index(0)
 {
 }
 
@@ -52,35 +52,4 @@ void Timer::SetIndex(int p_index)
 void Timer::PlusIndex()
 {
 	m_index++;
-}
-
-void Timer::Pause()
-{
-	if (!m_isPuase)
-	{
-		m_puase = chrono::system_clock::now();
-		m_puaseTime = m_time;
-		m_isPuase = true;
-	}
-}
-
-void Timer::Resume()
-{
-	if (m_isPuase)
-	{
-		m_time = m_puaseTime;
-		m_isPuase = false;
-	}
-	m_puaseTime = chrono::system_clock::now() - m_puase;
-    m_start = m_start + std::chrono::duration_cast<std::chrono::system_clock::duration>(m_puaseTime);
-}
-
-void Timer::SetTime(double p_time)
-{
-	m_time = chrono::duration<double>(p_time);
-}
-
-bool Timer::GetIsPuase()
-{
-	return m_isPuase;
 }
