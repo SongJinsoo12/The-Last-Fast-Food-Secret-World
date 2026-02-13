@@ -5,12 +5,7 @@
 #include <chrono>
 
 //각 화면
-<<<<<<< HEAD
  
-=======
-#include "GameLobby.h"
-#include "GameMenu.h" 
->>>>>>> 41382111320f47a0c72622284717d593348aec06
 #include "Shop.h"
 #include "DeckBuilding.h"
 #include "CardGacha.h"
@@ -26,7 +21,6 @@ namespace GameState_M {
 		StateVector.resize((int)E_InGameState::InGameResult + 1);
 		StateVector[(int)E_InGameState::Lobby] = make_shared<Lobby>();
 		StateVector[(int)E_InGameState::Menu] = make_shared<Menu>();
-		StateVector[(int)E_InGameState::Stage] = make_shared<Stage>();
 		StateVector[(int)E_InGameState::DeckBuild] = make_shared<DeckBuild>();
 		StateVector[(int)E_InGameState::Shop] = make_shared<Shop>();
 		StateVector[(int)E_InGameState::LuckyBox] = make_shared<LuckyBox>();
@@ -44,12 +38,6 @@ namespace GameState_M {
 
 	}
 
-	void Context::Init()
-	{
-		//시작시 덱 로드, 세이브는 소멸자에
-		g_DeckBuild.LoadDeck();
-	}
-
 	void Context::ChangeState(E_InGameState inputState) {
 		if (currentState != nullptr)
 			currentState.get()->Exit();
@@ -61,7 +49,6 @@ namespace GameState_M {
 
 	void Lobby::Enter()
 	{
-<<<<<<< HEAD
 		g_DeckBuild.LoadDeck();//시작시 덱 로드, 세이브는 소멸자에
 		/*M_REND.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(0, 0, 300, 300)
 			, false, GameImage_M::LayerType::Field);*/
@@ -76,46 +63,24 @@ namespace GameState_M {
 			STATE.ChangeState(GameState_M::E_InGameState::InGameResult);*/
 		if (GameInput_M::Input::GetInstance().isClick() == (int)GameInput_M::MouseValue::Left)
 			STATE.ChangeState(GameState_M::E_InGameState::InGame);
-=======
-		GameLobby::GetInstance().Enter();
-	}
-
-	void Lobby::Update(HDC p_hdc, HWND p_hwn) {
-		GameLobby::GetInstance().Logic();
->>>>>>> 41382111320f47a0c72622284717d593348aec06
 	}
 
 	void Lobby::Exit() {
 		//M_REND.AllRemoveImage();
-		GameLobby::GetInstance().Exit();
 	}
 
 	void Menu::Enter()
 	{
 		//M_REND.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(100, 0, 300, 300), true, GameImage_M::LayerType::Field);
-		GameMenu::GetInstance().Enter();
 	}
 
 	void Menu::Update(HDC p_hdc, HWND p_hwnd)
 	{
-		GameMenu::GetInstance().Logic();
+
 	}
 
 	void Menu::Exit() {
 		//M_REND.RemoveIDIamage("ID_1");
-		GameMenu::GetInstance().Exit();
-	}
-
-	void Stage::Enter()
-	{
-	}
-
-	void Stage::Update(HDC p_hdc, HWND p_hwnd)
-	{
-	}
-
-	void Stage::Exit()
-	{
 	}
 
 	void DeckBuild::Enter() {
@@ -236,11 +201,8 @@ namespace GameState_M {
 
 	void InGame::Enter()
 	{
-<<<<<<< HEAD
 		m_player.BindActors(&g_playerActor, &g_enemyActor);
 		m_boss.BindActors(nullptr, &g_enemyActor);
-=======
->>>>>>> 41382111320f47a0c72622284717d593348aec06
 		//이미지 로드/보여기
 		//값 초기화 가능 
 		m_player.SetImage();
@@ -256,7 +218,6 @@ namespace GameState_M {
 
 	void InGame::Update(HDC p_hdc, HWND p_hwnd)
 	{
-<<<<<<< HEAD
 		// ✅ 현재 턴 주인만 타임리밋(턴 전환)을 돌린다
 		if (m_player.IsMyTurn())
 			m_player.TimeLimit(m_player, m_boss);
@@ -270,12 +231,6 @@ namespace GameState_M {
 		////게임 로직 함수
 		//m_player.HandSelect(m_player, m_boss);
 
-=======
-		m_player.TimeLimit(m_player, m_boss);
-		//게임 로직 함수
-		m_player.HandSelect(m_player, m_boss);
-
->>>>>>> 41382111320f47a0c72622284717d593348aec06
 		//패 출력
 		m_player.DrawPlayerHand();
 		m_boss.DrawOppHand();
@@ -313,6 +268,5 @@ namespace GameState_M {
 	{
 		g_StageResult.ExitInGameResult();
 	}
-
 
 }
