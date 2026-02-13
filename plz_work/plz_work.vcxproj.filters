@@ -1,0 +1,315 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="SoLoud">
+      <UniqueIdentifier>{e4db8d65-42f7-440c-81ab-dc4460a5b325}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="메인">
+      <UniqueIdentifier>{36520852-f8fd-4068-91cb-2e62f4ab02a3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="RenderLayer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Shop.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Sound.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="stage.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Stats.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Status.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="SupportCard.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="AtkCard.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Boss.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ButtonManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Card.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CardGacha.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CardImageManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CardManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CardRule.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CardTableManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DeckBuilding.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DefCard.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="GameLobby.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="GameMenu.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="GameState.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageLoad.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="InputGame.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Mob.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="External\SoLoud\src\backend\winmm\soloud_winmm.cpp">
+      <Filter>SoLoud</Filter>
+    </ClCompile>
+    <ClCompile Include="External\SoLoud\src\core\soloud.cpp">
+      <Filter>SoLoud</Filter>
+    </ClCompile>
+    <ClCompile Include="External\SoLoud\src\core\soloud_audiosource.cpp">
+      <Filter>SoLoud</Filter>
+    </ClCompile>
+    <ClCompile Include="External\SoLoud\src\core\soloud_bus.cpp">
+      <Filter>SoLoud</Filter>
+    </ClCompile>
+    <ClCompile Include="External\SoLoud\src\core\soloud_core_3d.cpp">
+      <Filter>SoLoud</Filter>
+    </ClCompile>
+    <ClCompile Include="External\SoLoud\src\core\soloud_core_basicops.cpp">
+      <Filter>SoLoud</Filter>
+    </ClCompile>
+    <ClCompile Include="External\SoLoud\src\core\soloud_core_faderops.cpp">
+      <Filter>SoLoud</Filter>
+    </ClCompile>
+    <ClCompile Include="External\SoLoud\src\core\soloud_core_filterops.cpp">
+      <Filter>SoLoud</Filter>
+    </ClCompile>
+    <ClCompile Include="External\SoLoud\src\core\soloud_core_getters.cpp">
+      <Filter>SoLoud</Filter>
+    </ClCompile>
+    <ClCompile Include="External\SoLoud\src\core\soloud_core_setters.cpp">
+      <Filter>SoLoud</Filter>
+    </ClCompile>
+    <ClCompile Include="External\SoLoud\src\core\soloud_core_voicegroup.cpp">
+      <Filter>SoLoud</Filter>
+    </ClCompile>
+    <ClCompile Include="External\SoLoud\src\core\soloud_core_voiceops.cpp">
+      <Filter>SoLoud</Filter>
+    </ClCompile>
+    <ClCompile Include="External\SoLoud\src\core\soloud_fader.cpp">
+      <Filter>SoLoud</Filter>
+    </ClCompile>
+    <ClCompile Include="External\SoLoud\src\core\soloud_fft.cpp">
+      <Filter>SoLoud</Filter>
+    </ClCompile>
+    <ClCompile Include="External\SoLoud\src\core\soloud_fft_lut.cpp">
+      <Filter>SoLoud</Filter>
+    </ClCompile>
+    <ClCompile Include="External\SoLoud\src\core\soloud_file.cpp">
+      <Filter>SoLoud</Filter>
+    </ClCompile>
+    <ClCompile Include="External\SoLoud\src\core\soloud_filter.cpp">
+      <Filter>SoLoud</Filter>
+    </ClCompile>
+    <ClCompile Include="External\SoLoud\src\core\soloud_misc.cpp">
+      <Filter>SoLoud</Filter>
+    </ClCompile>
+    <ClCompile Include="External\SoLoud\src\core\soloud_queue.cpp">
+      <Filter>SoLoud</Filter>
+    </ClCompile>
+    <ClCompile Include="External\SoLoud\src\core\soloud_thread.cpp">
+      <Filter>SoLoud</Filter>
+    </ClCompile>
+    <ClCompile Include="External\SoLoud\src\audiosource\wav\dr_impl.cpp">
+      <Filter>SoLoud</Filter>
+    </ClCompile>
+    <ClCompile Include="External\SoLoud\src\audiosource\wav\soloud_wav.cpp">
+      <Filter>SoLoud</Filter>
+    </ClCompile>
+    <ClCompile Include="External\SoLoud\src\audiosource\wav\soloud_wavstream.cpp">
+      <Filter>SoLoud</Filter>
+    </ClCompile>
+    <ClCompile Include="External\SoLoud\src\audiosource\wav\stb_vorbis.c">
+      <Filter>SoLoud</Filter>
+    </ClCompile>
+    <ClCompile Include="WM_Main.cpp">
+      <Filter>메인</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>메인</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Boss.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SoLoud\src\audiosource\wav\dr_flac.h">
+      <Filter>SoLoud</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SoLoud\src\audiosource\wav\dr_mp3.h">
+      <Filter>SoLoud</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SoLoud\src\audiosource\wav\dr_wav.h">
+      <Filter>SoLoud</Filter>
+    </ClInclude>
+    <ClInclude Include="External\SoLoud\src\audiosource\wav\stb_vorbis.h">
+      <Filter>SoLoud</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="AtkCard.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="BattleTypes.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ButtonManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Card.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CardGacha.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CardImageManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CardManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CardRule.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CardTableManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DeckBuilding.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DefCard.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="GameLobby.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMenu.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageLoad.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="InputGame.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="json.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="macroNum.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="MainGame.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Mob.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderLayer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Shop.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Singleton.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Sound.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="stage.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Stats.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Status.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="SupportCard.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
