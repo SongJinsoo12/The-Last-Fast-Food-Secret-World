@@ -75,7 +75,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 #include "GameState.h"
 #include "InputGame.h"
 #include "ButtonManager.h"
-#include "DeckBuilding.h"
 #include "macroNum.h"
 
 //#define BSIZE 40
