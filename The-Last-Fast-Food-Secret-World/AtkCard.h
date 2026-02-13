@@ -1,7 +1,7 @@
 #pragma once
 #include "Card.h"
 #include "CardRule.h"
-#include "Mob.h"
+//#include "Mob.h"
 
 //공격 5 / 10 / 15
 //? 피해 / 5 / 10 / 15

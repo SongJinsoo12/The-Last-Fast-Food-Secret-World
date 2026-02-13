@@ -56,8 +56,13 @@ namespace GameState_M {
 			STATE.ChangeState(GameState_M::E_InGameState::Shop);*/
 		//확인용으로 좌클릭 시 스테이지 클리어 결과 이동
 		if (GameInput_M::Input::GetInstance().isClick() == (int)GameInput_M::MouseValue::Left)
+			//테스트용 스테이지 상태 조정
+		{
+			g_MainGame.GameState = E_STAGE_CLEAR;
+			g_StageResult.StageState = E_STAGE_NORMAL;
 			STATE.ChangeState(GameState_M::E_InGameState::InGameResult);
-	}
+		}
+		}
 
 	void Lobby::Exit() {
 		//M_REND.AllRemoveImage();
@@ -230,9 +235,14 @@ namespace GameState_M {
 
 	void InGameResult::Enter()
 	{
+		g_StageResult.IsStageClear();
+		g_StageResult.SetInGameResult();
 		g_StageResult.DrawInGameResult();
 		g_StageResult.DrawStageClearButton();
 		cout << "InGameResult Enter" << endl;
+		cout << "현 스테이지 상태" << g_StageResult.StageState << endl;
+		cout << "스테이지 넘버" << g_MainGame.GetLargeStage() << "-" << g_MainGame.GetSmallStage() << endl;
+		cout << "게임상태" << g_MainGame.GameState << endl;
 	}
 
 	void InGameResult::Update(HDC p_hdc, HWND p_hwnd)
@@ -242,7 +252,8 @@ namespace GameState_M {
 		if (g_StageResult.m_StageClearBtn.HandleClickId(g_MainGame.mx, g_MainGame.my) == "StageClearBtn_1")
 		{
 			cout << "버튼 클릭됨" << endl;
-			g_StageResult.NextStage();
+			
+			g_StageResult.IncreaseStage();
 			STATE.ChangeState(GameState_M::E_InGameState::Lobby);
 			return;
 		}

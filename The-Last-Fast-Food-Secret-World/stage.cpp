@@ -5,17 +5,11 @@
 #include "ButtonManager.h"
 
 StageClear g_StageResult;
+TutorialStage g_TutorialStage;
 
 
 
 
-int Stage::Get_LargeStage() { //튜토리얼 클래스 용
-    return LargeStage;
-}
-
-int Stage::Get_SmallStage() { //튜토리얼 클래스 용
-    return SmallStage;
-}
 
 
 
@@ -29,7 +23,7 @@ int Stage::Get_SmallStage() { //튜토리얼 클래스 용
 //    return true;
 //}
 bool TutorialStage::CheckTutorial() {
-    if (Get_LargeStage() <= 1 && Get_SmallStage() <= 3)
+    if (GetLargeStage() == 1 && GetSmallStage() <= 3)
     {
         StageState = E_STAGE_TUTORIAL;
         cout << "튜토리얼 속행" << endl;
@@ -48,8 +42,9 @@ int Stage::DropReward() {
 	
     if (SmallStage % 5 == 0)
     {
-        //팩 뽑기 횟수 변수?
+       
         cout << "골드, 카드박스 드롭됨" << endl;
+        CardBox++; //카드박스10x 획득
         return LargeStage * SmallStage * 100; //보스
 
     }
@@ -91,24 +86,23 @@ bool Stage::IsLastBossStage() {
 } //라보 스테이지 체크
 
 TCardType TutorialStage::TutorialCard() {
-    if (CheckTutorial()) {
-
-        if (Get_LargeStage() == 1 && Get_SmallStage() == 1)
+    
+        if (GetLargeStage() == 1 && GetSmallStage() == 1)
             return E_TUTORIAL_ATTACK;
 
-        if (Get_LargeStage() == 1 && Get_SmallStage() == 2)
+        if (GetLargeStage() == 1 && GetSmallStage() == 2)
             return E_TUTORIAL_DEFENSE;
 
-        if (Get_LargeStage() == 1 && Get_SmallStage() == 3)
+        if (GetLargeStage() == 1 && GetSmallStage() == 3)
             return E_TUTORIAL_MAGIC;
-    }
+    
 
     // 카드.h enum
 }
 
-bool Stage::StageStart() {
-    return true;
-}
+//bool Stage::StageStart() {
+//    return true;
+//}
 
 
 
@@ -122,31 +116,32 @@ bool Stage::StageStart() {
 //    E_DEAD,
 //    E_GAMEOVER
 //};
-int Stage::StageClear(bool isMonsterLost) {
+void Stage::IsStageClear() {
+    
 
-    if (IsLastBossStage())
-        StageState = E_STAGE_GAMECLEAR;
-
-
-    if (!isMonsterLost) //몬스터 hp = 0 또는 몬스터 비활성화일떄 else 코드 실행
+    if (g_MainGame.GameState == E_STAGE_CLEAR )
     {
-        GameState = E_PVP;
-        return GameState;
+        IsBossStage();
+        //return true;
     }
     else
     {
-        GameState = E_STAGE_CLEAR;
-
+        g_MainGame.GameState = E_GAMEOVER;
     }
 
-    AddGold(DropReward());
-    //GameState = E_MENU;
-    return GameState;
+    
+   
+        
 
+    
+
+    AddGold(DropReward());
+	//cout << "골드, 카드획득>> 골드: " <<  <<" 카드: " << CardBox << endl;
 }
 
-int Stage::NextStage() {
-    if (GameState == E_MENU) {
+int Stage::IncreaseStage() {
+    
+    if (g_MainGame.GameState == E_STAGE_CLEAR) {
         if (SmallStage != 5)
         {
             SmallStage++;
@@ -156,75 +151,116 @@ int Stage::NextStage() {
             LargeStage++;
             SmallStage = 1;
         }
-        GameState = E_PVP;
+       
+    }
+    
+    if (g_TutorialStage.CheckTutorial())
+    {
+        g_TutorialStage.TutorialCard();
     }
     IsBossStage();
+
     return GameState;
 }
 
-bool Stage::IsGameClear() {
-    return StageState == E_STAGE_GAMECLEAR;
-}
+//bool Stage::IsGameClear() {
+//    return StageState == E_STAGE_GAMECLEAR;
+//}
 
-bool Stage::GameOver(bool isPlayerLost/* player.h  IsAlive()*/) {
+bool Stage::IsGameOver() {
 
-    if (!isPlayerLost) {
+    if (g_MainGame.GameState != E_DEAD) {
 
-        GameState = E_PVP;
         return false;
     }
     else
     {
-        GameState = E_GAMEOVER;
+        g_MainGame.GameState = E_GAMEOVER;
 
         return true;
     }
 }
-
+//enum State {
+//    E_START,
+//    E_MENU,
+//    E_SHOP,
+//    E_PVP,
+//    E_STAGE_CLEAR,
+//    E_DEAD,
+//    E_GAMEOVER
+//};
 
 
 void StageClear::DrawStageClearButton() {
-    m_StageClearBtn.AddButton(make_shared<RectButton>("StageClearBtn_1", RECT{ 650, 360, 750, 410 }));
+    if (g_MainGame.GameState == E_STAGE_CLEAR) {
+        m_StageClearBtn.AddButton(make_shared<RectButton>("StageClearBtn_1", RECT{ 640 - 96, 360 - 48, 640 - 96 + 144, 360 - 48 + 70 }));
+    }
+    else if (g_MainGame.GameState == E_GAMEOVER) {
+        m_StageClearBtn.AddButton(make_shared<RectButton>("StageLostBtn_1", RECT{ 640 - 96, 360 - 48, 640 - 96 + 144, 360 - 48 + 70 }));
+    } 
 
 }
 
+
+void StageClear :: SetInGameResult() {
+    RENDER.MoveImage("StageClear",
+        Gdiplus::Rect(0, 0, 1280, 720));
+    RENDER.MoveImage("StageLost",
+        Gdiplus::Rect(0, 0, 1280, 720));
+    RENDER.MoveImage("Boss_StageClear",
+		Gdiplus::Rect(0, 0, 1280, 720));
+    RENDER.MoveImage("StageClearBtn_1",
+        Gdiplus::Rect(640 - 96, 360 - 48, 144, 70));//크기조절 //96 48
+	RENDER.MoveImage("StageLostBtn_1",
+		Gdiplus::Rect(640 - 96, 360 - 48, 144, 70));//크기조절 //96 48
+    RENDER.MoveImage("InGameResult_Gold",
+        Gdiplus::Rect(640 - 96, 360 - 48, 144, 70));//크기조절 //96 48
+    RENDER.MoveImage("InGameResult_CardBox",
+        Gdiplus::Rect(640 - 96, 360 - 48, 144, 70));//크기조절 //96 48
+}
+
+
 void StageClear::DrawInGameResult() {
-    
-        RENDER.ImageVisible("StageClear", true);//배경
-        RENDER.ImageVisible("StageClearBtn_1", true);//버튼
+    switch (g_MainGame.GameState) {
+    case E_STAGE_CLEAR:
+        if (StageState == E_STAGE_NORMAL) {
+            RENDER.ImageVisible("StageClear", true);//배경
+            RENDER.ImageVisible("StageClearBtn_1", true);//클리어버튼 보이기
+            RENDER.ImageVisible("IngameResult_Gold", true); //골드
+        }
+        if (StageState == E_STAGE_BOSS) {
+            RENDER.ImageVisible("IngameResult_CardBox", true);//카드박스 보이기
+        }
+        break;
+    case E_GAMEOVER:
+        RENDER.ImageVisible("StageLost", true);//게임오버 이미지 보이기
+		RENDER.ImageVisible("StageLostBtn_1", true);//게임오버 버튼 보이기
+		break;
+    }           
+		
         RENDER.MoveImage("StageClear",
                     Gdiplus::Rect(0, 0, 1280, 720));
         RENDER.MoveImage("StageClearBtn_1",
-                    Gdiplus::Rect(650, 360, 200, 100));//크기조절 
+                    Gdiplus::Rect(640-96, 360-48, 144, 70));//크기조절 //96 48
+
         /*RENDER.MoveImage("StageClearBtn_1",
             Gdiplus::Rect(650, 360, 1950, 1080));*/
         
 }
 
 void StageClear::ExitInGameResult() {
-    RENDER.ImageVisible("StageClear", false);
-	RENDER.ImageVisible("StageClearBtn_1", false); 
+    
+        RENDER.ImageVisible("StageClear", false);
+        RENDER.ImageVisible("GameOver", false);
+
+	    RENDER.ImageVisible("StageClearBtn_1", false);
+        RENDER.ImageVisible("StageLostBtn_1", false);
+
+        RENDER.ImageVisible("IngameResult_Gold", false); 
+		RENDER.ImageVisible("IngameResult_CardBox", false);
+        g_MainGame.GameState = E_MENU;
+
+	cout << "InGameResult Exit" << endl;
 }
-//void Stage::LoadStageClearScreen() {
-//    RECT StageClearBtnRect = { 340, 360, 540, 460 };
-//
-//    RENDER.ImageVisible("StageClear", true);
-//    RENDER.ImageVisible("StageClearBtn_1", true);
-//    RENDER.MoveImage("StageClear",
-//        Gdiplus::Rect(640, 360, 500, 500));
-//    RENDER.MoveImage("StageClearBtn_1",
-//        Gdiplus::Rect(500, 360, 500, 500));
-//
-//    btnManager.AddButton(make_shared<RectButton>("StageClearBtn_1", StageClearBtnRect));
-//    cout << "스테이지 클리어 화면 출력 확인" << endl;
-//    while?
-//    /*if (btnManager.HandleClick(m_Input.m_MousePosX, m_Input.m_MousePosY) && btnManager.HandleClick(mg.mx, mg.my) -> GetId() == "StageClearBtn_1")
-//    {
-//        GameState = E_MENU;
-//        m_rend.ImageVisible("StageClear", false);
-//
-//        btnManager.SetVisibleById("StageClearBtn_1", false);
-//    }*/
-//
-//}
+
 
