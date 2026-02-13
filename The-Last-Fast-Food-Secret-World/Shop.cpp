@@ -97,6 +97,7 @@ void Shop::ExitShop()
 	RENDER.RemoveIDIamage("textbox");
 	RENDER.RemoveIDIamage("one");
 	RENDER.RemoveIDIamage("ten");
+	RENDER.RemoveIDIamage("back");
 	for (int i = 0; i < 3; i++) RENDER.RemoveIDIamage("chest" + to_string(i+1));
 	//RENDER.AllRemoveImage();
 	mov_sel = 1400;
@@ -119,7 +120,7 @@ void Shop::DrawShop(HDC p_hdc, WCHAR p_text[])
 	}
 	RENDER.SetImage(L"rect_button.png", "back", Rect(0, 0, 100, 101)
 		, Rect(0, 0, 0, 0), true, GameImage_M::LayerType::UI);
-	m_ShopBtnM.AddButton(make_shared<RectButton>("back", RECT{ 10, 10, 60, 40 }));
+	m_ShopBtnM.AddButton(make_shared<RectButton>("back", RECT{ 10, 50, 60, 70 }));
 
 	m_ShopBtnM.DrawAll();
 }

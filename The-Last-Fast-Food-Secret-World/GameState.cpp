@@ -52,7 +52,8 @@ namespace GameState_M {
 	void Context::Init()
 	{
 		//시작시 덱 로드, 세이브는 소멸자에
-		g_DeckBuild.LoadDeck();
+		g_DeckBuild.LoadDeck(g_Gacha.GetAllCard());
+		g_MainGame.AddGold(1000);
 	}
 
 	void Lobby::Enter()
@@ -138,6 +139,10 @@ namespace GameState_M {
 			if (INPUT.isClick() == (int)GameInput_M::MouseValue::Left)
 			{
 				INPUT.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
+				if (g_Shop.m_ShopBtnM.HandleClickId(g_MainGame.mx, g_MainGame.my) == "back")
+				{
+					STATE.ChangeState(GameState_M::E_InGameState::Menu);
+				}
 				g_Shop.SelectChest(g_MainGame.mx, g_MainGame.my);
 			}
 
@@ -182,7 +187,7 @@ namespace GameState_M {
 			INPUT.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
 
 		//돌아가기 버튼 클릭시 상점으로 이동
-		if (btnManager.HandleClickId(g_MainGame.mx, g_MainGame.my) == "back")
+		if (g_Gacha.m_GachaBtnM.HandleClickId(g_MainGame.mx, g_MainGame.my) == "back")
 		{
 			STATE.ChangeState(GameState_M::E_InGameState::Shop);
 			return;
