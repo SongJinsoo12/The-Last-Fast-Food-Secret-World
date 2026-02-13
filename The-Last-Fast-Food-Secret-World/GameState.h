@@ -31,6 +31,7 @@ namespace GameState_M {
 		virtual void Enter() = 0;
 		virtual void Update(HDC p_hdc, HWND p_hwnd) = 0;
 		virtual void Exit() = 0;
+		void MonoGram(string p_image, string p_id, int p_x, int p_y);
 	};
 
 	class Context : public Singleton<Context>
@@ -100,9 +101,12 @@ namespace GameState_M {
 		void Enter() override;
 		void Update(HDC p_hdc, HWND p_hwnd) override;
 		void Exit() override;
+
+		void PlayAnimation(Timer& p_timer, Animation& p_effect, bool* p_isPlay);
 	private:
 		CardManager m_player, m_boss;
-		//Timer m_timer;
+		Timer m_shiny, m_rip, m_skill, m_def;
+		Animation m_shinyEffect, m_ripEffect, m_skillEffect, m_defEffect;
 	};
 
 	class InGameResult :public State {

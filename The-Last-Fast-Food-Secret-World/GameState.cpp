@@ -2,6 +2,7 @@
 #include "RenderManager.h"
 #include "InputGame.h"
 #include "CardTableManager.h"
+#include "Sound.h"
 #include <chrono>
 
 //각 화면
@@ -218,7 +219,68 @@ namespace GameState_M {
 		m_player.StartTurn(m_player, m_boss);
 		m_player.DrawPlayerHand();
 		m_boss.DrawOppHand();
+
+		//�ִϸ��̼� �۾�
+		m_shinyEffect.SetId("Card_Shiny_");
+		m_shinyEffect.SetImageSize(200, 200, 100, 128);
+		m_shinyEffect.SetIndex(10);
+
+		m_ripEffect.SetId("Card_Rip_");
+		m_ripEffect.SetImageSize(300, 200, 100, 128);
+		m_ripEffect.SetIndex(15);
+
+		m_skillEffect.SetId("Card_Skill_");
+		m_skillEffect.SetImageSize(430, 200, 128, 128);
+		m_skillEffect.SetIndex(27);
+
+		m_defEffect.SetId("Def_Effect_");
+		m_defEffect.SetImageSize(600, 200, 192, 192);
+		m_defEffect.SetIndex(20);
+
+		//bgm
+		Sound::Instance()->PlayBgm();
 	}
+
+	void InGame::PlayAnimation(Timer& p_timer, Animation& p_effect, bool* p_isPlay)
+	{
+		if (!*p_isPlay) return;
+
+		if (!p_timer.GetIsStart())
+		{
+			p_timer.StartTimer();
+			p_timer.SetIsStart(true);
+		}
+
+		string cardId = p_effect.GetId();
+		cardId += to_string(p_timer.GetIndex());
+
+		M_REND.MoveImage(cardId, Gdiplus::Rect(p_effect.GetImageX(), p_effect.GetImageY(),
+			p_effect.GetImageWidth(), p_effect.GetImageHeight()));
+		M_REND.ImageVisible(cardId, true);
+
+		p_timer.UpdateTimer();
+		if (p_timer.CheckTimer(0.05))
+		{
+			M_REND.ImageVisible(cardId, false);
+
+			//����Ʈ ��
+			if (p_timer.GetIndex() >= p_effect.GetIndex())
+			{
+				p_timer.SetIndex(0);
+				*p_isPlay = false;
+				return;
+			}
+
+			p_timer.StartTimer();
+			p_timer.PlusIndex();
+			string newId = p_effect.GetId();
+			newId += to_string(p_timer.GetIndex());
+			M_REND.MoveImage(newId, Gdiplus::Rect(p_effect.GetImageX(), p_effect.GetImageY(),
+				p_effect.GetImageWidth(), p_effect.GetImageHeight()));
+			M_REND.ImageVisible(newId, true);
+		}
+	}
+
 
 	void InGame::Update(HDC p_hdc, HWND p_hwnd)
 	{
@@ -238,10 +300,17 @@ namespace GameState_M {
 		//패 출력
 		m_player.DrawPlayerHand();
 		m_boss.DrawOppHand();
-		string shinyId = "Card_Shiny_";
-		string ripId = "Card_Rip_";
-		m_player.PlayCardEffect(200, 200);
-		m_player.PlayRip(300, 200);
+
+
+		PlayAnimation(m_shiny, m_shinyEffect, m_player.GetIsShiny());
+		PlayAnimation(m_rip, m_ripEffect, m_player.GetIsRip());
+		PlayAnimation(m_skill, m_skillEffect, m_player.GetIsSkill());
+		PlayAnimation(m_def, m_defEffect, m_player.GetIsDef());
+
+
+
+		/*MonoGram("Song123", "Temp_", 0, 0);
+		MonoGram("Song123", "Hello_", 0, 100);*/
 	}
 
 	void InGame::Exit()
@@ -284,6 +353,30 @@ namespace GameState_M {
 
 	void Stage::Exit()
 	{
+	}
+
+	void State::MonoGram(string p_image, string p_id, int p_x, int p_y)
+	{
+		int tempX = p_x;
+		for (size_t i = 0; i < p_image.size(); i++)
+		{
+			if (i > 0) tempX += 12;
+
+			int imageX, imageY;
+			int temp;
+
+			temp = p_image[i];
+			temp -= 32;
+
+			string tempId = p_id;
+			tempId += to_string(i);
+
+			imageX = ((temp % 16) * 6);
+			imageY = ((temp / 16) * 12);
+
+			M_REND.SetImage(L"images/monogram-bitmap.png", tempId, Rect(imageX, imageY, 6, 12), Rect(tempX, p_y, 12, 24)
+				, true, GameImage_M::LayerType::UI);
+		}
 	}
 
 }

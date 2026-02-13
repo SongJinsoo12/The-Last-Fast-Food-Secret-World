@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Timer.h"
-#include "Card.h"
+#include "Animation.h"
 #include <Windows.h>
 #include <vector>
 
@@ -35,12 +35,17 @@ public:
 	void HandSelect(CardManager& player, CardManager& opponent);
 	void StartTurn(CardManager& player, CardManager& opponent);
 	void TimeLimit(CardManager& player, CardManager& opponent);
-	//void TimeLimit(WPARAM wParam, HWND hWnd, CardManager& player, CardManager& opponent);
-	//void OpponentAct(Player& p_player, Boss& p_boss, CardManager& player, CardManager& opponent, HWND hWnd);
 	void BossCardAct(CardManager& player);
 	void SetImage();
-	void PlayCardEffect(int x, int y);
-	void PlayRip(int x, int y);
+	void LoadMonoGram(string p_image, string p_id, int p_x, int p_y);
+	void RemoveMonoGram(string p_id);
+	void PuaseGame();
+	
+	bool* GetIsShiny();
+	bool* GetIsRip();
+	bool* GetIsSkill();
+	bool* GetIsDef();
+
 
 	//void SetPlayer(Player* pPlayer);
 	//void SetEnemyMob(Mob* pMob);
@@ -56,6 +61,17 @@ public:
 	void SetMyTurn(bool v) { m_IsMyTurn = v; } // 필요하면
 
 private:
+	int m_DeckCount;//�� ���
+	int m_HandCount;//�� ���
+	int m_HandSelection;//�� ī�� ����
+	vector<GameCard*> m_Hand;//�� ī��
+	vector<GameCard*> m_Deck;//�� ī��
+	bool m_IsMyTurn;//�� Ȯ��
+	bool m_IsSelect;//�� ī�� ���� Ȯ��
+	//AI m_boss;//���� ai
+	Timer m_turnTime;
+	bool m_isShiny, m_isRip, m_isSkill, m_isDef;
+	int m_monoId;
 	// UID 카드정보
 	void ApplyUidMapping(GameCard* card);
 
