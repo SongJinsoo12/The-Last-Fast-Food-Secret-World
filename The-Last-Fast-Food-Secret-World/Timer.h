@@ -16,15 +16,11 @@ public:
 	int GetIndex();
 	void SetIndex(int p_index);
 	void PlusIndex();
-	void Pause();
-	void Resume();
-	void SetTime(double p_time);
-	bool GetIsPuase();
 
 private:
-	chrono::system_clock::time_point m_start, m_puase;
-	chrono::duration<double>m_time, m_puaseTime;
-	bool m_isStart, m_isPuase;
+	chrono::system_clock::time_point m_start;
+	chrono::duration<double>m_time;
+	bool m_isStart;
 	int m_index;
 };
 

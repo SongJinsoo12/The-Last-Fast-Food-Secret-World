@@ -274,47 +274,6 @@ void SupportCard::Sure(Player& player)
     player.ShuffleDeck();
 }
 
-void SupportCard::Card_Draw_Enemy_Damage_UP(Player& player, Mob& mob)
-{
-    player.DrawCards(2);
-    player.Damage(2);
-}
-
-void SupportCard::My_Deck_Count_Card_Draw(Player& player)
-{
-    player.ReturnHandToDeckAndRedraw(true);
-}
-
-void SupportCard::Sure(Player& player)
-{
-    // 패 1장 버림
-    if (player.GetHandSize() > 0)
-    {
-        if (!player.DiscardHandCardAt(player.ChooseCardIndex()))
-        {
-            player.DiscardRandomHandCards(1);
-        }
-    }
-
-    // 4장 드로우
-    player.DrawCards(4);
-
-    // 패 3장 덱으로 되돌림
-    int sendCount = std::min(3, player.GetHandSize());
-    for (int i = 0; i < sendCount; ++i)
-    {
-        int id = -1;
-        if (!player.PopRandomHandCard(id))
-        {
-            break;
-        }
-        player.AddCardToDeck(id, false);
-    }
-
-    // 덱 무작위로 보내기
-    player.ShuffleDeck();
-}
-
 void SupportCard::Next_AtkCard_Damage_Up(Player& player, float mult)
 {
    
