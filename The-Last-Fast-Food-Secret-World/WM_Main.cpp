@@ -125,7 +125,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		/*g_player.DrawPlayerHand();
 		g_enemy.DrawOppHand();*/
 
-		M_REND.RenderAll(&graphics);
+		RENDER.RenderAll(&graphics);
 
 		BitBlt(hdc, 0, 0, rt.right, rt.bottom, memDC, 0, 0, SRCCOPY);
 

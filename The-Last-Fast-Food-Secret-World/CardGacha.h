@@ -3,30 +3,141 @@
 #include "MainGame.h"
 #include "macroNum.h"
 #include "Shop.h"
+#include "CardTableManager.h"
 
 class CardGacha
 {
 private:
+	int gold_out;
 	vector<Card> draw_card;
 	bool isGachaFailed = false;
+	bool isOneGacha;
+	int index = 0;
+	//ì „ì²´ì¹´ë“œí’€
+	vector<GameCard> allCard;
+	//GameCard* allCard = new GameCard[AllCARDMAXSIZE];
+	BOOL isObtain[AllCARDMAXSIZE] = { FALSE, };
+	int cookie_num = 0;
+
+public:
+	ButtonManager m_GachaBtnM;
+
 public:
 	CardGacha()
 	{
+		allCard.resize(AllCARDMAXSIZE);
+		//ì¹´ë“œ idì–»ì–´ì˜¤ê¸°
+		for (int i = BASEATK + 1; i < ATKLIMIT; i++)
+		{
+			Card* card = CardTableManager::Instance()->GetCardData(i);
+			allCard[index++] = new GameCard(card);
+		}
+		for (int i = BASEDEF + 1; i < DEFLIMIT; i++)
+		{
+			Card* card = CardTableManager::Instance()->GetCardData(i);
+			allCard[index++] = new GameCard(card);
+		}
+		for (int i = BASEMAGIC + 1; i < MAGICLIMIT; i++)
+		{
+			Card* card = CardTableManager::Instance()->GetCardData(i);
+			allCard[index++] = new GameCard(card);
+		}
 
+		std::ifstream file("Deck.json", std::ios::in);//ê°™ì€ ê²½ë¡œë‚´ì—ì„œ íŒŒì¼ë¶ˆëŸ¬ì˜¤ê¸°
+
+		//íŒŒì¼ ë¶ˆëŸ¬ì˜¤ê¸°í™•ì¸ìš©
+		if (!file.is_open())
+		{
+			std::cerr << "Error opening Deck.json.\n";
+			return;
+		}
+
+		//ì½ì–´ë“¤ì¸ íŒŒì¼ì„ jsonì— ì €ì¥
+		json j;
+		try
+		{
+			file >> j;
+		}
+		catch (const std::exception& e)
+		{
+			cerr << "json parcing error : " << e.what() << "\n";
+			return;
+		}
+
+		if (j.contains("Cards_D") && j["Cards_D"].is_array())
+		{
+			//"Cards_D" ë°°ì—´ì´ ëë‚ ë•Œê¹Œì§€ ë°˜ë³µ
+			for (const auto& card : j["Cards_D"])
+			{
+				int uid = -1;
+				//uidí‚¤ì— ê°’ì´ ì¡´ì¬í•˜ë©´ intë¡œ ë°›ì•„ì˜´
+				if (card.contains("uid"))
+				{
+					try { uid = card["uid"].get<int>(); }
+					catch (...) { uid = -1; }
+				}
+
+				Card c;
+				if (uid >= 0) c = Card(uid);
+				else c = Card();
+
+				int c_uid = c.GetUid(), index = -1;
+				switch ((int)(c_uid / 100))
+				{
+				case 0: isObtain[c.GetUid() - 1] = true; break;
+				case 1: isObtain[c.GetUid() - 59] = true; break;
+				case 2: isObtain[c.GetUid() - 116] = true; break;
+				default: break;
+				}
+			}
+		}
+
+		if (j.contains("Cards_I") && j["Cards_I"].is_array())
+		{
+			//"Cards_D" ë°°ì—´ì´ ëë‚ ë•Œê¹Œì§€ ë°˜ë³µ
+			for (const auto& card : j["Cards_I"])
+			{
+				int uid = -1;
+				//uidí‚¤ì— ê°’ì´ ì¡´ì¬í•˜ë©´ intë¡œ ë°›ì•„ì˜´
+				if (card.contains("uid"))
+				{
+					try { uid = card["uid"].get<int>(); }
+					catch (...) { uid = -1; }
+				}
+
+				Card c;
+				if (uid >= 0) c = Card(uid);
+				else c = Card();
+
+				int c_uid = c.GetUid();
+				switch ((int)(c_uid / 100))
+				{
+				case 0: isObtain[c.GetUid() - 1] = true; break;
+				case 1: isObtain[c.GetUid() - 59] = true; break;
+				case 2: isObtain[c.GetUid() - 116] = true; break;
+				default: break;
+				}
+			}
+		}
 	}
 	virtual ~CardGacha()
 	{
 
 	}
 
-	void Sort(); //Áßº¹Ä«µå Á¦°Å ¹× id¼ø¼­´ë·Î Á¤·Ä
-	void one(DeckBuilding& p_deck);	//ÀüÃ¼Ä«µå Áß 1ÀåÀ» ÀÎº¥¿¡ÀúÀå
-	void ten(DeckBuilding& p_deck);	//ÀüÃ¼Ä«µå Áß 10ÀåÀ» ÀÎº¥¿¡ÀúÀå
-	void GetGacha(bool isOne, DeckBuilding& p_deck, MainGame& p_mg, Chest p_selChest); //»Ì±â¸¦ ½ÇÇà(T-1/F-10)
-	void InGacha(); //»Ì±âÈ­¸é ¼Ó ·ÎÁ÷
+	vector<GameCard> GetAllCard()
+	{
+		return allCard;
+	}
+	void one(DeckBuilding& p_deck, MainGame& p_mg);//ì „ì²´ì¹´ë“œ ì¤‘ 1ì¥ì„ ì¸ë²¤ì—ì €ì¥
+	void ten(DeckBuilding& p_deck, MainGame& p_mg);//ì „ì²´ì¹´ë“œ ì¤‘ 10ì¥ì„ ì¸ë²¤ì—ì €ì¥
+	void GetGacha(bool isOne, DeckBuilding& p_deck, MainGame& p_mg, Chest p_selChest);//ë½‘ê¸°ë¥¼ ì‹¤í–‰(T-1/F-10)
+	void InGacha();//ë½‘ê¸°í™”ë©´ ì† ë¡œì§
 
-	//»óÁ¡¿¡ »Ì±â¹öÆ°À» Ãâ·Â, ¹öÆ° Å¬¸¯ ½Ã »Ì±â¸¦ ½ÇÇà
-	void DrawGachaButton(HDC p_hdc, DeckBuilding p_deck, Chest p_selChest, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[]);
-	//»Ì±âÈ­¸éÀ» Ãâ·Â
-	void DrawGacha(HDC p_hdc, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[]);
+	void EnterGacha();
+	//ë½‘ê¸°í™”ë©´ì„ ì¶œë ¥
+	void DrawGacha(HDC p_hdc, int p_mx, int p_my, WCHAR p_text[]);
+	void ExitGacha();
 };
+
+extern CardGacha g_Gacha; // ì „ì—­ ì¹´ë“œë½‘ê¸° ê°ì²´

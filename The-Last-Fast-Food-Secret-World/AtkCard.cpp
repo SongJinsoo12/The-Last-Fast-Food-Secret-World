@@ -26,6 +26,7 @@ int AtkCard::DefaultAtk(CAttribute attr, Star rank)
 
 int AtkCard::Take_Damage_After_Atk(Mob& player, CAttribute attr, Star rank)
 {
+	// UID: 37
 	if (player.GetMaxHP() > player.GetHP())
 	{
 		switch (rank)
@@ -46,6 +47,7 @@ int AtkCard::Take_Damage_After_Atk(Mob& player, CAttribute attr, Star rank)
 
 int AtkCard::coinAtk(CAttribute attr, Star rank)
 {
+	// UID: 38
 	int Cardcoin = rand() % 2;
 	if (Cardcoin == 0)
 	{
@@ -69,6 +71,7 @@ int AtkCard::coinAtk(CAttribute attr, Star rank)
 
 int AtkCard::DefCard_After_Atk(bool DefCardUsed, Star rank)
 {
+	// UID: 39
 	if (DefCardUsed)
 	{
 		return m_Atk + 2;
@@ -78,6 +81,7 @@ int AtkCard::DefCard_After_Atk(bool DefCardUsed, Star rank)
 
 int AtkCard::PoisonDamageCard(Star rank)
 {
+	// UID: 40
 	if (Poison == false)
 	{
 		Poison = true;
@@ -95,3 +99,5 @@ int AtkCard::PoisonDamageCard(Star rank)
 	}
 	return DotDamage;
 }
+
+

@@ -1,5 +1,5 @@
-﻿#include "Player.h"
-#include "Mob.h"
+﻿#include "Mob.h"
+#include "Player.h"
 #include "AtkCard.h"
 #include "Card.h"
 
@@ -24,12 +24,12 @@ static std::unordered_map<int, CType>& CardTypeTable()
     return table;
 }
 
-void Player::RegisterCardType(int cardId, CType type)
+void Mob::RegisterCardType(int cardId, CType type)
 {
     CardTypeTable()[cardId] = type;
 }
 
-CType Player::ResolveCardTypeById(int cardId)
+CType Mob::ResolveCardTypeById(int cardId)
 {
     auto& t = CardTypeTable();
     auto it = t.find(cardId);
@@ -38,7 +38,7 @@ CType Player::ResolveCardTypeById(int cardId)
     return CType::E_Magic; // unknown -> treat as support (ignored)
 }
 
-void Player::RecordCardHistory(int cardId)
+void Mob::RecordCardHistory(int cardId)
 {
     const CType t = ResolveCardTypeById(cardId);
     if (t == CType::E_Magic)
@@ -55,35 +55,35 @@ void Player::RecordCardHistory(int cardId)
     }
 }
 
-bool Player::HasRecentTwoSameCombatType() const
+bool Mob::HasRecentTwoSameCombatType() const
 {
     if (m_recentCombatCount < 2)
         return false;
     return m_recentCombatTypes[0] == m_recentCombatTypes[1];
 }
 
-Player::Player() {}
+Mob::Mob() {}
 
-Player::Player(const std::wstring& name, int maxHp)
+Mob::Mob(const std::wstring& name, int maxHp)
 {
     m_name = name;
     m_maxHp = (maxHp <= 1) ? 1 : maxHp;
     m_hp = m_maxHp;
 }
 
-int Player::GetHP() const { return m_hp; }
+int Mob::GetHP() const { return m_hp; }
 
-int Player::GetMaxHP() const
+int Mob::GetMaxHP() const
 {
     return m_maxHp;
 }
 
-void Player::SetHP(int hp)
+void Mob::SetHP(int hp)
 {
     m_hp = ClampInt(hp, 0, m_maxHp);
 }
 
-void Player::Damage(int dmg)
+void Mob::Damage(int dmg)
 {
     if (dmg < 0) dmg = 0;
     lastDamageTaken = dmg;
@@ -91,7 +91,7 @@ void Player::Damage(int dmg)
     RemoveAllFromHand((int)CardId::Cockroach);
 }
 
-void Player::Heal(int amount)
+void Mob::Heal(int amount)
 {
     if (amount < 0) amount = 0;
 
@@ -109,26 +109,25 @@ void Player::Heal(int amount)
     SetHP(m_hp + amount);
 }
 
-int Player::GetShield() const
+int Mob::GetShield() const
 {
     return m_shield;
 }
 
-void Player::SetShield(int v)
+void Mob::SetShield(int v)
 {
     if (v < 0) v = 0;
     m_shield = v;
 }
 
-void Player::AddShield(int v)
+void Mob::AddShield(int v)
 {
     if (v <= 0) return;
     m_shield += v;
 }
 
 
-
-void Player::SetReflect(float pct, int hits)
+void Mob::SetReflect(float pct, int hits)
 {
     if (pct <= 0.0f || hits <= 0)
     {
@@ -140,17 +139,17 @@ void Player::SetReflect(float pct, int hits)
     m_reflectHitsLeft = hits;
 }
 
-float Player::GetReflectPct() const
+float Mob::GetReflectPct() const
 {
     return m_reflectPct;
 }
 
-int Player::GetReflectHitsLeft() const
+int Mob::GetReflectHitsLeft() const
 {
     return m_reflectHitsLeft;
 }
 
-void Player::TriggerDelayedEffectsNow()
+void Mob::TriggerDelayedEffectsNow()
 {
     // 즉시 처리: "n턴 뒤 발동"으로 예약된 것들을 지금 발동
     if (m_hasDelayedHpLoss)
@@ -172,7 +171,7 @@ void Player::TriggerDelayedEffectsNow()
         m_scheduledPlayLimitTurnsLeft = 0;
     }
 }
-int Player::TakeDamage(int dmg)
+int Mob::TakeDamage(int dmg)
 {
     if (dmg <= 0) return 0;
 
@@ -199,21 +198,21 @@ int Player::TakeDamage(int dmg)
     return lastDamageTaken;
 }
 
-void Player::AddDot(int dmg, int ticks)
+void Mob::AddDot(int dmg, int ticks)
 {
     if (dmg <= 0 || ticks <= 0) return;
-    p_dots.push_back({ dmg, ticks });
+    m_dots.push_back({ dmg, ticks });
 }
 
-void Player::TickDots()
+void Mob::TickDots()
 {
-    if (p_dots.empty()) return;
+    if (m_dots.empty()) return;
 
     int total = 0;
 
-    for (size_t i = 0; i < p_dots.size();)
+    for (size_t i = 0; i < m_dots.size();)
     {
-        PlayerDotInfo& d = p_dots[i];
+        MobDotInfo& d = m_dots[i];
         if (d.ticks > 0)
         {
             total += d.dmg;
@@ -221,7 +220,7 @@ void Player::TickDots()
         }
 
         if (d.ticks <= 0)
-            p_dots.erase(p_dots.begin() + i);
+            m_dots.erase(m_dots.begin() + i);
         else
             ++i;
     }
@@ -234,12 +233,12 @@ void Player::TickDots()
     }
 }
 
-bool Player::IsAlive() const { return m_hp > 0; }
+bool Mob::IsAlive() const { return m_hp > 0; }
 
-void Player::BeginTurn(int currentTurn)
+void Mob::BeginTurn(int currentTurn)
 {
     m_turn = currentTurn;
-    SetShield(0); // "     ǵ " Ģ
+    SetShield(0);
     SetReflect(0.0f, 0); // 반사 버프 초기화
 
     // ---- ÷ Ƚ ʱȭ ----
@@ -300,7 +299,7 @@ void Player::BeginTurn(int currentTurn)
     }
 }
 
-void Player::EndTurn()
+void Mob::EndTurn()
 {
     if (m_healToDamageTurnsLeft > 0)
     {
@@ -322,7 +321,7 @@ void Player::EndTurn()
     // ٸ   ó
 }
 
-bool Player::CanPlayCard() const
+bool Mob::CanPlayCard() const
 {
     if (!IsAlive()) return false;
     if (m_hand.empty()) return false;
@@ -335,7 +334,7 @@ bool Player::CanPlayCard() const
     return true;
 }
 
-void Player::SetDeck(const std::vector<int>& cardIds, bool shuffle)
+void Mob::SetDeck(const std::vector<int>& cardIds, bool shuffle)
 {
     m_deck = cardIds;
     m_hand.clear();
@@ -344,7 +343,7 @@ void Player::SetDeck(const std::vector<int>& cardIds, bool shuffle)
     if (shuffle) ShuffleDeck();
 }
 
-void Player::ShuffleDeck()
+void Mob::ShuffleDeck()
 {
     static std::random_device rd;
     static std::mt19937 gen(rd());
@@ -357,7 +356,7 @@ void Player::ShuffleDeck()
 //    cm.CardDraw(drawNum);
 //}
 
-void Player::DrawCards(int count)
+void Mob::DrawCards(int count)
 {
     for (int i = 0; i < count; ++i)
     {
@@ -381,7 +380,7 @@ void Player::DrawCards(int count)
     }
 }
 
-void Player::DiscardHand()
+void Mob::DiscardHand()
 {
     for (int id : m_hand)
     {
@@ -392,7 +391,7 @@ void Player::DiscardHand()
     m_selectedIndex = -1;
 }
 
-void Player::SetSelectedCardIndex(int index)
+void Mob::SetSelectedCardIndex(int index)
 {
     if (index < 0 || index >= (int)m_hand.size())
     {
@@ -402,14 +401,14 @@ void Player::SetSelectedCardIndex(int index)
     m_selectedIndex = index;
 }
 
-int Player::ChooseCardIndex() const
+int Mob::ChooseCardIndex() const
 {
     if (m_selectedIndex < 0 || m_selectedIndex >= (int)m_hand.size())
         return -1;
     return m_selectedIndex;
 }
 
-bool Player::TryPlayOneCard(Mob& mob, const CardResolver_PlayerVsMob& resolver)
+bool Mob::TryPlayOneCard(Player& player, const CardResolver_MobVsPlayer& resolver)
 {
     // Basic checks
     if (!IsAlive()) return false;
@@ -452,7 +451,7 @@ bool Player::TryPlayOneCard(Mob& mob, const CardResolver_PlayerVsMob& resolver)
 
     // Resolve effect externally
     if (resolver)
-        resolver(cardId, *this, mob);
+        resolver(cardId, *this, player);
 
     // Count play
     ++m_playsUsedThisTurn;
@@ -460,58 +459,56 @@ bool Player::TryPlayOneCard(Mob& mob, const CardResolver_PlayerVsMob& resolver)
     return true;
 }
 
-void Player::AddDelayedHpLoss(int turnsLater, int healAmount)
+void Mob::AddDelayedHpLoss(int turnsLater, int healAmount)
 {
     m_hasDelayedHpLoss = true;
     m_delayedHpLossTurnsLeft = turnsLater;
 
     // (heal + 25%) 
     m_delayedHpLossAmount = static_cast<int>(healAmount * 1.25f);
-    cout << " ԰ Ŵ." << endl;
 }
 
-void Player::AddDelayedHeal(int turnsLater, int amount)
+void Mob::AddDelayedHeal(int turnsLater, int amount)
 {
     m_hasDelayedHeal = true;
     m_delayedHealTurnsLeft = turnsLater;
     m_delayedHealAmount = amount;
 }
 
-void Player::SchedulePlayLimit(int turnsLater, int playLimit)
+void Mob::SchedulePlayLimit(int turnsLater, int playLimit)
 {
     m_hasScheduledPlayLimit = true;
     m_scheduledPlayLimitTurnsLeft = turnsLater;
     m_scheduledPlayLimit = playLimit;
-    cout << "3 ڿ Դ" << endl;
 }
 
-void Player::AddExtraPlaysThisTurn(int extraPlays)
+void Mob::AddExtraPlaysThisTurn(int extraPlays)
 {
     if (extraPlays <= 0) return;
     m_playLimitThisTurn += extraPlays;
     if (m_playLimitThisTurn < 1) m_playLimitThisTurn = 1;
 }
 
-void Player::AddNoDrawTurns(int turns)
+void Mob::AddNoDrawTurns(int turns)
 {
     if (turns <= 0) return;
     //  (   켱)
     m_noDrawTurns = std::max(m_noDrawTurns, turns);
 }
 
-void Player::SetNextAtkMultiplier(float mult)
+void Mob::SetNextAtkMultiplier(float mult)
 {
     if (mult <= 0.0f) return;
     m_hasNextAtkMultiplier = true;
     m_nextAtkMultiplier = mult;
 }
 
-bool Player::HasNextAtkMultiplier() const
+bool Mob::HasNextAtkMultiplier() const
 {
     return m_hasNextAtkMultiplier;
 }
 
-void Player::ApplyNextAttackModifiers(AtkCard& atk)
+void Mob::ApplyNextAttackModifiers(AtkCard& atk)
 {
     if (!m_hasNextAtkMultiplier) return;
 
@@ -527,14 +524,14 @@ void Player::ApplyNextAttackModifiers(AtkCard& atk)
     }
 }
 
-bool Player::HasPoison() const { return m_hasPoison; }
-void Player::SetPoison(bool on) { m_hasPoison = on; }
+bool Mob::HasPoison() const { return m_hasPoison; }
+void Mob::SetPoison(bool on) { m_hasPoison = on; }
 
-int Player::GetHandSize() const { return (int)m_hand.size(); }
-int Player::GetDeckSize() const { return (int)m_deck.size(); }
-int Player::GetDiscardSize() const { return (int)m_discard.size(); }
+int Mob::GetHandSize() const { return (int)m_hand.size(); }
+int Mob::GetDeckSize() const { return (int)m_deck.size(); }
+int Mob::GetDiscardSize() const { return (int)m_discard.size(); }
 
-void Player::AddCardToHand(int cardId)
+void Mob::AddCardToHand(int cardId)
 {
     if ((int)m_hand.size() >= m_maxHandSize)
     {
@@ -551,7 +548,7 @@ void Player::AddCardToHand(int cardId)
     OnAcquireCard(cardId);
 }
 
-bool Player::PopTopDeckCard(int& outCardId)
+bool Mob::PopTopDeckCard(int& outCardId)
 {
     if (m_deck.empty())
     {
@@ -566,7 +563,7 @@ bool Player::PopTopDeckCard(int& outCardId)
     return true;
 }
 
-bool Player::PopRandomHandCard(int& outCardId)
+bool Mob::PopRandomHandCard(int& outCardId)
 {
     if (m_hand.empty()) return false;
 
@@ -580,7 +577,7 @@ bool Player::PopRandomHandCard(int& outCardId)
     return true;
 }
 
-bool Player::DiscardHandCardAt(int index)
+bool Mob::DiscardHandCardAt(int index)
 {
     if (index < 0 || index >= (int)m_hand.size()) return false;
 
@@ -594,7 +591,7 @@ bool Player::DiscardHandCardAt(int index)
     return true;
 }
 
-bool Player::DiscardRandomHandCards(int count)
+bool Mob::DiscardRandomHandCards(int count)
 {
     if (count <= 0) return true;
     if ((int)m_hand.size() < count) return false;
@@ -610,7 +607,7 @@ bool Player::DiscardRandomHandCards(int count)
     return true;
 }
 
-bool Player::PeekTopDeck(int count, std::vector<int>& out) const
+bool Mob::PeekTopDeck(int count, std::vector<int>& out) const
 {
     out.clear();
     if (count <= 0) return false;
@@ -625,7 +622,7 @@ bool Player::PeekTopDeck(int count, std::vector<int>& out) const
     return true;
 }
 
-bool Player::ReorderTopDeck(const std::vector<int>& newOrder)
+bool Mob::ReorderTopDeck(const std::vector<int>& newOrder)
 {
     const int n = (int)newOrder.size();
     if (n <= 0) return false;
@@ -642,7 +639,7 @@ bool Player::ReorderTopDeck(const std::vector<int>& newOrder)
     return true;
 }
 
-void Player::ReturnHandToDeck(bool shuffleAfter)
+void Mob::ReturnHandToDeck(bool shuffleAfter)
 {
     for (int id : m_hand)
         m_deck.push_back(id);
@@ -654,7 +651,7 @@ void Player::ReturnHandToDeck(bool shuffleAfter)
 
 // ----------------- WinAPI Drawing -----------------
 
-void Player::Draw(HDC hdc, const RECT& area) const
+void Mob::Draw(HDC hdc, const RECT& area) const
 {
     DrawPanel(hdc, area);
 
@@ -664,7 +661,7 @@ void Player::Draw(HDC hdc, const RECT& area) const
     DrawHand(hdc, handArea);
 }
 
-void Player::DrawPanel(HDC hdc, const RECT& area) const
+void Mob::DrawPanel(HDC hdc, const RECT& area) const
 {
     Rectangle(hdc, area.left, area.top, area.right, area.bottom);
     SetBkMode(hdc, TRANSPARENT);
@@ -706,7 +703,7 @@ void Player::DrawPanel(HDC hdc, const RECT& area) const
     DrawHPBar(hdc, barRc);
 }
 
-void Player::DrawHPBar(HDC hdc, const RECT& barArea) const
+void Mob::DrawHPBar(HDC hdc, const RECT& barArea) const
 {
     Rectangle(hdc, barArea.left, barArea.top, barArea.right, barArea.bottom);
 
@@ -729,7 +726,7 @@ void Player::DrawHPBar(HDC hdc, const RECT& barArea) const
     DeleteObject(br);
 }
 
-void Player::DrawHand(HDC hdc, const RECT& area) const
+void Mob::DrawHand(HDC hdc, const RECT& area) const
 {
     Rectangle(hdc, area.left, area.top, area.right, area.bottom);
     SetBkMode(hdc, TRANSPARENT);
@@ -753,7 +750,7 @@ void Player::DrawHand(HDC hdc, const RECT& area) const
     DrawTextW(hdc, s.c_str(), -1, &textRc, DT_LEFT | DT_TOP | DT_SINGLELINE);
 }
 // ---------------------------------------------------------------------------
-void Player::AddCardToDeck(int cardId, bool triggerAcuire)
+void Mob::AddCardToDeck(int cardId, bool triggerAcuire)
 {
     m_deck.push_back(cardId);
     if (triggerAcuire)
@@ -762,7 +759,7 @@ void Player::AddCardToDeck(int cardId, bool triggerAcuire)
     }
 }
 
-void Player::AddHealToDamageTurns(int turns)
+void Mob::AddHealToDamageTurns(int turns)
 {
     if (turns <= 0)
     {
@@ -772,22 +769,22 @@ void Player::AddHealToDamageTurns(int turns)
 
 }
 
-bool Player::HasHealToDamageDebuff() const
+bool Mob::HasHealToDamageDebuff() const
 {
     return m_healToDamageTurnsLeft > 0;
 }
 
-void Player::AddDoubleDamageTakenTurns(int turns)
+void Mob::AddDoubleDamageTakenTurns(int turns)
 {
     if (turns <= 0) return;
     m_doubleDamageTurns = std::max(m_doubleDamageTurns, turns);
 }
-bool Player::HasDoubleDamageTakenDebuff() const
+bool Mob::HasDoubleDamageTakenDebuff() const
 {
     return m_doubleDamageTurns > 0;
 }
 
-void Player::AddDisarrayTurns(int turns)
+void Mob::AddDisarrayTurns(int turns)
 {
     if (turns <= 0)
     {
@@ -796,24 +793,24 @@ void Player::AddDisarrayTurns(int turns)
     m_disarrayTurnsLeft = std::max(m_disarrayTurnsLeft, turns);
 }
 
-bool Player::IsDisarray() const
+bool Mob::IsDisarray() const
 {
     return m_disarrayTurnsLeft > 0;
 }
 
-int Player::GetDisarrayTurnLeft() const
+int Mob::GetDisarrayTurnLeft() const
 {
     return m_disarrayTurnsLeft;
 }
 
-void Player::ReturnHandToDeckAndRedraw(bool shuffleAfter)
+void Mob::ReturnHandToDeckAndRedraw(bool shuffleAfter)
 {
     const int n = GetHandSize();
     ReturnHandToDeck(shuffleAfter);
     DrawCards(n);
 }
 
-void Player::TriggerScheduledEffectsNow()
+void Mob::TriggerScheduledEffectsNow()
 {
     if (m_hasDelayedHpLoss)
     {
@@ -840,14 +837,14 @@ void Player::TriggerScheduledEffectsNow()
     }
 }
 
-void Player::SetNextAtkAttribute(CAttribute attr, CAttribute neutral)
+void Mob::SetNextAtkAttribute(CAttribute attr, CAttribute neutral)
 {
     if (attr == neutral) return;
     m_hasNextAtkAttributeOverride = true;
     m_nextAtkAttributeOverride = attr;
 }
 
-void Player::SetNextAtkAttributeRandom(CAttribute neutral)
+void Mob::SetNextAtkAttributeRandom(CAttribute neutral)
 {
     std::vector<CAttribute> pool = { E_BULGOGI, E_SOURCE, E_CHESSE, E_VEGAT, E_BREAD };
     pool.erase(std::remove(pool.begin(), pool.end(), neutral), pool.end());
@@ -860,34 +857,34 @@ void Player::SetNextAtkAttributeRandom(CAttribute neutral)
     SetNextAtkAttribute(pool[dist(gen)], neutral);
 }
 
-bool Player::HasNextAtkAttributeOverride() const
+bool Mob::HasNextAtkAttributeOverride() const
 {
     return m_hasNextAtkAttributeOverride;
 }
 
-void Player::ProhibitPlay(int turns)
+void Mob::ProhibitPlay(int turns)
 {
     if (turns <= 0) return;
     m_playProhibitTurnsLeft = std::max(m_playProhibitTurnsLeft, turns);
 }
 
-void Player::ProhibitAttackPlay(int turns)
+void Mob::ProhibitAttackPlay(int turns)
 {
     if (turns <= 0) return;
     m_attackProhibitTurnsLeft = std::max(m_attackProhibitTurnsLeft, turns);
 }
 
-bool Player::IsPlayProhibited() const
+bool Mob::IsPlayProhibited() const
 {
     return m_playProhibitTurnsLeft > 0;
 }
 
-bool Player::IsAttackPlayProhibited() const
+bool Mob::IsAttackPlayProhibited() const
 {
     return m_attackProhibitTurnsLeft > 0;
 }
 
-void Player::OnAcquireCard(int cardId)
+void Mob::OnAcquireCard(int cardId)
 {
     if (cardId == (int)CardId::Cockroach)
     {
@@ -897,7 +894,7 @@ void Player::OnAcquireCard(int cardId)
     }
 }
 
-void Player::RemoveAllFromHand(int cardId)
+void Mob::RemoveAllFromHand(int cardId)
 {
     m_hand.erase(std::remove(m_hand.begin(), m_hand.end(), cardId), m_hand.end());
 }

@@ -1,17 +1,29 @@
-#include "GameState.h"
+﻿#include "GameState.h"
 #include "RenderManager.h"
 #include "InputGame.h"
 #include "CardTableManager.h"
 #include "Sound.h"
+#include <chrono>
 
-//�� ȭ��
-//#include "Shop.h"
+//각 화면
+#include "GameLobby.h"
+#include "GameMenu.h" 
+#include "Shop.h"
+#include "DeckBuilding.h"
+#include "CardGacha.h"
+#include "Stage.h"
+#include "MainGame.h"
+#include "CardManager.h"
+
+extern Player g_playerActor;
+extern Mob g_enemyActor;
 
 namespace GameState_M {
 	Context::Context() {
 		StateVector.resize((int)E_InGameState::InGameResult + 1);
 		StateVector[(int)E_InGameState::Lobby] = make_shared<Lobby>();
 		StateVector[(int)E_InGameState::Menu] = make_shared<Menu>();
+		StateVector[(int)E_InGameState::Stage] = make_shared<Stage>();
 		StateVector[(int)E_InGameState::DeckBuild] = make_shared<DeckBuild>();
 		StateVector[(int)E_InGameState::Shop] = make_shared<Shop>();
 		StateVector[(int)E_InGameState::LuckyBox] = make_shared<LuckyBox>();
@@ -19,7 +31,7 @@ namespace GameState_M {
 		StateVector[(int)E_InGameState::InGameResult] = make_shared<InGameResult>();
 	}
 
-	// �� ȭ�鿡 �´� Update ����
+	// 각 화면에 맞는 Update 로직
 	void Context::Update(HDC p_hdc, HWND p_hwnd)
 	{
 		if (currentState == nullptr)
@@ -38,101 +50,166 @@ namespace GameState_M {
 		currentState.get()->Enter();
 	}
 
+	void Context::Init()
+	{
+		//시작시 덱 로드, 세이브는 소멸자에
+		g_DeckBuild.LoadDeck(g_Gacha.GetAllCard());
+		g_MainGame.AddGold(1000);
+	}
+
 	void Lobby::Enter()
 	{
-		/*M_REND.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(0, 0, 300, 300)
-			, false, GameImage_M::LayerType::Field);*/
-		
-		/*int x = 0;
-		int y = 12;
-		for (size_t i = 0; i < 80; i++)
-		{
-			if (i > 0) x += 6;
-
-			if (i % 16 == 0 && i != 0)
-			{
-				x = 0;
-				y += 12;
-			}
-			string monoId = "Mono_";
-			monoId += to_string(i);
-			M_REND.SetImage(L"images/monogram-bitmap.png", monoId, Rect(x, y, 6, 12), Rect(0, 0, 0, 0)
-				, false, GameImage_M::LayerType::UI);
-		}*/
+		GameLobby::GetInstance().Enter();
 	}
 
 	void Lobby::Update(HDC p_hdc, HWND p_hwn) {
-		if (GameInput_M::Input::GetInstance().isClick() == (int)GameInput_M::MouseValue::Left)
-		{
-			//m_State.ChangeState(GameState_M::E_InGameState::InGameResult);
-			//M_REND.ImageVisible("ID_1", true);
-			M_STATE.ChangeState(GameState_M::E_InGameState::InGame);
-		}
+		GameLobby::GetInstance().Logic();
 	}
 
 	void Lobby::Exit() {
-		//M_REND.AllRemoveImage();
+		GameLobby::GetInstance().Exit();
 	}
 
 	void Menu::Enter()
 	{
-		//M_REND.SetImage(L"test.jpg", "ID_1", Rect(0, 0, 512, 512), Rect(100, 0, 300, 300), true, GameImage_M::LayerType::Field);
+		GameMenu::GetInstance().Enter();
 	}
 
 	void Menu::Update(HDC p_hdc, HWND p_hwnd)
 	{
-
+		GameMenu::GetInstance().Logic();
 	}
 
 	void Menu::Exit() {
-		//M_REND.RemoveIDIamage("ID_1");
+		GameMenu::GetInstance().Exit();
 	}
 
 	void DeckBuild::Enter() {
-
+		//덱빌드진입
+		g_DeckBuild.EnterDeckBuild();
 	}
 
 	void DeckBuild::Update(HDC p_hdc, HWND p_hwnd) {
+		WCHAR text[256] = L"";
+
+		//화면 그리기
+		g_DeckBuild.DrawDeckBuild(p_hdc, text);
+
+		//좌클릭시 카드 선택
+		if (INPUT.isClick() == (int)GameInput_M::MouseValue::Left)
+		{
+			INPUT.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
+			if (btnManager.HandleClickId(g_MainGame.mx, g_MainGame.my) == "rb1")
+			{
+				cout << "버튼클릭" << endl;
+				STATE.ChangeState(GameState_M::E_InGameState::Shop);
+			}
+			g_DeckBuild.DeckBuild(g_MainGame.mx, g_MainGame.my, 'L');
+		}
+		//우클릭시 카드 이동
+		else if (INPUT.isClick() == (int)GameInput_M::MouseValue::Right)
+		{
+			INPUT.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
+			g_DeckBuild.DeckBuild(g_MainGame.mx, g_MainGame.my, 'R');
+		}
 
 	}
 
 	void DeckBuild::Exit() {
-
+		//덱빌드 퇴장
+		g_DeckBuild.ExitDeckBuild();
 	}
 
 	void Shop::Enter()
 	{
-		//g_Shop.SetDrawShop();
+		//상점 진입
+		g_Shop.SetDrawShop();
+		cout << "Shop Enter" << endl;
 	}
 
 	void Shop::Update(HDC p_hdc, HWND p_hwnd)
 	{
-		//if (GameInput_M::Input::GetInstance().isClick() == (int)GameInput_M::MouseValue::Left)
-		//	m_State.ChangeState(GameState_M::E_InGameState::Lobby);
-		//g_Shop.DrawShop(p_hdc, text);
+		WCHAR text[256] = L"";
+
+		if (g_Shop.DrawEnterShop())
+		{
+			//상점 화면 그리기
+			g_Shop.DrawShop(p_hdc, text);
+
+			//좌클릭시 상자선택
+			if (INPUT.isClick() == (int)GameInput_M::MouseValue::Left)
+			{
+				INPUT.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
+				if (g_Shop.m_ShopBtnM.HandleClickId(g_MainGame.mx, g_MainGame.my) == "back")
+				{
+					STATE.ChangeState(GameState_M::E_InGameState::Menu);
+				}
+				g_Shop.SelectChest(g_MainGame.mx, g_MainGame.my);
+			}
+
+			//상자가 선택된 경우 -> 뽑기버튼 활성화 및 뽑기화면전환
+			if (g_Shop.CheckIsSelection())
+			{
+				if (g_Shop.m_ShopBtnM.HandleClickId(g_MainGame.mx, g_MainGame.my) == "one" && g_Shop.isSucceedGacha(p_hdc, 1))
+				{
+					g_Gacha.GetGacha(TRUE, g_DeckBuild, g_MainGame, g_Shop.GetSelectedChest());
+					STATE.ChangeState(GameState_M::E_InGameState::LuckyBox);
+				}
+				else if (g_Shop.m_ShopBtnM.HandleClickId(g_MainGame.mx, g_MainGame.my) == "ten" && g_Shop.isSucceedGacha(p_hdc, 10))
+				{
+					g_Gacha.GetGacha(FALSE, g_DeckBuild, g_MainGame, g_Shop.GetSelectedChest());
+					STATE.ChangeState(GameState_M::E_InGameState::LuckyBox);
+				}
+				g_Shop.DrawGachaButton(p_hdc, g_MainGame.mx, g_MainGame.my, text);
+			}
+
+			//임시 - 우클릭 시 덱빌딩화면 전환
+			if (GameInput_M::Input::GetInstance().isClick() == (int)GameInput_M::MouseValue::Right)
+				STATE.ChangeState(GameState_M::E_InGameState::DeckBuild);
+		}
 	}
 
 	void Shop::Exit()
 	{
-		//g_Shop.ClearShop();
+		//상점 퇴장
+		g_Shop.ExitShop();
 	}
 
 	void LuckyBox::Enter()
 	{
+		g_Gacha.EnterGacha();
 	}
 
 	void LuckyBox::Update(HDC p_hdc, HWND p_hwnd)
 	{
+		WCHAR text[256] = L"";
+		//좌클릭시 좌표 받아오고
+		if (INPUT.isClick() == (int)GameInput_M::MouseValue::Left)
+			INPUT.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
+
+		//돌아가기 버튼 클릭시 상점으로 이동
+		if (g_Gacha.m_GachaBtnM.HandleClickId(g_MainGame.mx, g_MainGame.my) == "back")
+		{
+			STATE.ChangeState(GameState_M::E_InGameState::Shop);
+			return;
+		}
+
+		g_Gacha.InGacha();//뽑은카드 좌표 세팅
+		g_Gacha.DrawGacha(p_hdc, g_MainGame.mx, g_MainGame.my, text);//뽑은카드 그리기
 	}
 
 	void LuckyBox::Exit()
 	{
+		cout << "exit" << endl;
+		g_Gacha.ExitGacha();
 	}
 
 	void InGame::Enter()
 	{
-		//�̹��� �ε�/������
-		//�� �ʱ�ȭ ���� 
+		m_player.BindActors(&g_playerActor, &g_enemyActor);
+		m_boss.BindActors(nullptr, &g_enemyActor);
+		//이미지 로드/보여기
+		//값 초기화 가능 
 		m_player.SetImage();
 		m_player.DrawBG();
 		CardTableManager::Instance();
@@ -143,7 +220,7 @@ namespace GameState_M {
 		m_player.DrawPlayerHand();
 		m_boss.DrawOppHand();
 
-		//�ִϸ��̼� �۾�
+		//�ִϸ��̼� �۾�
 		m_shinyEffect.SetId("Card_Shiny_");
 		m_shinyEffect.SetImageSize(200, 200, 100, 128);
 		m_shinyEffect.SetIndex(10);
@@ -186,7 +263,7 @@ namespace GameState_M {
 		{
 			M_REND.ImageVisible(cardId, false);
 
-			//����Ʈ ��
+			//����Ʈ ��
 			if (p_timer.GetIndex() >= p_effect.GetIndex())
 			{
 				p_timer.SetIndex(0);
@@ -207,11 +284,20 @@ namespace GameState_M {
 
 	void InGame::Update(HDC p_hdc, HWND p_hwnd)
 	{
-		m_player.TimeLimit(m_player, m_boss);
-		//���� ���� �Լ�
-		m_player.HandSelect(m_player, m_boss);
+		// ✅ 현재 턴 주인만 타임리밋(턴 전환)을 돌린다
+		if (m_player.IsMyTurn())
+			m_player.TimeLimit(m_player, m_boss);
+		else
+			m_boss.TimeLimit(m_player, m_boss);
 
-		//�� ���
+		// ✅ 내 턴일 때만 카드 입력(사용) 처리
+		if (m_player.IsMyTurn())
+			m_player.HandSelect(m_player, m_boss);
+		//m_player.TimeLimit(m_player, m_boss);
+		////게임 로직 함수
+		//m_player.HandSelect(m_player, m_boss);
+
+		//패 출력
 		m_player.DrawPlayerHand();
 		m_boss.DrawOppHand();
 
@@ -229,18 +315,43 @@ namespace GameState_M {
 
 	void InGame::Exit()
 	{
-		//�̹��� �����
+		//이미지 지우기
 	}
 
 	void InGameResult::Enter()
 	{
+		g_StageResult.DrawInGameResult();
+		g_StageResult.DrawStageClearButton();
+		cout << "InGameResult Enter" << endl;
 	}
 
 	void InGameResult::Update(HDC p_hdc, HWND p_hwnd)
 	{
+		if (INPUT.isOneClick(GameInput_M::MouseValue::Left))
+			INPUT.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
+		if (g_StageResult.m_StageClearBtn.HandleClickId(g_MainGame.mx, g_MainGame.my) == "StageClearBtn_1")
+		{
+			cout << "버튼 클릭됨" << endl;
+			g_StageResult.NextStage();
+			STATE.ChangeState(GameState_M::E_InGameState::Lobby);
+			return;
+		}
+	}
+	void InGameResult::Exit()
+	{
+		g_StageResult.ExitInGameResult();
 	}
 
-	void InGameResult::Exit()
+
+	void Stage::Enter()
+	{
+	}
+
+	void Stage::Update(HDC p_hdc, HWND p_hwnd)
+	{
+	}
+
+	void Stage::Exit()
 	{
 	}
 

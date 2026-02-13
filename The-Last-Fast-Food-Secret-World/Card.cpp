@@ -23,7 +23,7 @@ void Card::Init()
 	m_info = "";
 }
 
-int Card::GetUid()
+int Card::GetUid() const
 {
 	return m_Uid;
 }
@@ -33,7 +33,7 @@ void Card::SetUid(int p_uid)
 	m_Uid = p_uid;
 }
 
-int Card::GetAtk()
+int Card::GetAtk() const
 {
 	return m_Atk;
 }
@@ -43,7 +43,7 @@ void Card::SetAtk(int p_atk)
 	m_Atk = p_atk;
 }
 
-int Card::GetDef()
+int Card::GetDef() const
 {
 	return m_Def;
 }
@@ -52,8 +52,8 @@ void Card::SetDef(int p_def)
 {
 	m_Def = p_def;
 }
-
-CAttribute Card::GetAit()
+ 
+CAttribute Card::GetAit() const
 {
 	return m_Ait;
 }
@@ -62,8 +62,8 @@ void Card::SetAit(CAttribute p_Ait)
 {
 	m_Ait = p_Ait;
 }
-
-CType Card::GetType()
+ 
+CType Card::GetType() const
 {
 	return m_Type;
 }
@@ -73,7 +73,7 @@ void Card::SetType(CType p_Type)
 	m_Type = p_Type;
 }
 
-Star Card::GetStar()
+Star Card::GetStar() const
 {
 	return m_Star;
 }

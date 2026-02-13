@@ -1,4 +1,4 @@
-#include "CardManager.h"
+ï»¿#include "CardManager.h"
 #include "Card.h"
 #include "RenderManager.h"
 #include "ImageLoad.h"
@@ -7,8 +7,11 @@
 #include "Boss.h"
 #include "Player.h"
 #include "InputGame.h"
-#include "GameState.h"
-
+#include "Mob.h"
+#include "DefCard.h"
+#include "AtkCard.h"
+#include "SupportCard.h"
+#include "CardRule.h"
 
 CardManager::CardManager() : m_DeckCount(25), m_HandCount(0), m_HandSelection(4),
 m_IsMyTurn(false), m_IsSelect(false), m_isShiny(false), m_isRip(false), m_isSkill(false), 
@@ -69,7 +72,7 @@ void CardManager::SetImage()
 		wstring wCardPng;
 		wCardPng.assign(cardPng.begin(), cardPng.end());
 
-		M_REND.SetImage(wCardPng, cardId,
+		RENDER.SetImage(wCardPng, cardId,
 			Gdiplus::Rect(0, 0, 100, 128), Gdiplus::Rect(0, 0, 0, 0), false,
 			GameImage_M::LayerType::UI);
 	}
@@ -173,7 +176,7 @@ void CardManager::SetImage()
 	M_REND.SetImage(L"images/card_blank.png", "Card_Blank",
 		Gdiplus::Rect(0, 0, 102, 130), Gdiplus::Rect(0, 0, 0, 0), false,
 		GameImage_M::LayerType::Card);
-	cout << "ÀÌ¹ÌÁö ·Îµå È®ÀÎ\n";
+	cout << "ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½Îµï¿½ È®ï¿½ï¿½\n";
 }
 
 void CardManager::LoadMonoGram(string p_image, string p_id, int p_x, int p_y)
@@ -225,7 +228,7 @@ void CardManager::PuaseGame()
 {
 	m_turnTime.Pause();
 	/*m_turnTime.SetTime(0);*/
-	cout << "°ÔÀÓ ÀÏ½Ã Á¤Áö" << endl;
+	cout << "ï¿½ï¿½ï¿½ï¿½ ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½" << endl;
 }
 
 
@@ -253,7 +256,7 @@ bool* CardManager::GetIsDef()
 void CardManager::StartGame()
 {
 	CardDraw(5);
-	cout << "Ã³À½ Ä«µå µå·Î¿ì È®ÀÎ\n";
+	// 	cout << "ì²˜ìŒ ì¹´ë“œ ë“œë¡œìš° í™•ì¸\n";
 }
 
 CardManager::~CardManager()
@@ -286,12 +289,13 @@ void CardManager::SetDeck()
 	StartGame();
 }
 
-//µå·Î¿ì
+
+//ë“œë¡œìš°
 void CardManager::CardDraw(int drawNum)
 {
 	for (size_t i = 0; i < drawNum; i++)
 	{
-		//µ¦¿¡ Ä«µå°¡ ¾øÀ¸¸é ¸®ÅÏ
+		//ë±ì— ì¹´ë“œê°€ ì—†ìœ¼ë©´ ë¦¬í„´
 		if (m_DeckCount <= 0)
 			return;
 
@@ -300,11 +304,11 @@ void CardManager::CardDraw(int drawNum)
 
 
 		m_Hand.push_back(m_Deck[m_DeckCount]);
-		M_REND.ImageVisible(to_string(m_Deck[m_DeckCount]->GetUid()), true);
+		RENDER.ImageVisible(to_string(m_Deck[m_DeckCount]->GetUid()), true);
 	}
 
-	//ÆĞ Ä«µå ÀÓ½Ã È®ÀÎ
-	cout << "ÆĞ Ä«µå ¹øÈ£: [ ";
+	//íŒ¨ ì¹´ë“œ ì„ì‹œ í™•ì¸
+// 	cout << "íŒ¨ ì¹´ë“œ ë²ˆí˜¸: [ ";
 	for (size_t i = 0; i < m_HandCount; i++)
 	{
 		cout << m_Hand[i]->GetUid() << " ";
@@ -312,17 +316,17 @@ void CardManager::CardDraw(int drawNum)
 	cout << " ]\n";
 }
 
-//¶óÀÎ ±×¸®±â
+//ë¼ì¸ ê·¸ë¦¬ê¸°
 void CardManager::DrawLine(HDC hdc, int startX, int startY, int lengthX, int lengthY) {
 
 	MoveToEx(hdc, startX, startY, nullptr);
 	LineTo(hdc, lengthX, lengthY);
 }
 
-//¹è°æ ±×¸®±â
+//ë°°ê²½ ê·¸ë¦¬ê¸°
 void CardManager::DrawBG()
 {
-	//È­¸é Áß°£°ª ¹× Ä«µå ±æÀÌ Áß°£°ª
+	//í™”ë©´ ì¤‘ê°„ê°’ ë° ì¹´ë“œ ê¸¸ì´ ì¤‘ê°„ê°’
 	int midX = 1280 * 0.5;
 	int midY = 720 * 0.5;
 	int cardMidX = CARDX * 0.5;
@@ -331,24 +335,24 @@ void CardManager::DrawBG()
 
 	/*g_renderManager.MoveImage("City_Night",
 		Gdiplus::Rect(0, 0, 1280, 720));*/
-	M_REND.MoveImage("Card_Middle_Up",
+	RENDER.MoveImage("Card_Middle_Up",
 		Gdiplus::Rect(midX - cardMidX, midY - (deckY + 10), deckX, deckY));
-	M_REND.MoveImage("Card_Middle_Down",
+	RENDER.MoveImage("Card_Middle_Down",
 		Gdiplus::Rect(midX - cardMidX, (midY + 10), deckX, deckY));
 
-	M_REND.MoveImage("Card_Deck_Up",
+	RENDER.MoveImage("Card_Deck_Up",
 		Gdiplus::Rect(0, 0, deckX, deckY));
-	M_REND.MoveImage("Card_Deck_Down",
+	RENDER.MoveImage("Card_Deck_Down",
 		Gdiplus::Rect(1265 - deckX, 682 - deckY, deckX, deckY));
 
 
-	cout << "¹è°æ Ãâ·Â È®ÀÎ\n";
+	// 	cout << "ë°°ê²½ ì¶œë ¥ í™•ì¸\n";
 }
 
-//ÇÃ·¹ÀÌ¾î ÆĞ Ãâ·Â
+//í”Œë ˆì´ì–´ íŒ¨ ì¶œë ¥
 void CardManager::DrawPlayerHand()
 {
-	//ÆĞ°¡ ¾øÀ¸¸é ¸®ÅÏ
+	//íŒ¨ê°€ ì—†ìœ¼ë©´ ë¦¬í„´
 	if (m_HandCount <= 0)
 		return;
 
@@ -357,10 +361,10 @@ void CardManager::DrawPlayerHand()
 
 	int midX = 1280 * 0.5;
 	int handMidX = midX - (CARDX * 2) - (CARDX * 0.5);
-	//ÆĞ ÀüÃ¼ ±æÀÌ´Â ÀÓ½Ã·Î Ä«µå 5Àå ±æÀÌ·Î ¼³Á¤
+	//íŒ¨ ì „ì²´ ê¸¸ì´ëŠ” ì„ì‹œë¡œ ì¹´ë“œ 5ì¥ ê¸¸ì´ë¡œ ì„¤ì •
 	int sliceHand = (CARDX * 5) / m_HandCount;
 
-	//ÆĞ°¡ 5Àå º¸´Ù ÀûÀ» ½Ã
+	//íŒ¨ê°€ 5ì¥ ë³´ë‹¤ ì ì„ ì‹œ
 	if (m_HandCount < 5)
 	{
 		sliceHand = (CARDX * m_HandCount) / m_HandCount;
@@ -372,7 +376,7 @@ void CardManager::DrawPlayerHand()
 		int startPos = handMidX + (sliceHand * i);
 		if (i == m_HandSelection)
 		{
-			//Ä«µå Á¤º¸ È®´ë º¸±â
+			//ì¹´ë“œ ì •ë³´ í™•ëŒ€ ë³´ê¸°
 			if (m_IsSelect)
 			{
 				M_REND.MoveImage(to_string(m_Hand[m_HandSelection]->GetUid()),
@@ -391,12 +395,12 @@ void CardManager::DrawPlayerHand()
 		}
 		else
 		{
-			M_REND.MoveImage(to_string(m_Hand[i]->GetUid()),
+			RENDER.MoveImage(to_string(m_Hand[i]->GetUid()),
 				Gdiplus::Rect(startPos, posY + 10, CARDX, CARDY));
 		}
 
-		//Ä«µå Ãâ·Â ¼ø¼­
-		M_REND.LayerMoveToBack(to_string(m_Hand[i]->GetUid()));
+		//ì¹´ë“œ ì¶œë ¥ ìˆœì„œ
+		RENDER.LayerMoveToBack(to_string(m_Hand[i]->GetUid()));
 	}
 
 	if (m_IsSelect)
@@ -411,10 +415,10 @@ void CardManager::DrawPlayerHand()
 	}
 }
 
-//º¸½º ÆĞ Ãâ·Â
+//ë³´ìŠ¤ íŒ¨ ì¶œë ¥
 void CardManager::DrawOppHand()
 {
-	//ÆĞ°¡ ¾øÀ¸¸é ¸®ÅÏ
+	//íŒ¨ê°€ ì—†ìœ¼ë©´ ë¦¬í„´
 	if (m_HandCount <= 0)
 		return;
 
@@ -423,10 +427,10 @@ void CardManager::DrawOppHand()
 
 	int midX = 1280 * 0.5;
 	int handMidX = midX - (CARDX * 2) - (CARDX * 0.5);
-	//ÆĞ ÀüÃ¼ ±æÀÌ´Â ÀÓ½Ã·Î Ä«µå 5Àå ±æÀÌ·Î ¼³Á¤
+	//íŒ¨ ì „ì²´ ê¸¸ì´ëŠ” ì„ì‹œë¡œ ì¹´ë“œ 5ì¥ ê¸¸ì´ë¡œ ì„¤ì •
 	int sliceHand = (CARDX * 5) / m_HandCount;
 
-	//ÆĞ°¡ 5Àå º¸´Ù ÀûÀ» ½Ã
+	//íŒ¨ê°€ 5ì¥ ë³´ë‹¤ ì ì„ ì‹œ
 	if (m_HandCount < 5)
 	{
 		sliceHand = (CARDX * m_HandCount) / m_HandCount;
@@ -438,45 +442,122 @@ void CardManager::DrawOppHand()
 		int startPos = handMidX + (sliceHand * i);
 		string cardId = "Card_Boss_Hand_";
 		cardId = cardId + to_string(i);
-		M_REND.MoveImage(cardId,
+		RENDER.MoveImage(cardId,
 			Gdiplus::Rect(startPos, posY + 10, CARDX, CARDY));
 	}
 }
 
-//ÆĞ Ä«µå »ç¿ë
-void CardManager::CardAct(CardManager& player ,CardManager& opponent)
+//íŒ¨ ì¹´ë“œ ì‚¬ìš©
+void CardManager::CardAct(CardManager& player, CardManager& opponent)
 {
-	//ÆĞ¿¡ Ä«µå°¡ ¾øÀ¸¸é ¸®ÅÏ
+	if (!m_IsMyTurn) return; // âœ… ë‚´ í„´ ì•„ë‹ˆë©´ ì¹´ë“œ ì‚¬ìš© ê¸ˆì§€
+	//íŒ¨ì— ì¹´ë“œê°€ ì—†ìœ¼ë©´ ë¦¬í„´
 	if (m_HandCount <= 0)
 		return;
-	//¼±ÅÃ ÁßÀÌÁö ¾ÊÀ¸¸é ¸®ÅÏ
+	//ì„ íƒ ì¤‘ì´ì§€ ì•Šìœ¼ë©´ ë¦¬í„´
 	if (m_HandSelection < 0)
 		return;
-	
-	//Å¸ÀÌ¸Ó ÃÊ±âÈ­
-	m_turnTime.SetIsStart(false);
 
-	switch (m_Hand[m_HandSelection]->GetType())
+	//íƒ€ì´ë¨¸ ì´ˆê¸°í™”
+	m_timer.SetIsStart(false);
+
+	// =========================================================
+	// ë””ë²„ê·¸: ì¹´ë“œ ì‹¤í–‰ íë¦„ì„ ì½˜ì†”ì— ìì„¸íˆ ì¶œë ¥
+	//  - UID/íƒ€ì…/ì†ì„±/ë³„/ATK/DEF
+	//  - ì–´ë–¤ Apply* í•¨ìˆ˜ë¡œ ë“¤ì–´ê°”ëŠ”ì§€
+	//  - HP/Shield, íŒ¨/ë± ë³€í™”(í•µì‹¬ë§Œ)
+	// =========================================================
+	GameCard* sel = m_Hand[m_HandSelection];
+	if (!sel) return;
+
+	// ë§ˆì§€ë§‰ ì‚¬ìš© ì¹´ë“œ ê¸°ë¡(UID 211 ì§€ì›ìš©)
+	if (player.m_pPlayer) player.m_pPlayer->setLastUsedCard(sel);
+	else if (player.m_pEnemyMob) player.m_pEnemyMob->setLastUsedCard(sel);
+
+	// í˜¹ì‹œ ì¹´ë“œ ë°ì´í„°ê°€ ë¹„ì–´ìˆë”ë¼ë„ UID ë²”ìœ„ë¡œ ê¸°ë³¸ ë§¤í•‘
+	ApplyUidMapping(sel);
+
+	auto TypeToStr = [](int t) -> const char*
+		{
+			switch (t)
+			{
+			case E_Attack:   return "Attack";
+			case E_Deffense: return "Defense";
+			case E_Magic:    return "Support";
+			default:         return "Unknown";
+			}
+		};
+
+	auto StarToStr = [](int s) -> const char*
+		{
+			switch (s)
+			{
+			case E_ONE:   return "1";
+			case E_TWO:   return "2";
+			case E_THREE: return "3";
+			default:      return "?";
+			}
+		};
+
+	auto AttrToStr = [](int a) -> const char*
+		{
+			switch (a)
+			{
+			case E_BULGOGI: return "BULGOGI";
+			case E_SOURCE:  return "SOURCE";
+			case E_CHESSE:  return "CHESSE";
+			case E_VEGAT:   return "VEGAT";
+			case E_BREAD:   return "BREAD";
+			default:        return "ATTR?";
+			}
+		};
+
+	std::cout
+		<< "\n[CardAct] uid=" << sel->GetUid()
+		<< " type=" << TypeToStr(sel->GetType())
+		<< " attr=" << AttrToStr(sel->GetAit())
+		<< " star=" << StarToStr(sel->GetStar())
+		<< " atk=" << sel->GetAtk()
+		<< " def=" << sel->GetDef()
+		<< " | my HP=" << ActorHP() << "/" << ActorMaxHP()
+		<< " shield=" << ActorShield()
+		<< " | opp HP=" << opponent.ActorHP() << "/" << opponent.ActorMaxHP()
+		<< " shield=" << opponent.ActorShield()
+		<< "\n";
+
+	switch (sel->GetType())
 	{
 	case E_Attack:
-		cout << "°ø°İ Ä«µå »ç¿ë!! " << m_Hand[m_HandSelection]->GetAtk() << "µ¥¹ÌÁö!!\n";
+		// 		std::cout << "[Flow] ApplyAttackTo(opponent, card)\n";
+		ApplyAttackTo(opponent, sel);
+		// 		cout << "ê³µê²© ì¹´ë“œ ì‚¬ìš©!! " << sel->GetAtk() << "ë°ë¯¸ì§€!!\n";
 		break;
 	case E_Deffense:
-		cout << "¹æ¾î Ä«µå »ç¿ë!!" << m_Hand[m_HandSelection]->GetDef() << "¹æ¾î!!\n";
+		// 		std::cout << "[Flow] ApplyDefense(card)\n";
+		ApplyDefense(sel);
+		// 		cout << "ë°©ì–´ ì¹´ë“œ ì‚¬ìš©!!" << sel->GetDef() << "ë°©ì–´!!\n";
 		break;
 	case E_Magic:
-		cout << "º¸Á¶ Ä«µå »ç¿ë!!\n";
+		// 		std::cout << "[Flow] ApplySupport(card, opponent)\n";
+		ApplySupport(sel, opponent);
+		// 		cout << "ë³´ì¡° ì¹´ë“œ ì‚¬ìš©!!\n";
 		break;
 	}
 
-	//ÀÓ½Ã
+	std::cout
+		<< "[After] my HP=" << ActorHP() << "/" << ActorMaxHP()
+		<< " shield=" << ActorShield()
+		<< " | opp HP=" << opponent.ActorHP() << "/" << opponent.ActorMaxHP()
+		<< " shield=" << opponent.ActorShield()
+		<< "\n";
+
 	m_isShiny = true;
 	m_isRip = true;
 	m_isSkill = true;
 	m_isDef = true;
 
-	//ÀÌ¹ÌÁö ¾Èº¸ÀÌ±â
-	M_REND.ImageVisible(to_string(m_Hand[m_HandSelection]->GetUid()), false);
+	//ì´ë¯¸ì§€ ì•ˆë³´ì´ê¸°
+	RENDER.ImageVisible(to_string(m_Hand[m_HandSelection]->GetUid()), false);
 	/*int midX = 1280 * 0.5;
 	int midY = 720 * 0.5;
 	int cardMidX = CARDX * 0.5;
@@ -488,43 +569,30 @@ void CardManager::CardAct(CardManager& player ,CardManager& opponent)
 
 	m_Hand.erase(m_Hand.begin() + m_HandSelection);
 	m_HandCount--;
-	//»ç¿ëÇÑ Ä«µå°¡ ÆĞÀÇ °¡Àå ¿À¸¥ÂÊ Ä«µåÀÌ¸é ¿ŞÂÊ Ä«µå ¼±ÅÃ
+	//ì‚¬ìš©í•œ ì¹´ë“œê°€ íŒ¨ì˜ ê°€ì¥ ì˜¤ë¥¸ìª½ ì¹´ë“œì´ë©´ ì™¼ìª½ ì¹´ë“œ ì„ íƒ
 	if (m_HandSelection >= m_HandCount && m_HandSelection != 0)
 		m_HandSelection--;
 
-	//ÅÏ ¿£µå
-	player.m_IsMyTurn = !player.m_IsMyTurn;
-	opponent.m_IsMyTurn = !opponent.m_IsMyTurn;
-	opponent.BossCardAct(player);
-	cout << "ÅÏ ±³Ã¼.\n";
+	// ===== ì¹´ë“œ ì‚¬ìš© íšŸìˆ˜ ì¦ê°€ í›„, ì œí•œì— ë„ë‹¬í•˜ë©´ ì¦‰ì‹œ ë³´ìŠ¤ í„´ìœ¼ë¡œ ë„˜ê¹€ =====
+	RefreshPlayLimitFromPlayer();
+	++m_PlaysUsedThisTurn;
+	TryEndTurn(opponent, NULL);
 }
 
 void CardManager::HandSelect(CardManager& player, CardManager& opponent)
 {
-	if (GameInput_M::Input::GetInstance().isKeyboard(KEY_LEFT)
-		&& !(m_HandSelection <= 0) && !m_turnTime.GetIsPuase()) m_HandSelection--;
-	else if (GameInput_M::Input::GetInstance().isKeyboard(KEY_RIGHT)
-		&& !(m_HandSelection >= m_HandCount - 1) && !m_turnTime.GetIsPuase()) m_HandSelection++;
+	if (GameInput_M::Input::GetInstance().isKeyboard((int)GameInput_M::KeyboardValue::ArrowLeft)
+		&& !(m_HandSelection <= 0)) m_HandSelection--;
+	else if (GameInput_M::Input::GetInstance().isKeyboard((int)GameInput_M::KeyboardValue::ArrowRight)
+		&& !(m_HandSelection >= m_HandCount - 1)) m_HandSelection++;
 
-	else if (GameInput_M::Input::GetInstance().isKeyboard(KEY_UP)
-		&& !m_turnTime.GetIsPuase()) m_IsSelect = true;
-	else if (GameInput_M::Input::GetInstance().isKeyboard(KEY_DOWN)
-		&& !m_turnTime.GetIsPuase()) m_IsSelect = false;
-	else if (GameInput_M::Input::GetInstance().isKeyboard(KEY_ENTER)
-		&& m_IsMyTurn && !m_turnTime.GetIsPuase()) CardAct(player, opponent);
-	else if (GameInput_M::Input::GetInstance().isKeyboard(VK_ESCAPE))
-	{
-		m_turnTime.Pause();
-		cout << "°ÔÀÓ ÀÏ½Ã Á¤Áö\n";
-	}
-	else if (GameInput_M::Input::GetInstance().isKeyboard(VK_DELETE))
-	{
-		m_turnTime.Resume();
-		cout << "°ÔÀÓ ÀÏ½Ã Á¤Áö ÇØÁ¦\n";
-	}
+	else if (GameInput_M::Input::GetInstance().isKeyboard((int)GameInput_M::KeyboardValue::ArrowUp)) m_IsSelect = true;
+	else if (GameInput_M::Input::GetInstance().isKeyboard((int)GameInput_M::KeyboardValue::ArrowDown)) m_IsSelect = false;
+	else if (GameInput_M::Input::GetInstance().isKeyboard((int)GameInput_M::KeyboardValue::Enter)
+		&& m_IsMyTurn) CardAct(player, opponent);
 }
 
-//½ÃÀÛ ÅÏ Á¤ÇÏ±â
+//ì‹œì‘ í„´ ì •í•˜ê¸°
 void CardManager::StartTurn(CardManager& player, CardManager& opponent)
 {
 	randomInit(0, 100);
@@ -534,20 +602,20 @@ void CardManager::StartTurn(CardManager& player, CardManager& opponent)
 	if (randTurn % 2 == 0)
 	{
 		player.m_IsMyTurn = !player.m_IsMyTurn;
-		cout << "ÀÚ½ÅÀÇ ÅÏ\n";
+		//		cout << "ìì‹ ì˜ í„´\n";
 	}
 	else
 	{
 		opponent.m_IsMyTurn = !opponent.m_IsMyTurn;
-		cout << "»ó´ë¹æÀÇ ÅÏ\n";
-		//opponent.OpponentAct(player, opponent, hWnd);
-		//opponent.BossCardAct(player);
+		//		cout << "ìƒëŒ€ë°©ì˜ í„´\n";
+				//opponent.OpponentAct(player, opponent, hWnd);
+				//opponent.BossCardAct(player);
 	}
 }
 
 void CardManager::TimeLimit(CardManager& player, CardManager& opponent)
 {
-	//ÀÏ½ÃÁ¤Áö
+	//ï¿½Ï½ï¿½ï¿½ï¿½ï¿½ï¿½
 	if (m_turnTime.GetIsPuase()) return;
 
 	if (!m_turnTime.GetIsStart())
@@ -555,47 +623,57 @@ void CardManager::TimeLimit(CardManager& player, CardManager& opponent)
 		m_turnTime.StartTimer();
 		m_turnTime.SetIsStart(true);
 	}
-	
-	m_turnTime.UpdateTimer();
-	if (m_turnTime.CheckTimer(5))
-	{
-		player.m_IsMyTurn = !player.m_IsMyTurn;
-		opponent.m_IsMyTurn = !opponent.m_IsMyTurn;
 
-		//ÀÚ½ÅÀÇ Â÷·Ê¸é µå·Î¿ì
-		if (player.m_IsMyTurn)
-		{
-			CardDraw(1);
-			cout << "ÀÚ½ÅÀÇ ÅÏ\n";
-		}
-		else
-		{
-			cout << "»ó´ë¹æÀÇ ÅÏ\n";
-			//opponent.BossCardAct(player);
-		}
-		m_turnTime.SetIsStart(false);
+	m_timer.UpdateTimer();
+	if (!m_timer.CheckTimer(5))
+		return;
+
+	// âœ… ì—¬ê¸°ì„œ ë¨¼ì € ëŠì–´ì¤˜ì•¼ ê°™ì€ í”„ë ˆì„/ë‹¤ìŒ í”„ë ˆì„ ì—°ì† ì§„ì…ì„ ë§‰ìŒ
+	m_timer.SetIsStart(false);
+
+	// 1) í„´ í† ê¸€
+	player.m_IsMyTurn = !player.m_IsMyTurn;
+	opponent.m_IsMyTurn = !opponent.m_IsMyTurn;
+
+	// 2) ë‹¤ìŒ í„´ BeginTurn (ì‹¤ë“œ 0ì€ ì—¬ê¸°ì„œë§Œ)
+	static int turnCounter = 1;
+	++turnCounter;
+
+	if (player.m_IsMyTurn)
+	{
+		player.CardDraw(1);
+		if (player.m_pPlayer)        player.m_pPlayer->BeginTurn(turnCounter);
+		else if (player.m_pEnemyMob) player.m_pEnemyMob->BeginTurn(turnCounter);
+	}
+	else
+	{
+		opponent.CardDraw(1);
+		if (opponent.m_pPlayer)        opponent.m_pPlayer->BeginTurn(turnCounter);
+		else if (opponent.m_pEnemyMob) opponent.m_pEnemyMob->BeginTurn(turnCounter);
+		// opponent.BossCardAct(player); // ì›í•  ë•Œë§Œ
 	}
 }
 
-//ÅÏ ½Ã°£ Á¦ÇÑ
+
+//í„´ ì‹œê°„ ì œí•œ
 //void CardManager::TimeLimit(WPARAM wParam, HWND hWnd, CardManager& player, CardManager& opponent)
 //{
 //	switch (wParam)
 //	{
 //	case TURNTIME:
-//		//ÅÏ ¿£µå
+//		//í„´ ì—”ë“œ
 //		player.m_IsMyTurn = !player.m_IsMyTurn;
 //		opponent.m_IsMyTurn = !opponent.m_IsMyTurn;
 //
-//		//ÀÚ½ÅÀÇ Â÷·Ê¸é µå·Î¿ì
+//		//ìì‹ ì˜ ì°¨ë¡€ë©´ ë“œë¡œìš°
 //		if (player.m_IsMyTurn)
 //		{
 //			CardDraw(1);
-//			cout << "ÀÚ½ÅÀÇ ÅÏ\n";
+//			cout << "ìì‹ ì˜ í„´\n";
 //		}
 //		else
 //		{
-//			cout << "»ó´ë¹æÀÇ ÅÏ\n";
+//			cout << "ìƒëŒ€ë°©ì˜ í„´\n";
 //			//opponent.OpponentAct(player, opponent, hWnd);
 //		}
 //
@@ -607,24 +685,24 @@ void CardManager::TimeLimit(CardManager& player, CardManager& opponent)
 //	}
 //}
 
-//º¸½º / ¸ó½ºÅÍ Çàµ¿
+//ë³´ìŠ¤ / ëª¬ìŠ¤í„° í–‰ë™
 //void CardManager::OpponentAct(Player& p_player, Boss& p_boss, CardManager& player, CardManager& opponent, HWND hWnd)
 //{
-//	//µå·Î¿ì 
+//	//ë“œë¡œìš° 
 //	CardDraw(1);
 //
-//	//ÀÓ½Ã Á¤º¸ Ç¥Ãâ
+//	//ì„ì‹œ ì •ë³´ í‘œì¶œ
 //	string info;
 //	for (int i = 0; i < m_HandCount; i++)
 //	{
-//		info += (to_string(i) + "¹øÂ° Ä«µå Á¤º¸: ");
-//		info += (to_string(m_Hand[i]->GetStar() + 1) + "¼º. °ø°İ·Â " + to_string(m_Hand[i]->GetAtk())
-//			+ ". ¹æ¾î·Â " + to_string(m_Hand[i]->GetDef()) + ".");
+//		info += (to_string(i) + "ë²ˆì§¸ ì¹´ë“œ ì •ë³´: ");
+//		info += (to_string(m_Hand[i]->GetStar() + 1) + "ì„±. ê³µê²©ë ¥ " + to_string(m_Hand[i]->GetAtk())
+//			+ ". ë°©ì–´ë ¥ " + to_string(m_Hand[i]->GetDef()) + ".");
 //		info += m_Hand[i]->GetInfo() + "\n";
 //	}
 //	cout << info << endl;
 //	
-//	//°ø°İ Ä«µå·Î ÇÃ·¹ÀÌ¾î¸¦ Á×ÀÏ ¼ö ÀÖ´Ù¸é 1¼øÀ§ ¾×Æ®
+//	//ê³µê²© ì¹´ë“œë¡œ í”Œë ˆì´ì–´ë¥¼ ì£½ì¼ ìˆ˜ ìˆë‹¤ë©´ 1ìˆœìœ„ ì•¡íŠ¸
 //	for (int i = 0; i < m_HandCount; i++)
 //	{
 //		if (m_Hand[i]->GetType() == E_Attack)
@@ -646,40 +724,35 @@ void CardManager::TimeLimit(CardManager& player, CardManager& opponent)
 
 void CardManager::BossCardAct(CardManager& player)
 {
-	//ÆĞ¿¡ Ä«µå°¡ ¾øÀ¸¸é ¸®ÅÏ
-	if (m_HandCount <= 0)
-		return;
-	//¼±ÅÃ ÁßÀÌÁö ¾ÊÀ¸¸é ¸®ÅÏ
-	if (m_HandSelection < 0)
-		return;
+	// âœ… ë³´ìŠ¤ í„´ì´ ì•„ë‹ ë•ŒëŠ” í–‰ë™ ê¸ˆì§€ (ì¤‘ë³µ ì‹¤í–‰/í„´ ê¼¬ì„ ë°©ì§€)
+	if (!m_IsMyTurn) return;
 
+	// íŒ¨ì— ì¹´ë“œê°€ ì—†ìœ¼ë©´ ë¦¬í„´
+	if (m_HandCount <= 0) return;
+
+	// ì„ íƒ ì¸ë±ìŠ¤ ë³´ì • (ë³´ìŠ¤ëŠ” ì„ íƒ UIê°€ ì—†ì–´ì„œ -1ì´ë©´ 0ìœ¼ë¡œ)
+	if (m_HandSelection < 0) m_HandSelection = 0;
+	if (m_HandSelection >= m_HandCount) m_HandSelection = 0;
+
+	// (ê¸°ì¡´ íš¨ê³¼ ì²˜ë¦¬ ë¡œì§ì´ ë”°ë¡œ ì—†ì–´ì„œ, ì§€ê¸ˆì€ 'ì¹´ë“œ 1ì¥ ì†Œë¹„'ë§Œ ìœ ì§€)
 	switch (m_Hand[m_HandSelection]->GetType())
 	{
 	case E_Attack:
-		cout << "°ø°İ Ä«µå »ç¿ë!! " << m_Hand[m_HandSelection]->GetAtk() << "µ¥¹ÌÁö!!\n";
+		// ê³µê²© ë¡œì§ì€ ApplyAttackì´ ì•„ë‹ˆë¼ë©´ ë³„ë„ êµ¬í˜„ í•„ìš”
 		break;
 	case E_Deffense:
-		cout << "¹æ¾î Ä«µå »ç¿ë!!" << m_Hand[m_HandSelection]->GetDef() << "¹æ¾î!!\n";
 		break;
 	case E_Magic:
-		cout << "º¸Á¶ Ä«µå »ç¿ë!!\n";
 		break;
 	}
 
-	//ÀÌ¹ÌÁö ¾Èº¸ÀÌ±â
-	M_REND.ImageVisible(to_string(m_Hand[m_HandSelection]->GetUid() + BOSSUID), false);
+	// ì´ë¯¸ì§€ ì•ˆë³´ì´ê¸°
+	RENDER.ImageVisible(to_string(m_Hand[m_HandSelection]->GetUid() + BOSSUID), false);
 
 	m_Hand.erase(m_Hand.begin() + m_HandSelection);
 	m_HandCount--;
-	//»ç¿ëÇÑ Ä«µå°¡ ÆĞÀÇ °¡Àå ¿À¸¥ÂÊ Ä«µåÀÌ¸é ¿ŞÂÊ Ä«µå ¼±ÅÃ
+
+	// ì‚¬ìš©í•œ ì¹´ë“œê°€ íŒ¨ì˜ ê°€ì¥ ì˜¤ë¥¸ìª½ ì¹´ë“œì´ë©´ ì™¼ìª½ ì¹´ë“œ ì„ íƒ
 	if (m_HandSelection >= m_HandCount && m_HandSelection != 0)
 		m_HandSelection--;
-
-	//ÅÏ ¿£µå
-	player.m_IsMyTurn = !player.m_IsMyTurn;
-	m_IsMyTurn = !m_IsMyTurn;
-	//SetTimer(hWnd, TURNTIME, 7000, NULL);
-	player.CardDraw(1);
-	cout << "ÅÏ ±³Ã¼.\n";
-
 }

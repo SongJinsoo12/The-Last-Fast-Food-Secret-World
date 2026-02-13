@@ -1,6 +1,6 @@
 #pragma once
 
-#define M_REND GameImage_M::RenderManager::GetInstance()
+#define RENDER GameImage_M::RenderManager::GetInstance()
 
 #include "ImageLoad.h"
 #include "ImageManager.h"
@@ -48,3 +48,5 @@ namespace GameImage_M {
 		void LayerMoveToBack(string p_id);
 	};
 }
+
+

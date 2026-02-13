@@ -1,10 +1,12 @@
 #include <windows.h>
-#include <iostream>// Çì´õ
+#include <iostream>// 
 //#include "tweeny.h"
+#include "Mob.h"
+#include "Player.h"
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-HINSTANCE g_hInst;											// ÀÎ½ºÅÏ½º ÇÚµé
-LPCTSTR lpszClass = TEXT("T.L.F.F2 : Secret World");					// Á¦¸ñ Ç¥½ÃÁÙ¿¡ Ç¥½Ã
+HINSTANCE g_hInst;											// Î½Ï½ Úµ
+LPCTSTR lpszClass = TEXT("T.L.F.F2 : Secret World");					//  Ç¥Ù¿ Ç¥
 
 //auto tween = tweeny::from(50).to(500).during(2000).via(tweeny::easing::exponentialOut);
 //
@@ -17,63 +19,95 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	if (AllocConsole()) {
 		FILE* fp;
 		freopen_s(&fp, "CONOUT$", "w", stdout);
-		freopen_s(&fp, "CONOUT$", "w", stderr); // ¿¡·¯ Ãâ·Âµµ ÄÜ¼Ö·Î
-		std::ios::sync_with_stdio(); // cout°ú printf¸¦ ¼¯¾î ¾µ ¶§ À¯¿ë
+		freopen_s(&fp, "CONOUT$", "w", stderr); //  Âµ Ü¼Ö·
+		std::ios::sync_with_stdio(); // cout printf    
 	}
 #endif
 
-	HWND hWnd;												// À©µµ¿ì ÇÚµé ¼±¾ğ
-	MSG Message;											// ¸Ş½ÃÁö ±¸Á¶Ã¼ º¯¼ö ¼±¾ğ
-	WNDCLASS WndClass;										// Windows Class ±¸Á¶Ã¼ º¯¼ö ¼±¾ğ
-	g_hInst = hInstance;									// hInstance°ªÀ» ¿ÜºÎ¿¡¼­µµ »ç¿ëµÇ°Ô Àü¿ª º¯¼ö¿¡ ÀúÀå
+	HWND hWnd;												//  Úµ 
+	MSG Message;											// Ş½ Ã¼  
+	WNDCLASS WndClass;										// Windows Class Ã¼  
+	g_hInst = hInstance;									// hInstance ÜºÎ¿ Ç°   
 
-	WndClass.cbClsExtra = 0;								// ¿¹¾à ¿µ¿ª, Áö±İ »ç¿ë x
-	WndClass.cbWndExtra = 0;								// ¿¹¾à ¿µ¿ª
-	WndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);	// ¹è°æ »ö ÁöÁ¤
-	WndClass.hCursor = LoadCursor(NULL, IDC_ARROW);			// ¸¶¿ì½º Æ÷ÀÎÅÍ ¸ğ¾ç ÁöÁ¤
-	WndClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);		// Ä¿¼­ ¾ÆÀÌÄÜ ÁöÁ¤
-	WndClass.hInstance = hInstance;							// Å¬·¡½º µî·ÏÇÏ´Â ÇÁ·Î±×·¥ ¹øÈ£
-	WndClass.lpfnWndProc = WndProc;							// ¸Ş½ÃÁö Ã³¸® ÇÔ¼ö ÁöÁ¤
-	WndClass.lpszClassName = lpszClass;						// Å¬·¡½º ÀÌ¸§ ÁöÁ¤
-	WndClass.lpszMenuName = NULL;							// ¸Ş´º ÁöÁ¤
-	WndClass.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;		// ½ºÅ¸ÀÏ Á¤ÀÇ
+	WndClass.cbClsExtra = 0;								//  ,   x
+	WndClass.cbWndExtra = 0;								//  
+	WndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);	//   
+	WndClass.hCursor = LoadCursor(NULL, IDC_ARROW);			// ì½º   
+	WndClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);		// Ä¿  
+	WndClass.hInstance = hInstance;							// Å¬ Ï´ Î±×· È£
+	WndClass.lpfnWndProc = WndProc;							// Ş½ Ã³ Ô¼ 
+	WndClass.lpszClassName = lpszClass;						// Å¬ Ì¸ 
+	WndClass.lpszMenuName = NULL;							// Ş´ 
+	WndClass.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;		// Å¸ 
 
 	RegisterClass(&WndClass);
 
-	hWnd = CreateWindow(lpszClass, lpszClass, // À©µµ¿ì »ı¼º
+	hWnd = CreateWindow(lpszClass, lpszClass, //  
 		WS_OVERLAPPEDWINDOW, /*CW_USEDEFAULT,
 		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT*/
 		100,0,1280,720, NULL, (HMENU)NULL, hInstance, NULL);
 
 	ShowWindow(hWnd, nCmdShow);
 
-	while (true) { //Queue¿¡ ÀÖ´Â ¸Ş½ÃÁö ÀĞ¾îµéÀÓ
+	while (true) { //Queue Ö´ Ş½ Ğ¾
 		if (PeekMessage(&Message, NULL, 0, 0, PM_REMOVE)) {
 			if (Message.message == WM_QUIT)
 				break;
-			TranslateMessage(&Message); // Å°º¸µå ÀÔ·Â ¸Ş½ÃÁö °¡°ø
-			DispatchMessage(&Message); // ¸Ş½ÃÁö Ã³¸®
+			TranslateMessage(&Message); // Å° Ô· Ş½ 
+			DispatchMessage(&Message); // Ş½ Ã³
 		}
 		else {
-			// 0. Å¸ÀÌ¸Ó Ã³¸®
+			// 0. Å¸Ì¸ Ã³
 			// 
 			//QueryPerformanceCounter(&t2);
 			//deltaTime = (double)(t2.QuadPart - t1.QuadPart) / frequency.QuadPart;
 			//t1 = t2;
-			// 1. °ÔÀÓÀÇ ¼öÄ¡µéÀ» ¾÷µ¥ÀÌÆ® (ÀÌµ¿, Ãæµ¹ µî)
+			// 1.  Ä¡ Æ® (Ìµ, æµ¹ )
 			// GameInput_M::Input::GetInstance().Update();
 			// 
-			// Render ÀÚ¸®
+			// Render Ú¸
 			InvalidateRect(hWnd, NULL, FALSE);
 		}
 	}
-	return (int)Message.wParam; // Å»Ãâ ÄÚµå, ÇÁ·Î±×·¥ Á¾·á
+	return (int)Message.wParam; // Å» Úµ, Î±×· 
 }
 
 #include <math.h>
 #include "RenderManager.h"
 #include "GameState.h"
 #include "InputGame.h"
+#include "ButtonManager.h"
+
+
+// ------------------------------------------------------------
+// HUD: í™”ë©´ ì¢Œì¸¡ ìƒë‹¨ì— HP/Shieldë§Œ 2ì¤„ í‘œì‹œ
+// ------------------------------------------------------------
+
+Player g_playerActor;
+Mob    g_enemyActor;
+CardManager g_player;
+CardManager g_enemy;
+
+static void DrawSimpleHUD(HDC hdc)
+{
+	SetBkMode(hdc, TRANSPARENT);
+	SetTextColor(hdc, RGB(255, 255, 255));
+
+	const int pHP = g_playerActor.GetHP();
+	const int pMax = g_playerActor.GetMaxHP();
+	const int pSh = g_playerActor.GetShield();
+
+	const int eHP = g_enemyActor.GetHP();
+	const int eMax = g_enemyActor.GetMaxHP();
+	const int eSh = g_enemyActor.GetShield();
+
+	wchar_t line1[128], line2[128];
+	wsprintfW(line1, L"PLAYER  HP %d/%d   SH %d", pHP, pMax, pSh);
+	wsprintfW(line2, L"ENEMY   HP %d/%d   SH %d", eHP, eMax, eSh);
+
+	TextOutW(hdc, 20, 20, line1, lstrlenW(line1));
+	TextOutW(hdc, 20, 45, line2, lstrlenW(line2));
+}
 
 //#define BSIZE 40
 //
@@ -85,6 +119,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 //	if (LengthPts(x, y, mx, my) < BSIZE)return TRUE;
 //	else return FALSE;
 //}
+
+//  Ã¼
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
@@ -99,7 +135,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	switch (iMessage) {
 	case WM_CREATE:
 		GetClientRect(hWnd, &rt);
-		M_STATE.ChangeState(GameState_M::E_InGameState::Lobby);
+		GameState_M::Context::GetInstance().Init();
+		GameState_M::Context::GetInstance().ChangeState(GameState_M::E_InGameState::Lobby);
+
+		// Actor(HP/Shield) ì—°ê²°: ì¹´ë“œ íš¨ê³¼ê°€ ì‹¤ì œ HP/Shieldì— ì ìš©ë˜ê²Œ í•©ë‹ˆë‹¤.
+		g_player.BindActors(&g_playerActor, &g_enemyActor);
+		g_enemy.BindActors(nullptr, &g_enemyActor);
+
 		//SetTimer(hWnd, 1, 500, NULL);
 		break;
 
@@ -107,30 +149,33 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	{
 		hdc = BeginPaint(hWnd, &ps);
 
-		// 1. ¸Ş¸ğ¸® DC¿Í ºñÆ®¸Ê »ı¼º (´õºí ¹öÆÛ¸µ¿ë)
+		// 1. ë©”ëª¨ë¦¬ DCì™€ ë¹„íŠ¸ë§µ ìƒì„± (ë”ë¸” ë²„í¼ë§ìš©)
 		memDC = CreateCompatibleDC(hdc);
 		hOldBitmap = (HBITMAP)SelectObject(memDC, CreateCompatibleBitmap(hdc, rt.right, rt.bottom));
 
-		// 2. ¸Ş¸ğ¸® DC À§¿¡ Graphics »ı¼º
+		// 2. ë©”ëª¨ë¦¬ DC ìœ„ì— Graphics ìƒì„±
 		Graphics graphics(memDC);
-		graphics.Clear(Color(255, 255, 255, 255)); // ¹è°æ Áö¿ì±â
+		graphics.Clear(Color(255, 255, 255, 255)); //  
 
-		// 3. ¸ğµç ÀÌ¹ÌÁö ±×¸®±â
-		M_STATE.Update(hdc, hWnd);
+		// 3.  Ì¹ëª¨ë“  ì´ë¯¸ì§€ ê·¸ë¦¬ê¸°
+		GameState_M::Context::GetInstance().Update(hdc, hWnd);
 		GameImage_M::RenderManager::GetInstance().RenderAll(&graphics);
-
-		// 4. ¸Ş¸ğ¸®¿¡ ±×¸° ³»¿ëÀ» ½ÇÁ¦ È­¸éÀ¸·Î ÇÑ ¹ø¿¡ º¹»ç (±ôºıÀÓ ¹æÁö)
+		btnManager.DrawAll();
+		
+		// 4. ë©”ëª¨ë¦¬ì— ê·¸ë¦° ë‚´ìš© ì‹¤ì œ í™”ë©´ìœ¼ë¡œ ë³µì‚¬
 		BitBlt(hdc, 0, 0, rt.right, rt.bottom, memDC, 0, 0, SRCCOPY);
 
-		// 5. ¸Ş¸ğ¸® ÇØÁ¦
+		// 5. ë©”ëª¨ë¦¬ í•´ì œ
 		DeleteObject(SelectObject(memDC, hOldBitmap));
 		DeleteDC(memDC);
+		DrawSimpleHUD(hdc);
+
 		EndPaint(hWnd, &ps);
 	}
 	return 0;
 
-	case WM_DESTROY: // À©µµ¿ì Á¾·á ½Ã(Ã¢ ´İÀ½ ¸Ş½ÃÁö)
-		PostQuitMessage(0); // ¸Ş½ÃÁö Å¥¿¡ Á¾·á ¸Ş½ÃÁö Àü´Ş
+	case WM_DESTROY: //   (Ã¢  Ş½)
+		PostQuitMessage(0); // Ş½ Å¥  Ş½ 
 		return 0;
 	}
 	return(DefWindowProc(hWnd, iMessage, wParam, lParam));

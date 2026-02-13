@@ -39,20 +39,20 @@ void CardTableManager::Init()
 {
 	m_AllCardDataVec.resize(250);
 
-	// csv ÀĞ¾î ¿Í¼­ ·ÎµåÇÏ±â
+	// csv ì½ì–´ ì™€ì„œ ë¡œë“œí•˜ê¸°
 	ifstream file("All_Card.csv");
 	if (!file.is_open())
 		return;
 
 	string line;
-	getline(file, line); //Ã¹ ¹øÂ° ÁÙ Á¤º¸¾øÀ½
+	getline(file, line); //ì²« ë²ˆì§¸ ì¤„ ì •ë³´ì—†ìŒ
 	while (getline(file, line))
 	{
 		stringstream ss(line);
 		string cell;
 		vector<string> row;
 
-		// ½°Ç¥(,)¸¦ ±âÁØÀ¸·Î Àß¶ó¼­ row º¤ÅÍ¿¡ ÀúÀå
+		// ì‰¼í‘œ(,)ë¥¼ ê¸°ì¤€ìœ¼ë¡œ ì˜ë¼ì„œ row ë²¡í„°ì— ì €ì¥
 		while (getline(ss, cell, ',')) {
 			row.push_back(cell);
 		}
@@ -69,7 +69,7 @@ void CardTableManager::Init()
 		string info = row[6];
 
 
-		//Ä«µå »ı¼º ¹× µ¥ÀÌÅÍ ¼¼ÆÃ
+		//ì¹´ë“œ ìƒì„± ë° ë°ì´í„° ì„¸íŒ…
 		Card* newCard = new Card(uid);
 		newCard->SetAtk(atk);
 		newCard->SetDef(def);
@@ -96,7 +96,7 @@ Card* CardTableManager::GetCardData(ALLCARDEnum p_uid)
 	return m_AllCardDataVec[(int)p_uid];
 }
 
-//Ä«µå ¼ÅÇÃ
+//ì¹´ë“œ ì…”í”Œ
 vector<GameCard*> CardTableManager::GetRandomCard(int p_count)
 {
 	vector<GameCard*> outvec;
@@ -109,7 +109,7 @@ vector<GameCard*> CardTableManager::GetRandomCard(int p_count)
 		randUid = cookRandom(gen);
 		Card* card = GetCardData(randUid);
 
-		//Áßº¹ È®ÀÎ
+		//ì¤‘ë³µ í™•ì¸
 		for (size_t j = 0; j < noSameUid.size(); j++)
 		{
 			if (randUid == noSameUid[j])
@@ -133,7 +133,7 @@ vector<GameCard*> CardTableManager::GetRandomCard(int p_count)
 		}
 	}
 
-	cout << "Ä«µå ¼ÅÇÃ È®ÀÎ\n";
+	cout << "ì¹´ë“œ ì…”í”Œ í™•ì¸\n";
 	return outvec;
 }
 
@@ -144,7 +144,7 @@ CAttribute CardTableManager::StrToAit(string str)
 	if (str == "E_CHESSE") return E_CHESSE;
 	if (str == "E_VEGAT") return E_VEGAT;
 	if (str == "E_BREAD") return E_BREAD;
-	return E_BREAD; // ±âº»°ª
+	return E_BREAD; // ê¸°ë³¸ê°’
 }
 
 CType CardTableManager::StrToType(string str)
@@ -152,7 +152,7 @@ CType CardTableManager::StrToType(string str)
 	if (str == "E_Attack") return E_Attack;
 	if (str == "E_Deffense") return E_Deffense;
 	if (str == "E_Magic") return E_Magic;
-	return E_Attack; // ±âº»°ª
+	return E_Attack; // ê¸°ë³¸ê°’
 }
 
 Star CardTableManager::StrToStar(string str)
@@ -160,7 +160,7 @@ Star CardTableManager::StrToStar(string str)
 	if (str == "E_ONE") return E_ONE;
 	if (str == "E_TWO") return E_TWO;
 	if (str == "E_THREE") return E_THREE;
-	return E_TWO; //±âº»°ª
+	return E_TWO; //ê¸°ë³¸ê°’
 }
 
 void CardTableManager::CardImageLoad(int uid, CAttribute  ait, CType type, Star star)

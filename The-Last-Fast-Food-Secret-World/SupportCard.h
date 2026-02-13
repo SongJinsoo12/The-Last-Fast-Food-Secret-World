@@ -43,7 +43,7 @@ public:
     // --- 공격 강화/변형 ---
     void Next_AtkCard_Damage_Up(Player& player, float mult = 1.5f);  // 다음 공격 피해량 배율
     void MY_Attiravate_Change(Player& player, CAttribute attr, CAttribute neutral = E_BREAD);   // 자신의 다음 공격 카드의 속성을 임의의 속성(무속성 x)으로 변경
-    void MY_Attiravate_Change_Random(Player& player, CAttribute neutral = E_BREAD);
+   /* void MY_Attiravate_Change_Random(Player& player, CAttribute neutral = E_BREAD);*/
     void Card_Forsake_Damage_up(Player& player, float dmg = 2.0f);   // 자신의 패 2장을 버린 후 공격 카드의 피해를 2배로 변경
     void Atk_Or_Def(Player* player, Mob* mob);                       // 전 턴에 상대가 마지막으로 사용한 카드에 따라 다음 카드 변경
 
@@ -68,6 +68,9 @@ public:
 
     // --- 양쪽 패를 덱으로 되돌리고 N장씩 드로우 ---
     void Deck_Retrun_Card(Player& player, Mob& enemy, int drawEach);
+
+    // UID
+    void ApplyByUid(int uid, Player& player, Mob& mob, CardManager& cm);
 
 public:
     int heal = 10;

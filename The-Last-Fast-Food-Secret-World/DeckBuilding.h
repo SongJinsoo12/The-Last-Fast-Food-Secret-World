@@ -5,10 +5,16 @@
 #include <time.h>
 #include <Windows.h>
 #include "Card.h"
-#include "Stats.h"
 #include "macroNum.h"
+#include "RenderManager.h"
+#include "ButtonManager.h"
+
+#include <iostream>
+#include <fstream>	//파일읽기
+#include "json.hpp"
 
 using namespace std;
+using json = nlohmann::json;
 
 #define BSIZE 25
 double LenghtPts(int x1, int y1, int x2, int y2);
@@ -20,56 +26,95 @@ private:
 	//현재 덱
 	vector<Card> myDeck;
 	//보유한 카드들
-	vector<Card> inven;
-	//덱빌딩 할때 성제한 여부 확인하기
-	//임시 전체카드풀/////////////////////
-	Card* allcard = new Card[AllCARDMAXSIZE];
+	vector<Card> inven_list[4];//전체, 공, 방, 마
+	vector<Card> DrawOnly_pre = inven_list[0];
+	Card* SelectedCard;//덱편집화면에서 유저가 정보를 확인할 카드변수 / exit시 선택해제할것
+
+	int filter = 0;//필터용 변수 0이면 필터x
+	int Star_n[3] = { 0, };//덱의 1,2,3성 카드개수
+	int i_page = 0, max_page = 0;
+	bool isShowHelper = false;
 
 public:
 	DeckBuilding()
 	{
-		//기본사이즈 세팅 후 좌표 초기화
-		myDeck.resize(10);
-		for (int i = 0; i < 10; i++)
-		{
-			int x = i % 5, y = i / 5;		//한 화면에 가로5개, 세로5개
-			//myDeck[i].SetCard(CType(rand() % 3), i, x * 150 + 50, y * 150 + 50);	//(val * 간격 + 젤 (왼/위)쪽으로부터의 여백)
-		}
-
-		for (int i = 0; i < 256; i++)
-		{
-			//allcard[i].SetCard(CType(rand() % 3), i, 0, 0);
-		}
 	}
-
 	virtual ~DeckBuilding()
 	{
-
+		this->SaveDeck();
 	}
 
+	void SaveDeck();
+	void LoadDeck(vector<GameCard> p_all);
+
+	void PageBuff(bool p_isIncrease);
+	//중복이 존재하면 제거후 뒤의 카드들을 앞으로 이동
+	vector<Card> EraseDuple(vector<Card> p_cards);
+
+	//인벤토리의 사이즈 리턴
 	int GetSize();
-	void PushCard(Card* p_cards, int p_size)
+	void ChangeFilter()
 	{
-		for (int i = 0; i < p_size; i++)
-		{
-			inven.push_back(p_cards[i]);
-		}
+		++filter;
+		if (filter > 3) filter = 0;
+		cout << "filter : " << filter << endl;
 	}
-	Card* GetAllCard()
+
+	//파라미터의 배열을 인벤 맨 뒤에 추가함. 중복 제거도 해줌
+	void PushCard(vector<Card> p_cards);
+	vector<Card> SetPos(vector<Card> p_cards)
 	{
-		return allcard;
+		//인벤에 들어갈 자리에 맞게 좌표를 세팅함.
+		for (int i = 0; i < p_cards.size(); i++)
+		{
+			int x = ((i) % 25) % 5, y = ((i) % 25) / 5;
+			p_cards[i].x = x * 72 + 950, p_cards[i].y = y * 110 + 130;
+			cout << p_cards[i].GetUid() << ": " << p_cards[i].x << " , " << p_cards[i].y << endl;
+		}
+		return p_cards;
+	}
+	vector<Card> SortCards(vector<Card> p_cards)
+	{
+		for (int i = 0; i < p_cards.size() - 1; i++)
+		{
+			for (int j = i + 1; j < p_cards.size(); j++)
+			{
+				if (p_cards[i].GetUid() > p_cards[j].GetUid())
+				{
+					swap(p_cards[i], p_cards[j]);
+				}
+			}
+		}
+		return p_cards;
+	}
+
+	void pushTypeCard(Card p_card)
+	{
+		CType type = p_card.GetType();
+		inven_list[(int)type + 1].push_back(p_card);
 	}
 
 	//인벤->덱 (덱, 마우스X, 마우스Y)
-	void ItoD(DeckBuilding& p_deck, int p_mx, int p_my);
+	void ItoD(int p_mx, int p_my);
 	//덱->인벤 (덱, 마우스X, 마우스Y)
-	void DtoI(DeckBuilding& p_deck, int p_mx, int p_my);
-	void DeckBuild(DeckBuilding& p_deck, int p_mx, int p_my);
+	void DtoI(int p_mx, int p_my);
+	void SelectCard(int p_mx, int p_my);
+	void DeckBuild(int p_mx, int p_my, char click_m);//click_m == 좌/우클릭 확인용, 좌-카드하이라이트/우-카드이동
+
+	void EnterDeckBuild();
+	void ExitDeckBuild();
 
 	//인벤토리 출력
-	void DrawInventory(HDC p_hdc, DeckBuilding p_deck, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[]);
+	void DrawInventory(HDC p_hdc, WCHAR p_text[], vector<Card> p_cardType);
 	//마이덱 출력
-	void DrawMyDeck(HDC p_hdc, DeckBuilding p_deck, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[]);
+	void DrawMyDeck(HDC p_hdc, WCHAR p_text[]);
 	//덱빌딩 화면 출력
-	void DrawDeckBuild(HDC p_hdc, DeckBuilding p_deck, HPEN p_hpen, HPEN p_oldpen, int p_mx, int p_my, WCHAR p_text[]);
+	void DrawDeckBuild(HDC p_hdc, WCHAR p_text[]);
+	void DrawHelp()
+	{
+		if (isShowHelper) RENDER.ImageVisible("helper", true);
+		else RENDER.ImageVisible("helper", false);
+	}
 };
+
+extern DeckBuilding g_DeckBuild;

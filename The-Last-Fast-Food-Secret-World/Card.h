@@ -13,6 +13,11 @@ using namespace std;
 	mt19937 gen(rd()); \
 	uniform_int_distribution<int> cookRandom(start, end)
 
+enum class CardId : int
+{
+	Cockroach = 9999
+};
+
 enum CAttribute {
 	E_BULGOGI,
 	E_SOURCE,
@@ -62,14 +67,28 @@ protected:
 	CType m_Type;
 	Star m_Star;
 	string m_info;
+public:
+	int x, y;
 
 public:
 	Card();
 	Card(int p_uid);
 	void Init();
 
-	//Get Set ÇÔ¼ö
-	int GetUid();
+	//Get Set í•¨ìˆ˜
+	int GetUid() const;
+	void SetUid(int p_uid);
+	int GetAtk() const;
+	void SetAtk(int p_atk);
+	int GetDef() const;
+	void SetDef(int p_def);
+	CAttribute GetAit() const;
+	void SetAit(CAttribute p_Ait);
+	CType GetType() const;
+	void SetType(CType p_Type);
+	Star GetStar() const;
+	void SetStar(Star p_Star);
+	/*int GetUid();
 	void SetUid(int p_uid);
 	int GetAtk();
 	void SetAtk(int p_atk);
@@ -80,13 +99,13 @@ public:
 	CType GetType();
 	void SetType(CType p_Type);
 	Star GetStar();
-	void SetStar(Star p_Star);
+	void SetStar(Star p_Star);*/
 	string GetInfo();
 	void SetInfo(string p_info);
 
-	// ½ÇÁ¦ °ø°İÄ«µå(AtkCard)¿¡ ¹èÀ²À» Àû¿ëÇÏ°í,
-	// Àû¿ë ÈÄ m_hasNextAtkMultiplier¸¦ false·Î ²ô´Â ½ÄÀ¸·Î "1È¸¼º" Ã³¸®ÇÏ´Â ¿ëµµ
-	void setAttribute(CAttribute attr) { m_Ait = attr; }
+	// ì‹¤ì œ ê³µê²©ì¹´ë“œ(AtkCard)ì— ë°°ìœ¨ì„ ì ìš©í•˜ê³ ,
+	// ì ìš© í›„ m_hasNextAtkMultiplierë¥¼ falseë¡œ ë„ëŠ” ì‹ìœ¼ë¡œ "1íšŒì„±" ì²˜ë¦¬í•˜ëŠ” ìš©ë„
+	void setAttribute(CAttribute attr) { m_Ait = attr; } // ì¶”ê°€
 };
 
 class GameCard : public Card

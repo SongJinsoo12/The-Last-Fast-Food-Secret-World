@@ -3,11 +3,6 @@
 #include "Singleton.h"
 
 #define INPUT GameInput_M::Input::GetInstance()
-#define KEY_ENTER 13
-#define KEY_RIGHT 39
-#define KEY_LEFT 37
-#define KEY_UP 38
-#define KEY_DOWN 40
 
 namespace GameInput_M {
 	enum class MouseValue {
@@ -16,11 +11,20 @@ namespace GameInput_M {
 		Right
 	};
 
+	enum class KeyboardValue {
+		Enter = 13,
+		ArrowLeft = 37,
+		ArrowUp,
+		ArrowRight,
+		ArrowDown
+	};
+
 	class Input : public Singleton<Input>
 	{
 		friend class Singleton<Input>;
 	public:
 		virtual int isClick();
+		virtual bool isOneClick(MouseValue p_value);
 		virtual int isHeel();
 		virtual bool isKeyboard(int p_key);
 		virtual void GetMousePos(int* p_x, int* p_y);

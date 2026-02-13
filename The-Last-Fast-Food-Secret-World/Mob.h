@@ -3,7 +3,6 @@
 #include <vector>
 #include <string>
 #include <functional>
-#include <unordered_map>
 #include "Card.h"
 
 // WinAPI headers define min/max macros that break std::min/std::max.
@@ -26,32 +25,32 @@ class Player;
 // ī ȿ (cardId, user, target) · ܺο ؼ/
 // -> Player "ī带 ´" óϰ,
 //     ī ȿ(//Ưȿ) resolver cardId Ǵؼ ϴ 
-using CardResolver_PlayerVsMob = std::function<void(
+using CardResolver_MobVsPlayer = std::function<void(
     int     /*cardId*/,
-    Player& /*player*/,
-    Mob&    /*mob*/
+    Mob& /*player*/,
+    Player&    /*mob*/
     )>;
 
-enum class Player_AcquireSource
+enum class Mob_AcquireSource //AcquireSource
 {
     Normal, // Ϲ ȹ
     SpawnedByRoach //    ߰
 };
 
-struct PlayerDotInfo
+struct MobDotInfo
 {
     int dmg = 0;
     int ticks = 0;
 };
 
-class Player
+class Mob
 {
 public:
     // ⺻ : ׽Ʈ/⺻ Player   
-    Player();
+    Mob();
 
     // ̸ ִ ü ؼ   
-    Player(const std::wstring& name, int maxHp);
+    Mob(const std::wstring& name, int maxHp);
 
     //  ü ȸ (UIǥ/  )
     int  GetHP() const;
@@ -76,11 +75,14 @@ public:
     void AddDot(int dmg, int ticks);
     void TickDots(); //    ȣ
 
-    // ====== 피해 반사(DEF 143) ======
+    // ====== ?해 반사(DEF 143) ======
     void SetReflect(float pct, int hits = 1);
     float GetReflectPct() const;
     int   GetReflectHitsLeft() const;
-    void  ConsumeReflectHit();
+
+    // ====== "X????발동" ?과 즉시 발동(?포??231) ======
+    void TriggerDelayedEffectsNow();
+
 
     //   ó:
     // -   ȣ 
@@ -131,7 +133,7 @@ public:
     // - ÷ Ƚ , ī ̵(->)  ⺻ ó
     // - ȿ  resolver(cardId, *this, mob) ܺο 
     //   (ī  Player ο  ʱ  )
-    bool TryPlayOneCard(Mob& mob, const CardResolver_PlayerVsMob& resolver);
+    bool TryPlayOneCard(Player& player, const CardResolver_MobVsPlayer& resolver);
 
     // n  HP Ҹ 
     // ) "ü ?ȸ  3  ?+25%ŭ ü "  ī忡 
@@ -146,9 +148,6 @@ public:
     // n ,  Ͽ "ī ÷ (playLimit)"  
     // ) "3  3  "  ī忡 
     void SchedulePlayLimit(int turnsLater, int playLimit);
-
-    // "X턴 뒤 발동" 예약 효과를 즉시 발동 (SUP 231)
-    void TriggerDelayedEffectsNow();
 
     // ̹   ߰  ÷  Ƚ ο
     // ) "̹  ߰ 1 "  ȿ
@@ -278,7 +277,7 @@ public:
     void AddDoubleDamageTakenTurns(int turns);
     bool HasDoubleDamageTakenDebuff() const;
 
-void AddDisarrayTurns(int turns);
+    void AddDisarrayTurns(int turns);
     bool IsDisarray() const;
     int GetDisarrayTurnLeft() const;
 
@@ -299,10 +298,6 @@ void AddDisarrayTurns(int turns);
     bool IsPlayProhibited() const;
     bool IsAttackPlayProhibited() const;
 
-    // ڵ Ȯο
-    int GetPlayLimitThisTurn() const { return m_playLimitThisTurn; }
-
-
 
     // --- Bridge accessors for CardManager syncing (int cardId deck/hand) ---
     const std::vector<int>& Debug_GetDeckIds() const { return m_deck; }
@@ -310,8 +305,8 @@ void AddDisarrayTurns(int turns);
     void Debug_SetDeckIds(const std::vector<int>& ids) { m_deck = ids; }
     void Debug_SetHandIds(const std::vector<int>& ids) { m_hand = ids; }
 
+
 private:
-    // CardManager public 
     // ÷̾ ǥÿ ̸
     std::wstring m_name = L"Player";
 
@@ -322,12 +317,13 @@ private:
     // ǵ
     int m_shield = 0;
 
-    // 피해 반사 버프(DEF 143): 다음 피격 hits회 동안 받은 피해의 pct만큼 반사
+
+    // ?해 반사(DEF 143)
     float m_reflectPct = 0.0f;
     int   m_reflectHitsLeft = 0;
 
     // Ʈ
-    std::vector<PlayerDotInfo> p_dots;
+    std::vector<MobDotInfo> m_dots;
 
     //   ī(  ȣ )
     int m_turn = 0;
