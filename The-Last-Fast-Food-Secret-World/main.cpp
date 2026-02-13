@@ -1,10 +1,10 @@
 #include <windows.h>
-#include <iostream>// Çì´õ
+#include <iostream>// í—¤ë”
 //#include "tweeny.h"
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-HINSTANCE g_hInst;											// ÀÎ½ºÅÏ½º ÇÚµé
-LPCTSTR lpszClass = TEXT("T.L.F.F2 : Secret World");					// Á¦¸ñ Ç¥½ÃÁÙ¿¡ Ç¥½Ã
+HINSTANCE g_hInst;											// ì¸ìŠ¤í„´ìŠ¤ í•¸ë“¤
+LPCTSTR lpszClass = TEXT("T.L.F.F2 : Secret World");					// ì œëª© í‘œì‹œì¤„ì— í‘œì‹œ
 
 //auto tween = tweeny::from(50).to(500).during(2000).via(tweeny::easing::exponentialOut);
 //
@@ -17,63 +17,64 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	if (AllocConsole()) {
 		FILE* fp;
 		freopen_s(&fp, "CONOUT$", "w", stdout);
-		freopen_s(&fp, "CONOUT$", "w", stderr); // ¿¡·¯ Ãâ·Âµµ ÄÜ¼Ö·Î
-		std::ios::sync_with_stdio(); // cout°ú printf¸¦ ¼¯¾î ¾µ ¶§ À¯¿ë
+		freopen_s(&fp, "CONOUT$", "w", stderr); // ì—ëŸ¬ ì¶œë ¥ë„ ì½˜ì†”ë¡œ
+		std::ios::sync_with_stdio(); // coutê³¼ printfë¥¼ ì„ì–´ ì“¸ ë•Œ ìœ ìš©
 	}
 #endif
 
-	HWND hWnd;												// À©µµ¿ì ÇÚµé ¼±¾ğ
-	MSG Message;											// ¸Ş½ÃÁö ±¸Á¶Ã¼ º¯¼ö ¼±¾ğ
-	WNDCLASS WndClass;										// Windows Class ±¸Á¶Ã¼ º¯¼ö ¼±¾ğ
-	g_hInst = hInstance;									// hInstance°ªÀ» ¿ÜºÎ¿¡¼­µµ »ç¿ëµÇ°Ô Àü¿ª º¯¼ö¿¡ ÀúÀå
+	HWND hWnd;												// ìœˆë„ìš° í•¸ë“¤ ì„ ì–¸
+	MSG Message;											// ë©”ì‹œì§€ êµ¬ì¡°ì²´ ë³€ìˆ˜ ì„ ì–¸
+	WNDCLASS WndClass;										// Windows Class êµ¬ì¡°ì²´ ë³€ìˆ˜ ì„ ì–¸
+	g_hInst = hInstance;									// hInstanceê°’ì„ ì™¸ë¶€ì—ì„œë„ ì‚¬ìš©ë˜ê²Œ ì „ì—­ ë³€ìˆ˜ì— ì €ì¥
 
-	WndClass.cbClsExtra = 0;								// ¿¹¾à ¿µ¿ª, Áö±İ »ç¿ë x
-	WndClass.cbWndExtra = 0;								// ¿¹¾à ¿µ¿ª
-	WndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);	// ¹è°æ »ö ÁöÁ¤
-	WndClass.hCursor = LoadCursor(NULL, IDC_ARROW);			// ¸¶¿ì½º Æ÷ÀÎÅÍ ¸ğ¾ç ÁöÁ¤
-	WndClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);		// Ä¿¼­ ¾ÆÀÌÄÜ ÁöÁ¤
-	WndClass.hInstance = hInstance;							// Å¬·¡½º µî·ÏÇÏ´Â ÇÁ·Î±×·¥ ¹øÈ£
-	WndClass.lpfnWndProc = WndProc;							// ¸Ş½ÃÁö Ã³¸® ÇÔ¼ö ÁöÁ¤
-	WndClass.lpszClassName = lpszClass;						// Å¬·¡½º ÀÌ¸§ ÁöÁ¤
-	WndClass.lpszMenuName = NULL;							// ¸Ş´º ÁöÁ¤
-	WndClass.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;		// ½ºÅ¸ÀÏ Á¤ÀÇ
+	WndClass.cbClsExtra = 0;								// ì˜ˆì•½ ì˜ì—­, ì§€ê¸ˆ ì‚¬ìš© x
+	WndClass.cbWndExtra = 0;								// ì˜ˆì•½ ì˜ì—­
+	WndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);	// ë°°ê²½ ìƒ‰ ì§€ì •
+	WndClass.hCursor = LoadCursor(NULL, IDC_ARROW);			// ë§ˆìš°ìŠ¤ í¬ì¸í„° ëª¨ì–‘ ì§€ì •
+	WndClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);		// ì»¤ì„œ ì•„ì´ì½˜ ì§€ì •
+	WndClass.hInstance = hInstance;							// í´ë˜ìŠ¤ ë“±ë¡í•˜ëŠ” í”„ë¡œê·¸ë¨ ë²ˆí˜¸
+	WndClass.lpfnWndProc = WndProc;							// ë©”ì‹œì§€ ì²˜ë¦¬ í•¨ìˆ˜ ì§€ì •
+	WndClass.lpszClassName = lpszClass;						// í´ë˜ìŠ¤ ì´ë¦„ ì§€ì •
+	WndClass.lpszMenuName = NULL;							// ë©”ë‰´ ì§€ì •
+	WndClass.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;		// ìŠ¤íƒ€ì¼ ì •ì˜
 
 	RegisterClass(&WndClass);
 
-	hWnd = CreateWindow(lpszClass, lpszClass, // À©µµ¿ì »ı¼º
+	hWnd = CreateWindow(lpszClass, lpszClass, // ìœˆë„ìš° ìƒì„±
 		WS_OVERLAPPEDWINDOW, /*CW_USEDEFAULT,
 		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT*/
 		100,0,1280,720, NULL, (HMENU)NULL, hInstance, NULL);
 
 	ShowWindow(hWnd, nCmdShow);
 
-	while (true) { //Queue¿¡ ÀÖ´Â ¸Ş½ÃÁö ÀĞ¾îµéÀÓ
+	while (true) { //Queueì— ìˆëŠ” ë©”ì‹œì§€ ì½ì–´ë“¤ì„
 		if (PeekMessage(&Message, NULL, 0, 0, PM_REMOVE)) {
 			if (Message.message == WM_QUIT)
 				break;
-			TranslateMessage(&Message); // Å°º¸µå ÀÔ·Â ¸Ş½ÃÁö °¡°ø
-			DispatchMessage(&Message); // ¸Ş½ÃÁö Ã³¸®
+			TranslateMessage(&Message); // í‚¤ë³´ë“œ ì…ë ¥ ë©”ì‹œì§€ ê°€ê³µ
+			DispatchMessage(&Message); // ë©”ì‹œì§€ ì²˜ë¦¬
 		}
 		else {
-			// 0. Å¸ÀÌ¸Ó Ã³¸®
+			// 0. íƒ€ì´ë¨¸ ì²˜ë¦¬
 			// 
 			//QueryPerformanceCounter(&t2);
 			//deltaTime = (double)(t2.QuadPart - t1.QuadPart) / frequency.QuadPart;
 			//t1 = t2;
-			// 1. °ÔÀÓÀÇ ¼öÄ¡µéÀ» ¾÷µ¥ÀÌÆ® (ÀÌµ¿, Ãæµ¹ µî)
+			// 1. ê²Œì„ì˜ ìˆ˜ì¹˜ë“¤ì„ ì—…ë°ì´íŠ¸ (ì´ë™, ì¶©ëŒ ë“±)
 			// GameInput_M::Input::GetInstance().Update();
 			// 
-			// Render ÀÚ¸®
+			// Render ìë¦¬
 			InvalidateRect(hWnd, NULL, FALSE);
 		}
 	}
-	return (int)Message.wParam; // Å»Ãâ ÄÚµå, ÇÁ·Î±×·¥ Á¾·á
+	return (int)Message.wParam; // íƒˆì¶œ ì½”ë“œ, í”„ë¡œê·¸ë¨ ì¢…ë£Œ
 }
 
 #include <math.h>
 #include "RenderManager.h"
 #include "GameState.h"
 #include "InputGame.h"
+#include "ButtonManager.h"
 
 //#define BSIZE 40
 //
@@ -99,8 +100,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	switch (iMessage) {
 	case WM_CREATE:
 		GetClientRect(hWnd, &rt);
-		//
-		STATE.ChangeState(GameState_M::E_InGameState::Lobby);
+		GameState_M::Context::GetInstance().Init();
+		GameState_M::Context::GetInstance().ChangeState(GameState_M::E_InGameState::Lobby);
 		//SetTimer(hWnd, 1, 500, NULL);
 		break;
 
@@ -108,30 +109,31 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	{
 		hdc = BeginPaint(hWnd, &ps);
 
-		// 1. ¸Ş¸ğ¸® DC¿Í ºñÆ®¸Ê »ı¼º (´õºí ¹öÆÛ¸µ¿ë)
+		// 1. ë©”ëª¨ë¦¬ DCì™€ ë¹„íŠ¸ë§µ ìƒì„± (ë”ë¸” ë²„í¼ë§ìš©)
 		memDC = CreateCompatibleDC(hdc);
 		hOldBitmap = (HBITMAP)SelectObject(memDC, CreateCompatibleBitmap(hdc, rt.right, rt.bottom));
 
-		// 2. ¸Ş¸ğ¸® DC À§¿¡ Graphics »ı¼º
+		// 2. ë©”ëª¨ë¦¬ DC ìœ„ì— Graphics ìƒì„±
 		Graphics graphics(memDC);
-		graphics.Clear(Color(255, 255, 255, 255)); // ¹è°æ Áö¿ì±â
+		graphics.Clear(Color(255, 255, 255, 255)); // ë°°ê²½ ì§€ìš°ê¸°
 
-		// 3. ¸ğµç ÀÌ¹ÌÁö ±×¸®±â
-		STATE.Update(hdc, hWnd);
+		// 3. ëª¨ë“  ì´ë¯¸ì§€ ê·¸ë¦¬ê¸°
+		GameState_M::Context::GetInstance().Update(hdc, hWnd);
 		GameImage_M::RenderManager::GetInstance().RenderAll(&graphics);
+		btnManager.DrawAll();
 
-		// 4. ¸Ş¸ğ¸®¿¡ ±×¸° ³»¿ëÀ» ½ÇÁ¦ È­¸éÀ¸·Î ÇÑ ¹ø¿¡ º¹»ç (±ôºıÀÓ ¹æÁö)
+		// 4. ë©”ëª¨ë¦¬ì— ê·¸ë¦° ë‚´ìš©ì„ ì‹¤ì œ í™”ë©´ìœ¼ë¡œ í•œ ë²ˆì— ë³µì‚¬ (ê¹œë¹¡ì„ ë°©ì§€)
 		BitBlt(hdc, 0, 0, rt.right, rt.bottom, memDC, 0, 0, SRCCOPY);
 
-		// 5. ¸Ş¸ğ¸® ÇØÁ¦
+		// 5. ë©”ëª¨ë¦¬ í•´ì œ
 		DeleteObject(SelectObject(memDC, hOldBitmap));
 		DeleteDC(memDC);
 		EndPaint(hWnd, &ps);
 	}
 	return 0;
 
-	case WM_DESTROY: // À©µµ¿ì Á¾·á ½Ã(Ã¢ ´İÀ½ ¸Ş½ÃÁö)
-		PostQuitMessage(0); // ¸Ş½ÃÁö Å¥¿¡ Á¾·á ¸Ş½ÃÁö Àü´Ş
+	case WM_DESTROY: // ìœˆë„ìš° ì¢…ë£Œ ì‹œ(ì°½ ë‹«ìŒ ë©”ì‹œì§€)
+		PostQuitMessage(0); // ë©”ì‹œì§€ íì— ì¢…ë£Œ ë©”ì‹œì§€ ì „ë‹¬
 		return 0;
 	}
 	return(DefWindowProc(hWnd, iMessage, wParam, lParam));
