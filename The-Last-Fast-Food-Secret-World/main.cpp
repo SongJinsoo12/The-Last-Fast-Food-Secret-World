@@ -76,6 +76,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 #include "RenderManager.h"
 #include "GameState.h"
 #include "InputGame.h"
+#include "ButtonManager.h"
 
 
 // ------------------------------------------------------------
@@ -134,8 +135,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	switch (iMessage) {
 	case WM_CREATE:
 		GetClientRect(hWnd, &rt);
-		//
-		STATE.ChangeState(GameState_M::E_InGameState::Lobby);
+		GameState_M::Context::GetInstance().Init();
+		GameState_M::Context::GetInstance().ChangeState(GameState_M::E_InGameState::Lobby);
 
 		// Actor(HP/Shield) 연결: 카드 효과가 실제 HP/Shield에 적용되게 합니다.
 		g_player.BindActors(&g_playerActor, &g_enemyActor);
@@ -148,22 +149,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	{
 		hdc = BeginPaint(hWnd, &ps);
 
-		// 1. ޸ DC Ʈ  ( ۸)
+		// 1. 메모리 DC와 비트맵 생성 (더블 버퍼링용)
 		memDC = CreateCompatibleDC(hdc);
 		hOldBitmap = (HBITMAP)SelectObject(memDC, CreateCompatibleBitmap(hdc, rt.right, rt.bottom));
 
-		// 2. ޸ DC  Graphics 
+		// 2. 메모리 DC 위에 Graphics 생성
 		Graphics graphics(memDC);
 		graphics.Clear(Color(255, 255, 255, 255)); //  
 
-		// 3.  ̹ ׸
-		STATE.Update(hdc, hWnd);
+		// 3.  ̹모든 이미지 그리기
+		GameState_M::Context::GetInstance().Update(hdc, hWnd);
 		GameImage_M::RenderManager::GetInstance().RenderAll(&graphics);
-
-		// 4. ޸𸮿 ׸   ȭ    ( )
+		btnManager.DrawAll();
+		
+		// 4. 메모리에 그린 내용 실제 화면으로 복사
 		BitBlt(hdc, 0, 0, rt.right, rt.bottom, memDC, 0, 0, SRCCOPY);
 
-		// 5. ޸ 
+		// 5. 메모리 해제
 		DeleteObject(SelectObject(memDC, hOldBitmap));
 		DeleteDC(memDC);
 		DrawSimpleHUD(hdc);
