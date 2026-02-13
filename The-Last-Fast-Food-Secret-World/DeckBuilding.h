@@ -26,11 +26,8 @@ private:
 	//현재 덱
 	vector<Card> myDeck;
 	//보유한 카드들
-	vector<Card> inven;
-	vector<Card> atkCards;
-	vector<Card> defCards;
-	vector<Card> magicCards;
-	vector<Card> DrawOnly_pre = this->inven;
+	vector<Card> inven_list[4];//전체, 공, 방, 마
+	vector<Card> DrawOnly_pre = inven_list[0];
 	Card* SelectedCard;//덱편집화면에서 유저가 정보를 확인할 카드변수 / exit시 선택해제할것
 
 	int filter = 0;//필터용 변수 0이면 필터x
@@ -48,7 +45,7 @@ public:
 	}
 
 	void SaveDeck();
-	void LoadDeck();
+	void LoadDeck(vector<GameCard> p_all);
 
 	void PageBuff(bool p_isIncrease);
 	//중복이 존재하면 제거후 뒤의 카드들을 앞으로 이동
@@ -71,7 +68,7 @@ public:
 		for (int i = 0; i < p_cards.size(); i++)
 		{
 			int x = ((i) % 25) % 5, y = ((i) % 25) / 5;
-			p_cards[i].x = x * 82 + 1050, p_cards[i].y = y * 120 + 130;
+			p_cards[i].x = x * 72 + 950, p_cards[i].y = y * 110 + 130;
 			cout << p_cards[i].GetUid() << ": " << p_cards[i].x << " , " << p_cards[i].y << endl;
 		}
 		return p_cards;
@@ -94,18 +91,7 @@ public:
 	void pushTypeCard(Card p_card)
 	{
 		CType type = p_card.GetType();
-		switch (type)
-		{
-		case E_Attack:
-			atkCards.push_back(p_card);
-			break;
-		case E_Deffense:
-			defCards.push_back(p_card);
-			break;
-		case E_Magic:
-			magicCards.push_back(p_card);
-			break;
-		}
+		inven_list[(int)type + 1].push_back(p_card);
 	}
 
 	//인벤->덱 (덱, 마우스X, 마우스Y)
