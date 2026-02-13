@@ -11,7 +11,7 @@
 #include "DefCard.h"
 #include "AtkCard.h"
 #include "SupportCard.h"
-
+#include "CardRule.h"
 
 CardManager::CardManager() : m_DeckCount(25), m_HandCount(0), m_HandSelection(4),
 m_IsMyTurn(false), m_IsSelect(false), m_isShiny(false), m_isRip(false)
@@ -432,8 +432,18 @@ void CardManager::ApplyUidMapping(GameCard* card)
 		return;
 	}
 
+	if (uid == 143)
+	{
+		card->SetAtk(0);
+		card->SetDef(0);
+		card->SetAit(E_BREAD);
+		card->SetType(E_Deffense);
+		card->SetStar(E_TWO);
+		return;
+	}
+
 	// 보조 카드 : 200~233 (프로젝트 UID 범위)
-	if (200 <= uid && uid <= 233)
+	if (201 <= uid && uid <= 232)
 	{
 		card->SetAtk(0);
 		card->SetDef(0);
@@ -504,11 +514,36 @@ void CardManager::ApplyAttackTo(CardManager& opponent, GameCard* card)
 
 	if (dmg < 0) dmg = 0;
 
+	// ===== CardRule: 상대가 마지막으로 쓴 방어 카드가 있으면 상성/랭크 보정 =====
+	if (opponent.m_hasLastDefCard && opponent.ActorShield() > 0)
+	{
+		int bonus = 0;
+		bonus += CardRule::RankMatchUp(rank, opponent.m_lastDefRank);
+		if (CardRule::IsCounterAttribute(attr, opponent.m_lastDefAttr))
+			bonus += 1;
+		if (bonus != 0)
+		{
+			std::cout << "[CardRule] bonus=" << bonus << " (atkRank=" << rank << ", defRank=" << opponent.m_lastDefRank << ")\n";
+			dmg += bonus;
+		}
+	}
+
 	// 2) 실제 HP/Shield 적용은 Actor(Player/Mob)에게 위임 (추천안 핵심)
 	int beforeHP = opponent.ActorHP();
 	int beforeShield = opponent.ActorShield();
 
 	opponent.ActorTakeDamage(dmg);
+
+	// ===== 피해 반사(DEF 143): 다음 공격 1회 30% 반사 =====
+	if (dmg > 0 && opponent.ActorGetReflectPct() > 0.0f && opponent.ActorGetReflectHitsLeft() > 0)
+	{
+		int ref = (int)(dmg * opponent.ActorGetReflectPct());
+		if (ref < 1) ref = 1;
+		int selfHP0 = ActorHP();
+		ActorTakeDamage(ref);
+		opponent.ActorConsumeReflectHit();
+		std::cout << "[전투] 반사 데미지=" << ref << " | self HP " << selfHP0 << "->" << ActorHP() << "\n";
+	}
 
 	std::cout << "[전투] 공격 UID=" << uid
 		<< " dmg=" << dmg
@@ -521,6 +556,10 @@ void CardManager::ApplyDefense(GameCard* card)
 {
 	if (!card) return;
 
+	// CardRule용: 마지막으로 사용한 방어 카드 기록
+	m_hasLastDefCard = true;
+	m_lastDefAttr = card->GetAit();
+	m_lastDefRank = card->GetStar();
 	const int uid = card->GetUid();
 	const CAttribute attr = card->GetAit();
 	const Star rank = card->GetStar();
@@ -535,10 +574,18 @@ void CardManager::ApplyDefense(GameCard* card)
 		add = defRule.BreadDef(attr, rank);
 	else if (uid == 142)
 		add = 999;
+	else if (uid == 143)
+		add = 0;
 	else
 		add = card->GetDef();
 
 	if (add < 0) add = 0;
+
+	if (uid == 143)
+	{
+		ActorSetReflect(0.30f, 1);
+		std::cout << "[전투] 반사 버프(30%) 부여 (DEF uid=143)\n";
+	}
 
 	ActorAddShield(add);
 
@@ -552,104 +599,44 @@ void CardManager::ApplySupport(GameCard* card, CardManager& opponent)
 {
 	if (!card) return;
 
+	const int uid = card->GetUid();
+
+	// 바인딩이 안 되어 있으면 (Player/Mob 포인터 주입 실패) 최소 로그만 남기고 스킵
 	if (!m_pPlayer || !m_pEnemyMob)
 	{
-		std::cout << "[보조] 바인딩 없음: uid=" << card->GetUid() << " (효과 미적용)";
+		std::cout << "[SUP] uid=" << uid << " skipped (unbound)";
 		return;
 	}
 
-	auto ExtractHandIds = [](const std::vector<GameCard*>& v) -> std::vector<int>
-		{
-			std::vector<int> out;
-			out.reserve(v.size());
-			for (auto* c : v) out.push_back(c ? c->GetUid() : -1);
-			return out;
-		};
+	// 실행 전/후 상태만 간단히 출력 (HP/Shield 변화 확인용)
+	const int myHP0 = ActorHP();
+	const int mySH0 = ActorShield();
+	const int opHP0 = opponent.ActorHP();
+	const int opSH0 = opponent.ActorShield();
 
-	auto ExtractDeckIdsRemaining = [](const std::vector<GameCard*>& deck, int deckCount) -> std::vector<int>
-		{
-			std::vector<int> out;
-			if (deckCount < 0) deckCount = 0;
-			if ((int)deck.size() < deckCount) deckCount = (int)deck.size();
-			out.reserve(deckCount);
-			for (int i = 0; i < deckCount; ++i)
-				out.push_back(deck[i] ? deck[i]->GetUid() : -1);
-			return out;
-		};
-
-	auto RebuildFromIds = [&](CardManager& cm, const std::vector<int>& deckIds, const std::vector<int>& handIds)
-		{
-			// 기존 손패 이미지 숨기기(유령 카드 방지)
-			for (auto* c : cm.m_Hand)
-				if (c) RENDER.ImageVisible(std::to_string(c->GetUid()), false);
-
-			cm.m_Hand.clear();
-			cm.m_Deck.clear();
-			cm.m_HandCount = 0;
-			cm.m_DeckCount = 0;
-			cm.m_HandSelection = 0;
-
-			// 덱(남은 카드들)
-			for (int id : deckIds)
-			{
-				if (id <= 0) continue;
-				Card* base = CardTableManager::Instance()->GetCardData(id);
-				if (!base) continue;
-				GameCard* gc = new GameCard(base);
-				cm.ApplyUidMapping(gc);
-				cm.m_Deck.push_back(gc);
-				cm.m_DeckCount++;
-			}
-
-			// 패
-			for (int id : handIds)
-			{
-				if (id <= 0) continue;
-				Card* base = CardTableManager::Instance()->GetCardData(id);
-				if (!base) continue;
-				GameCard* gc = new GameCard(base);
-				cm.ApplyUidMapping(gc);
-				cm.m_Hand.push_back(gc);
-				cm.m_HandCount++;
-				RENDER.ImageVisible(std::to_string(id), true);
-			}
-		};
-
-	// (1) CardManager -> Player/Mob 동기화
-	m_pPlayer->Debug_SetHandIds(ExtractHandIds(m_Hand));
-	m_pPlayer->Debug_SetDeckIds(ExtractDeckIdsRemaining(m_Deck, m_DeckCount));
-
-	m_pEnemyMob->Debug_SetHandIds(ExtractHandIds(opponent.m_Hand));
-	m_pEnemyMob->Debug_SetDeckIds(ExtractDeckIdsRemaining(opponent.m_Deck, opponent.m_DeckCount));
-
-	// (2) SupportCard 실행
 	SupportCard sc;
-	sc.ApplyByUid(card->GetUid(), *m_pPlayer, *m_pEnemyMob, *this);
+	sc.ApplyByUid(uid, *m_pPlayer, *m_pEnemyMob, *this);
 
-	// uid218은 SupportCard 내부에서 CardManager(cm) 손패를 직접 버립니다.
-	// 이 경우 Player 손패(int id)에도 동일하게 반영해줘야 재동기화 시 카드가 되돌아오지 않습니다.
-	if (card->GetUid() == 218)
-	{
-		m_pPlayer->Debug_SetHandIds(ExtractHandIds(m_Hand));
-		m_pPlayer->Debug_SetDeckIds(ExtractDeckIdsRemaining(m_Deck, m_DeckCount));
-	}
+	const int myHP1 = ActorHP();
+	const int mySH1 = ActorShield();
+	const int opHP1 = opponent.ActorHP();
+	const int opSH1 = opponent.ActorShield();
 
-	// (3) Player/Mob -> CardManager 재동기화
-	RebuildFromIds(*this, m_pPlayer->Debug_GetDeckIds(), m_pPlayer->Debug_GetHandIds());
-	RebuildFromIds(opponent, m_pEnemyMob->Debug_GetDeckIds(), m_pEnemyMob->Debug_GetHandIds());
-
-	// UI용 HP 동기화
-	int myHp = ActorHP();
-	int myMax = ActorMaxHP();
-	int oppHp = opponent.ActorHP();
-	int oppMax = opponent.ActorMaxHP();
-
+	std::cout << "[SUP] uid=" << uid
+		<< " | my(H:" << myHP0 << "->" << myHP1 << " S:" << mySH0 << "->" << mySH1 << ")"
+		<< " | opp(H:" << opHP0 << "->" << opHP1 << " S:" << opSH0 << "->" << opSH1 << ")";
 }
 
 int CardManager::ActorHP() const
 {
-	if (m_pPlayer) return m_pPlayer->GetHP();
-	if (m_pEnemyMob) return m_pEnemyMob->GetHP();
+	if (m_pPlayer)
+	{
+		return m_pPlayer->GetHP();
+	}
+	if (m_pEnemyMob)
+	{
+		return m_pEnemyMob->GetHP();
+	}
 	return 0;
 }
 
@@ -684,6 +671,32 @@ void CardManager::ActorAddDot(int dmg, int ticks)
 {
 	if (m_pPlayer) m_pPlayer->AddDot(dmg, ticks);
 	else if (m_pEnemyMob) m_pEnemyMob->AddDot(dmg, ticks);
+}
+
+void CardManager::ActorSetReflect(float pct, int hits)
+{
+	if (m_pPlayer) m_pPlayer->SetReflect(pct, hits);
+	else if (m_pEnemyMob) m_pEnemyMob->SetReflect(pct, hits);
+}
+
+float CardManager::ActorGetReflectPct() const
+{
+	if (m_pPlayer) return m_pPlayer->GetReflectPct();
+	if (m_pEnemyMob) return m_pEnemyMob->GetReflectPct();
+	return 0.0f;
+}
+
+int CardManager::ActorGetReflectHitsLeft() const
+{
+	if (m_pPlayer) return m_pPlayer->GetReflectHitsLeft();
+	if (m_pEnemyMob) return m_pEnemyMob->GetReflectHitsLeft();
+	return 0;
+}
+
+void CardManager::ActorConsumeReflectHit()
+{
+	if (m_pPlayer) m_pPlayer->SetReflect(0.0f, 0);
+	else if (m_pEnemyMob) m_pEnemyMob->SetReflect(0.0f, 0);
 }
 
 void CardManager::RefreshPlayLimitFromPlayer()
@@ -721,9 +734,12 @@ void CardManager::TryEndTurn(CardManager& opponent, HWND hWnd)
 	this->m_IsMyTurn = !this->m_IsMyTurn;
 	opponent.m_IsMyTurn = !opponent.m_IsMyTurn;
 
+	// ✅ 상대 턴 타이머를 새로 시작하게 초기화
+	opponent.m_timer.SetIsStart(false);
+
 	// 상대 행동은 “즉시”가 아니라 타이머로 처리하고 싶으면 OpponentAct를 여기서 빼도 됨
 	// 일단 기존 구조 유지 시:
-	std::cout << "상대방의 턴\n";
+// 	std::cout << "상대방의 턴\n";
 	opponent.OpponentAct(*this);
 }
 
@@ -735,7 +751,7 @@ void CardManager::OpponentAct(CardManager& player)
 void CardManager::StartGame()
 {
 	CardDraw(5);
-	cout << "처음 카드 드로우 확인\n";
+	// 	cout << "처음 카드 드로우 확인\n";
 }
 
 CardManager::~CardManager()
@@ -787,7 +803,7 @@ void CardManager::CardDraw(int drawNum)
 	}
 
 	//패 카드 임시 확인
-	cout << "패 카드 번호: [ ";
+// 	cout << "패 카드 번호: [ ";
 	for (size_t i = 0; i < m_HandCount; i++)
 	{
 		cout << m_Hand[i]->GetUid() << " ";
@@ -825,7 +841,7 @@ void CardManager::DrawBG()
 		Gdiplus::Rect(1265 - deckX, 682 - deckY, deckX, deckY));
 
 
-	cout << "배경 출력 확인\n";
+	// 	cout << "배경 출력 확인\n";
 }
 
 //플레이어 패 출력
@@ -913,6 +929,7 @@ void CardManager::DrawOppHand()
 //패 카드 사용
 void CardManager::CardAct(CardManager& player, CardManager& opponent)
 {
+	if (!m_IsMyTurn) return; // ✅ 내 턴 아니면 카드 사용 금지
 	//패에 카드가 없으면 리턴
 	if (m_HandCount <= 0)
 		return;
@@ -923,18 +940,95 @@ void CardManager::CardAct(CardManager& player, CardManager& opponent)
 	//타이머 초기화
 	m_timer.SetIsStart(false);
 
-	switch (m_Hand[m_HandSelection]->GetType())
+	// =========================================================
+	// 디버그: 카드 실행 흐름을 콘솔에 자세히 출력
+	//  - UID/타입/속성/별/ATK/DEF
+	//  - 어떤 Apply* 함수로 들어갔는지
+	//  - HP/Shield, 패/덱 변화(핵심만)
+	// =========================================================
+	GameCard* sel = m_Hand[m_HandSelection];
+	if (!sel) return;
+
+	// 마지막 사용 카드 기록(UID 211 지원용)
+	if (player.m_pPlayer) player.m_pPlayer->setLastUsedCard(sel);
+	else if (player.m_pEnemyMob) player.m_pEnemyMob->setLastUsedCard(sel);
+
+	// 혹시 카드 데이터가 비어있더라도 UID 범위로 기본 매핑
+	ApplyUidMapping(sel);
+
+	auto TypeToStr = [](int t) -> const char*
+		{
+			switch (t)
+			{
+			case E_Attack:   return "Attack";
+			case E_Deffense: return "Defense";
+			case E_Magic:    return "Support";
+			default:         return "Unknown";
+			}
+		};
+
+	auto StarToStr = [](int s) -> const char*
+		{
+			switch (s)
+			{
+			case E_ONE:   return "1";
+			case E_TWO:   return "2";
+			case E_THREE: return "3";
+			default:      return "?";
+			}
+		};
+
+	auto AttrToStr = [](int a) -> const char*
+		{
+			switch (a)
+			{
+			case E_BULGOGI: return "BULGOGI";
+			case E_SOURCE:  return "SOURCE";
+			case E_CHESSE:  return "CHESSE";
+			case E_VEGAT:   return "VEGAT";
+			case E_BREAD:   return "BREAD";
+			default:        return "ATTR?";
+			}
+		};
+
+	std::cout
+		<< "\n[CardAct] uid=" << sel->GetUid()
+		<< " type=" << TypeToStr(sel->GetType())
+		<< " attr=" << AttrToStr(sel->GetAit())
+		<< " star=" << StarToStr(sel->GetStar())
+		<< " atk=" << sel->GetAtk()
+		<< " def=" << sel->GetDef()
+		<< " | my HP=" << ActorHP() << "/" << ActorMaxHP()
+		<< " shield=" << ActorShield()
+		<< " | opp HP=" << opponent.ActorHP() << "/" << opponent.ActorMaxHP()
+		<< " shield=" << opponent.ActorShield()
+		<< "\n";
+
+	switch (sel->GetType())
 	{
 	case E_Attack:
-		cout << "공격 카드 사용!! " << m_Hand[m_HandSelection]->GetAtk() << "데미지!!\n";
+		// 		std::cout << "[Flow] ApplyAttackTo(opponent, card)\n";
+		ApplyAttackTo(opponent, sel);
+		// 		cout << "공격 카드 사용!! " << sel->GetAtk() << "데미지!!\n";
 		break;
 	case E_Deffense:
-		cout << "방어 카드 사용!!" << m_Hand[m_HandSelection]->GetDef() << "방어!!\n";
+		// 		std::cout << "[Flow] ApplyDefense(card)\n";
+		ApplyDefense(sel);
+		// 		cout << "방어 카드 사용!!" << sel->GetDef() << "방어!!\n";
 		break;
 	case E_Magic:
-		cout << "보조 카드 사용!!\n";
+		// 		std::cout << "[Flow] ApplySupport(card, opponent)\n";
+		ApplySupport(sel, opponent);
+		// 		cout << "보조 카드 사용!!\n";
 		break;
 	}
+
+	std::cout
+		<< "[After] my HP=" << ActorHP() << "/" << ActorMaxHP()
+		<< " shield=" << ActorShield()
+		<< " | opp HP=" << opponent.ActorHP() << "/" << opponent.ActorMaxHP()
+		<< " shield=" << opponent.ActorShield()
+		<< "\n";
 
 	m_isShiny = true;
 	m_isRip = true;
@@ -956,11 +1050,10 @@ void CardManager::CardAct(CardManager& player, CardManager& opponent)
 	if (m_HandSelection >= m_HandCount && m_HandSelection != 0)
 		m_HandSelection--;
 
-	//턴 엔드
-	player.m_IsMyTurn = !player.m_IsMyTurn;
-	opponent.m_IsMyTurn = !opponent.m_IsMyTurn;
-	opponent.BossCardAct(player);
-	cout << "턴 교체.\n";
+	// ===== 카드 사용 횟수 증가 후, 제한에 도달하면 즉시 보스 턴으로 넘김 =====
+	RefreshPlayLimitFromPlayer();
+	++m_PlaysUsedThisTurn;
+	TryEndTurn(opponent, NULL);
 }
 
 void CardManager::HandSelect(CardManager& player, CardManager& opponent)
@@ -986,14 +1079,14 @@ void CardManager::StartTurn(CardManager& player, CardManager& opponent)
 	if (randTurn % 2 == 0)
 	{
 		player.m_IsMyTurn = !player.m_IsMyTurn;
-		cout << "자신의 턴\n";
+		//		cout << "자신의 턴\n";
 	}
 	else
 	{
 		opponent.m_IsMyTurn = !opponent.m_IsMyTurn;
-		cout << "상대방의 턴\n";
-		//opponent.OpponentAct(player, opponent, hWnd);
-		//opponent.BossCardAct(player);
+		//		cout << "상대방의 턴\n";
+				//opponent.OpponentAct(player, opponent, hWnd);
+				//opponent.BossCardAct(player);
 	}
 }
 
@@ -1006,24 +1099,35 @@ void CardManager::TimeLimit(CardManager& player, CardManager& opponent)
 	}
 
 	m_timer.UpdateTimer();
-	if (m_timer.CheckTimer(5))
-	{
-		player.m_IsMyTurn = !player.m_IsMyTurn;
-		opponent.m_IsMyTurn = !opponent.m_IsMyTurn;
+	if (!m_timer.CheckTimer(5))
+		return;
 
-		//자신의 차례면 드로우
-		if (player.m_IsMyTurn)
-		{
-			cout << "자신의 턴\n";
-		}
-		else
-		{
-			cout << "상대방의 턴\n";
-			//opponent.BossCardAct(player);
-		}
-		m_timer.SetIsStart(false);
+	// ✅ 여기서 먼저 끊어줘야 같은 프레임/다음 프레임 연속 진입을 막음
+	m_timer.SetIsStart(false);
+
+	// 1) 턴 토글
+	player.m_IsMyTurn = !player.m_IsMyTurn;
+	opponent.m_IsMyTurn = !opponent.m_IsMyTurn;
+
+	// 2) 다음 턴 BeginTurn (실드 0은 여기서만)
+	static int turnCounter = 1;
+	++turnCounter;
+
+	if (player.m_IsMyTurn)
+	{
+		player.CardDraw(1);
+		if (player.m_pPlayer)        player.m_pPlayer->BeginTurn(turnCounter);
+		else if (player.m_pEnemyMob) player.m_pEnemyMob->BeginTurn(turnCounter);
+	}
+	else
+	{
+		opponent.CardDraw(1);
+		if (opponent.m_pPlayer)        opponent.m_pPlayer->BeginTurn(turnCounter);
+		else if (opponent.m_pEnemyMob) opponent.m_pEnemyMob->BeginTurn(turnCounter);
+		// opponent.BossCardAct(player); // 원할 때만
 	}
 }
+
 
 //턴 시간 제한
 //void CardManager::TimeLimit(WPARAM wParam, HWND hWnd, CardManager& player, CardManager& opponent)
@@ -1094,40 +1198,35 @@ void CardManager::TimeLimit(CardManager& player, CardManager& opponent)
 
 void CardManager::BossCardAct(CardManager& player)
 {
-	//패에 카드가 없으면 리턴
-	if (m_HandCount <= 0)
-		return;
-	//선택 중이지 않으면 리턴
-	if (m_HandSelection < 0)
-		return;
+	// ✅ 보스 턴이 아닐 때는 행동 금지 (중복 실행/턴 꼬임 방지)
+	if (!m_IsMyTurn) return;
 
+	// 패에 카드가 없으면 리턴
+	if (m_HandCount <= 0) return;
+
+	// 선택 인덱스 보정 (보스는 선택 UI가 없어서 -1이면 0으로)
+	if (m_HandSelection < 0) m_HandSelection = 0;
+	if (m_HandSelection >= m_HandCount) m_HandSelection = 0;
+
+	// (기존 효과 처리 로직이 따로 없어서, 지금은 '카드 1장 소비'만 유지)
 	switch (m_Hand[m_HandSelection]->GetType())
 	{
 	case E_Attack:
-		cout << "공격 카드 사용!! " << m_Hand[m_HandSelection]->GetAtk() << "데미지!!\n";
+		// 공격 로직은 ApplyAttack이 아니라면 별도 구현 필요
 		break;
 	case E_Deffense:
-		cout << "방어 카드 사용!!" << m_Hand[m_HandSelection]->GetDef() << "방어!!\n";
 		break;
 	case E_Magic:
-		cout << "보조 카드 사용!!\n";
 		break;
 	}
 
-	//이미지 안보이기
+	// 이미지 안보이기
 	RENDER.ImageVisible(to_string(m_Hand[m_HandSelection]->GetUid() + BOSSUID), false);
 
 	m_Hand.erase(m_Hand.begin() + m_HandSelection);
 	m_HandCount--;
-	//사용한 카드가 패의 가장 오른쪽 카드이면 왼쪽 카드 선택
+
+	// 사용한 카드가 패의 가장 오른쪽 카드이면 왼쪽 카드 선택
 	if (m_HandSelection >= m_HandCount && m_HandSelection != 0)
 		m_HandSelection--;
-
-	//턴 엔드
-	player.m_IsMyTurn = !player.m_IsMyTurn;
-	m_IsMyTurn = !m_IsMyTurn;
-	//SetTimer(hWnd, TURNTIME, 7000, NULL);
-	player.CardDraw(1);
-	cout << "턴 교체.\n";
-
 }

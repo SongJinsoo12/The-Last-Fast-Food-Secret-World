@@ -164,6 +164,7 @@ void SupportCard::Card_Draw_Enemy_Heal(Player& player, Mob& mob)
 void SupportCard::Card_Draw_CockroachCard(Player& player)
 {
     player.DrawCards(3);
+    player.Heal(20);
     player.AddCardToDeck((int)CardId::Cockroach, true);
     cout << "난 3장 드로우 그리고 바퀴벌레을 꺼내겠다." << endl;
 }
@@ -221,12 +222,10 @@ void SupportCard::TwoCard_Get_Enemy_Card_Get(Player& player, Mob& mob)
 
 void SupportCard::Card_Draw_Enemy_Damage_UP(Player& player, Mob& mob)
 {
-  
+    // CSV(UID 223): 2장 드로우, 다음 1턴동안 받는 피해 2배
     player.DrawCards(2);
-
-    player.Damage(2);
-    cout << "이거만 뽑을게 아자자잣 아프다잉" << endl;
-
+    player.AddDoubleDamageTakenTurns(1);
+    cout << "[SUP 223] Draw 2, take double damage for 1 turn" << endl;
 }
 
 void SupportCard::My_Deck_Count_Card_Draw(Player& player)
@@ -321,24 +320,25 @@ void SupportCard::Card_Forsake_Damage_up(Player& player, float dmg)
 
 void SupportCard::Atk_Or_Def(Player* player, Mob* mob)
 {
-    Card* playerLastCard = player->getLastUsedCard();
+    // CSV(UID 211): 전 턴에 '상대'가 사용한 카드 타입에 따라 분기
+    //  - 상대가 공격을 사용했다면: 내가 직전에 받은 피해의 50%를 상대에게 되돌려줌
+    //  - 상대가 방어를 사용했다면: 내 다음 공격 피해 50% 증가(=1.5배)
+    Card* oppLast = mob ? mob->getLastUsedCard() : nullptr;
+    if (!player || !mob || !oppLast) return;
 
-    if (playerLastCard != nullptr)
+    CType lastType = oppLast->GetType();
+
+    if (lastType == CType::E_Attack)
     {
-        CType lastType = playerLastCard->GetType();
-        cout << "신월의 때가 왔다" << endl;
-        if (lastType == CType::E_Attack)
-        {
-            int lastDamage = player->getLastdamageTaken();
-            int reflect = lastDamage / 2;
-            player->takeDamage(reflect);
-            cout << "메이든 인 헤븐" << endl;
-        }
-        else if (lastType == CType::E_Deffense)
-        {
-            player->boostNextAttack(20);
-            cout << "크아아아아" << endl;
-        }
+        int lastTaken = player->getLastdamageTaken();      // 직전 피격량
+        int dmg = lastTaken / 2;
+        if (dmg > 0) mob->TakeDamage(dmg);                 // 상대에게 데미지
+        cout << "[SUP 211] OppLast=Attack => deal " << dmg << " to opponent" << endl;
+    }
+    else if (lastType == CType::E_Deffense)
+    {
+        player->SetNextAtkMultiplier(1.5f);
+        cout << "[SUP 211] OppLast=Defense => next atk x1.5" << endl;
     }
 }
 
@@ -393,7 +393,7 @@ void SupportCard::Instant_Turn_Card(Player& player)
 void SupportCard::Two_Turn_Heal(Player& player)
 {
     
-    player.AddDelayedHeal(2, heal);
+    player.AddDelayedHeal(2, 20);
     cout << "2턴 뒤 힐" << endl;
 
 }
@@ -428,21 +428,19 @@ void SupportCard::MY_Two_Card_Forsake_Get_Card(Player& player, Mob& enemy)
 
 void SupportCard::SeeCard(Player& player)
 {
- 
-    // "덱 맨 위 3장을 보고 순서 변경"은 UI 선택이 필요하지만,
-    // 여기서는 구현 예시로 "상단 3장 reverse"만 제공합니다.
-    std::vector<int> top;
-  
-    if (!player.PeekTopDeck(3, top))
-    {
-        
+    // CSV(UID 219): 패 1장 버림 -> 덱 맨 위 3장 확인 후 순서 변경
+    // UI 선택 구현이 없어서 최소 구현으로:
+    //  1) 패 1장 랜덤 버림
+    //  2) 덱 상단 3장을 "reverse"로 재정렬
+    if (!player.DiscardRandomHandCards(1))
         return;
-    }
+
+    std::vector<int> top;
+    if (!player.PeekTopDeck(3, top))
+        return;
 
     std::reverse(top.begin(), top.end());
-  
     player.ReorderTopDeck(top);
-  
 }
 
 void SupportCard::Enemy_Atk_Prohibition(Player& player, Mob& mob)
@@ -459,7 +457,7 @@ void SupportCard::Enemy_Forsake_Card(Mob& enemy)
 {
    
     enemy.DiscardRandomHandCards(1);
-    cout << "야당~" << endl;
+    cout << "야" << endl;
   
 }
 
@@ -481,38 +479,43 @@ void SupportCard::ApplyByUid(int uid, Player& player, Mob& mob, CardManager& cm)
 {
     switch (uid)
     {
-    case 200: HealCard(player); break;
-    case 201: Heal_Turn_Three_Hp_Down(player); break;
-    case 202: RemoveStatus(player); break;
-    case 203: GetCard(player, mob); break;
-    case 204: Next_AtkCard_Damage_Up(player, 1.5f); break;
-    case 205: Three_Turn_After_Three_Card(player); break;
-    case 206: Two_Turn_Heal(player); break;
-    case 207: Card_Forsake_Card_Draw(player); break;
-    case 208: Atk_Or_Def(&player, &mob); break;
-    case 209: MY_Two_Card_Forsake_Get_Card(player, mob); break;
-    //case 210: MY_Attiravate_Change_Random(player); break; // TODO: 속성별 추가효과
-    case 211: Card_Forsake_Damage_up(player, 2.0f); break;
-    case 212: Same_Card(player); break;
-    case 213: Card_Draw_Enemy_Heal(player, mob); break;
-    case 214: Card_Draw_CockroachCard(player); break;
-    case 215: Hp_Down_Card_Draw(player); break;
-    case 216: SeeCard(player); break;
-    case 217: Card_Draw_Damage_Doun(player, 0.5f); break;
-    case 218: AtkCard_Forsake_Used_TwoCard(player, cm); break;
-    case 219: Card_Draw_Disarray(player); break;
-    case 220: Card_Draw_Enemy_Damage_UP(player, mob); break;
-    case 221: Sure(player); break;
-    case 222: Card_Forsake_Heal_Atk_Change(player, mob); break;
-    case 223: Used_TwoCard_But_Drow_Prohibition(player); break;
-    case 224: My_Deck_Count_Card_Draw(player); break;
-    case 225: Enemy_Atk_Prohibition(player, mob); break; // 공격만 금지로 분리 구현 권장
-    case 226: TwoCard_Get_Enemy_Card_Get(player, mob); break;
-    case 227: Enemy_Forsake_Card(mob); break;
-    case 228: Instant_Turn_Card(player); break;
-    case 229: Deck_Retrun_Card(player, mob, /*drawEach=*/3); break; // 원하는 값으로
+    case 201: HealCard(player); break;
+    case 202: HealCard(player); break;
+    case 203: HealCard(player); break;
+    case 204: Heal_Turn_Three_Hp_Down(player); break;
+    case 205: RemoveStatus(player); break;
+    case 206: GetCard(player, mob); break;
+    case 207: Next_AtkCard_Damage_Up(player, 1.3f); break; // +30%
+    case 208: Three_Turn_After_Three_Card(player); break;
+    case 209: Two_Turn_Heal(player); break;
+    case 210: Card_Forsake_Card_Draw(player); break;
+    case 211: Atk_Or_Def(&player, &mob); break;
+    case 212: MY_Two_Card_Forsake_Get_Card(player, mob); break;
+    //case 213: MY_Attiravate_Change(player); break;
+    case 214: Card_Forsake_Damage_up(player, 2.0f); break;
+    case 215: Same_Card(player); break;
+    case 216: Card_Draw_Enemy_Heal(player, mob); break;
+    case 217: Card_Draw_CockroachCard(player); break;
+    case 218: Hp_Down_Card_Draw(player); break;
+    case 219: SeeCard(player); break;
+    case 220: Card_Draw_Damage_Doun(player, 0.5f); break;
+    case 221: AtkCard_Forsake_Used_TwoCard(player, cm); break;
+    case 222: Card_Draw_Disarray(player); break;
+    case 223: Card_Draw_Enemy_Damage_UP(player, mob); break;
+    case 224: Sure(player); break;
+    case 225: Card_Forsake_Heal_Atk_Change(player, mob); break;
+    case 226: Used_TwoCard_But_Drow_Prohibition(player); break;
+    case 227: My_Deck_Count_Card_Draw(player); break;
+    case 228: Enemy_Atk_Prohibition(player, mob); break;
+    case 229: TwoCard_Get_Enemy_Card_Get(player, mob); break;
+    case 230: Enemy_Forsake_Card(mob); break;
+    case 231: Instant_Turn_Card(player); break;
+    case 232: Deck_Retrun_Card(player, mob, /*drawEach=*/3); break;
+    case 233:
+        cout << "[SUP] uid=233(MAGICLIMIT) sentinel - ignored" << endl;
+        break;
     default:
-        HealCard(player); // 미매핑이면 기본 회복
+        HealCard(player);
         break;
     }
 }

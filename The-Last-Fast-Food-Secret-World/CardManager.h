@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Timer.h"
+#include "Card.h"
 #include <Windows.h>
 #include <vector>
 
@@ -41,11 +42,18 @@ public:
 	void PlayCardEffect(int x, int y);
 	void PlayRip(int x, int y);
 
+	//void SetPlayer(Player* pPlayer);
+	//void SetEnemyMob(Mob* pMob);
+
 	// 공격 2장 버리고 2턴 사용
 	bool DiscardFirstAttackCard();
 
 	// CardManager가 조작할 실제 전투 객체(Player/Mob) 연결
 	void BindActors(Player* player, Mob* enemy);
+
+	// 턴관련
+	bool IsMyTurn() const { return m_IsMyTurn; }
+	void SetMyTurn(bool v) { m_IsMyTurn = v; } // 필요하면
 
 private:
 	// UID 카드정보
@@ -80,7 +88,18 @@ private:
 	int  ActorTakeDamage(int dmg); // TakeDamage 호출
 	void ActorAddDot(int dmg, int ticks);
 
+
+	void ActorSetReflect(float pct, int hits);
+	float ActorGetReflectPct() const;
+	int   ActorGetReflectHitsLeft() const;
+	void  ActorConsumeReflectHit();
+
 	// 행도 카드 확인용
+	// ===== CardRule 적용용: 마지막으로 사용한 방어 카드 정보(상성/랭크 보정) =====
+	bool m_hasLastDefCard = false;
+	CAttribute m_lastDefAttr = E_BREAD;
+	Star m_lastDefRank = E_ONE;
+
 	int m_PlayLimitThisTurn = 1;   // 이번 턴 사용 가능 횟수
 	int m_PlaysUsedThisTurn = 0;   // 이번 턴 사용한 횟수
 

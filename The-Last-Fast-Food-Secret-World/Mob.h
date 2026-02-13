@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include <vector>
 #include <string>
@@ -22,9 +22,9 @@ class Mob;
 class AtkCard;
 class Player;
 
-// Ä«µå È¿°ú´Â (cardId, user, target) ÇüÅÂ·Î ¿ÜºÎ¿¡¼­ ÇØ¼®/Àû¿ë
-// -> Player´Â "Ä«µå¸¦ ³Â´Ù"±îÁö¸¸ Ã³¸®ÇÏ°í,
-//    ½ÇÁ¦ Ä«µå È¿°ú(µ¥¹ÌÁö/Èú/Æ¯¼öÈ¿°ú)´Â resolver°¡ cardId·Î ÆÇ´ÜÇØ¼­ Àû¿ëÇÏ´Â ±¸Á¶
+// Ä« È¿ (cardId, user, target) Â· ÜºÎ¿ Ø¼/
+// -> Player "Ä«å¸¦ Â´" Ã³Ï°,
+//     Ä« È¿(//Æ¯È¿) resolver cardId Ç´Ø¼ Ï´ 
 using CardResolver_MobVsPlayer = std::function<void(
     int     /*cardId*/,
     Mob& /*player*/,
@@ -33,8 +33,8 @@ using CardResolver_MobVsPlayer = std::function<void(
 
 enum class Mob_AcquireSource //AcquireSource
 {
-    Normal, // ÀÏ¹İ È¹µæ
-    SpawnedByRoach // ¹ÙÄû¹ú·¹ Áõ½ÄÀ¸·Î »ı±ä Ãß°¡ºĞ
+    Normal, // Ï¹ È¹
+    SpawnedByRoach //    ß°
 };
 
 struct MobDotInfo
@@ -46,183 +46,192 @@ struct MobDotInfo
 class Mob
 {
 public:
-    // ±âº» »ı¼ºÀÚ: Å×½ºÆ®/±âº»°ªÀ¸·Î Player¸¦ ¸¸µé ¶§ »ç¿ë
+    // âº» : ×½Æ®/âº» Player   
     Mob();
 
-    // ÀÌ¸§°ú ÃÖ´ë Ã¼·ÂÀ» ÁöÁ¤ÇØ¼­ »ı¼ºÇÒ ¶§ »ç¿ë
+    // Ì¸ Ö´ Ã¼ Ø¼   
     Mob(const std::wstring& name, int maxHp);
 
-    // ÇöÀç Ã¼·Â Á¶È¸ (UIÇ¥½Ã/ÀüÅõÆÇÁ¤ µî¿¡ »ç¿ë)
+    //  Ã¼ È¸ (UIÇ¥/ î¿¡ )
     int  GetHP() const;
 
-    // ÃÖ´ë Ã¼·Â Á¶È¸ (HP¹Ù Ç¥½Ã, Heal »óÇÑ Ã³¸® µî¿¡ »ç¿ë)
+    // Ö´ Ã¼ È¸ (HP Ç¥, Heal  Ã³ î¿¡ )
     int  GetMaxHP() const;
 
-    // ÇöÀç Ã¼·ÂÀ» °­Á¦·Î ¼³Á¤ (µğ¹ö±×/¸®¼Â/·Îµå µî¿¡ »ç¿ë)
-    // º¸Åë ³»ºÎÀûÀ¸·Î 0~max ¹üÀ§¸¦ clampÇÏ´Â ±¸ÇöÀ» µÓ´Ï´Ù.
+    //  Ã¼   (//Îµ î¿¡ )
+    //   0~max  clampÏ´  Ó´Ï´.
     void SetHP(int hp);
 
-    // µ¥¹ÌÁö Àû¿ë (HP °¨¼Ò). Ä«µå È¿°ú/»óÅÂÀÌ»ó Ã³¸® µî¿¡¼­ »ç¿ë
+    //   (HP ). Ä« È¿/Ì» Ã³ î¿¡ 
     void Damage(int dmg);
 
-    // È¸º¹ Àû¿ë (HP Áõ°¡). º¸Åë maxHP¸¦ ³ÑÁö ¾Êµµ·Ï Á¦ÇÑ
+    // È¸  (HP ).  maxHP  Êµ 
     void Heal(int amount);
 
     int  GetShield() const;
     void SetShield(int v);
     void AddShield(int v);
-    int  TakeDamage(int dmg); // ¹İÈ¯: ½ÇÁ¦ HP°¡ ±ğÀÎ ¾ç
+    int  TakeDamage(int dmg); // È¯:  HP  
     void AddDot(int dmg, int ticks);
-    void TickDots(); // ÅÏ ³¡³¯ ¶§ È£Ãâ
+    void TickDots(); //    È£
 
-    // ÅÏ ½ÃÀÛ Ã³¸®:
-    // - ÇöÀç ÅÏ ¹øÈ£ ±â·Ï
-    // - "ÀÌ¹ø ÅÏ¿¡ ¾µ ¼ö ÀÖ´Â Ä«µå ¼ö(ÇÃ·¹ÀÌ ¸®¹Ô)" ÃÊ±âÈ­
-    // - Áö¿¬ È¿°ú(¸î ÅÏ ÈÄ Èú/°¨¼Ò) Ä«¿îÆ® °¨¼Ò/¹ßµ¿
-    // - µå·Î¿ì ±İÁö ÅÏ Ã³¸® µî
+    // ====== ?í•´ ë°˜ì‚¬(DEF 143) ======
+    void SetReflect(float pct, int hits = 1);
+    float GetReflectPct() const;
+    int   GetReflectHitsLeft() const;
+
+    // ====== "X????ë°œë™" ?ê³¼ ì¦‰ì‹œ ë°œë™(?í¬??231) ======
+    void TriggerDelayedEffectsNow();
+
+
+    //   Ã³:
+    // -   È£ 
+    // - "Ì¹ Ï¿   Ö´ Ä« (Ã· )" Ê±È­
+    // -  È¿(   /) Ä«Æ® /ßµ
+    // - Î¿   Ã³ 
     void BeginTurn(int currentTurn);
 
-    // ÅÏ Á¾·á Ã³¸®:
-    // - ÀÌ¹ø ÅÏ »ç¿ëÇÑ Ä«µå ¼ö Á¤¸®
-    // - "ÀÌ¹ø ÅÏ¿¡ ÀÌ¹Ì ÇÃ·¹ÀÌÇß´ÂÁö" ÇÃ·¡±× Á¤¸® µî
+    //   Ã³:
+    // - Ì¹   Ä«  
+    // - "Ì¹ Ï¿ Ì¹ Ã·ß´" Ã·  
     void EndTurn();
 
-    // »ıÁ¸ ¿©ºÎ(HP > 0) ÆÇÁ¤
+    //  (HP > 0) 
     bool IsAlive() const;
 
-    // ÀÌ¹ø ÅÏ¿¡ Ä«µå¸¦ ´õ ³¾ ¼ö ÀÖ´ÂÁö È®ÀÎ:
-    // ex) ±âº» 1Àå/ÅÏÀÎµ¥, 3ÅÏ ÈÄ 3Àå »ç¿ë °¡´É °°Àº È¿°ú°¡ ÀÖÀ¸¸é ¿©±â¼­ Çã¿ë
+    // Ì¹ Ï¿ Ä«å¸¦    Ö´ È®:
+    // ex) âº» 1/Îµ, 3  3    È¿  â¼­ 
     bool CanPlayCard() const;
 
-    // µ¦À» Ä«µåID ¸ñ·ÏÀ¸·Î ¼¼ÆÃ:
-    // - ÀüÅõ ½ÃÀÛ ½Ã µ¦ ±¸¼º
-    // - shuffle=true¸é ¼¯¾î¼­ ½ÃÀÛ
+    //  Ä«ID  :
+    // -     
+    // - shuffle=true î¼­ 
     void SetDeck(const std::vector<int>& cardIds, bool shuffle = true);
 
-    // µ¦ ¼ÅÇÃ(¹«ÀÛÀ§ ¼¯±â)
+    //  ( )
     void ShuffleDeck();
 
-    // µ¦¿¡¼­ countÀå »Ì¾Æ¼­ ¼ÕÆĞ(hand)¿¡ Ãß°¡
-    // - draw ±İÁö ÅÏ(m_noDrawTurns)ÀÏ ¶§´Â ¾Æ¹«°Íµµ ¾È »Ìµµ·Ï ±¸Çö °¡´É
-    //void DrawCard(int drawNum); // CardManagerÀ» ÀÌ¿ëÇÑ Draw
-    void DrawCards(int count); // ÀÚÃ¼ÀûÀ¸·Î ¸¸µç Draw
+    //  count Ì¾Æ¼ (hand) ß°
+    // - draw  (m_noDrawTurns)  Æ¹Íµ  Ìµ  
+    //void DrawCard(int drawNum); // CardManager Ì¿ Draw
+    void DrawCards(int count); // Ã¼  Draw
 
-    // ¼ÕÆĞ¸¦ ÀüºÎ ¹ö¸² ´õ¹Ì(discard)·Î ÀÌµ¿
-    // - ¶ó¿îµå Á¾·á/Æ¯Á¤ Ä«µå È¿°ú(¼ÕÆĞ ÀüºÎ ¹ö¸®±â) µî¿¡ »ç¿ë
+    // Ğ¸   (discard) Ìµ
+    // -  /Æ¯ Ä« È¿(  ) î¿¡ 
     void DiscardHand();
 
-    // UI¿¡¼­ Å¬¸¯/¼±ÅÃÇÑ ¼ÕÆĞ ÀÎµ¦½º¸¦ ÀúÀå
+    // UI Å¬/  Îµ 
     void SetSelectedCardIndex(int index);
 
-    // ÇöÀç ¼±ÅÃµÈ Ä«µå ÀÎµ¦½º¸¦ ¹İÈ¯
-    // - UI/ÀÔ·Â ½Ã½ºÅÛ¿¡¼­ "¾î¶² Ä«µå ³»´ÂÁö" È®ÀÎ¿ë
+    //  Ãµ Ä« Îµ È¯
+    // - UI/Ô· Ã½Û¿ "î¶² Ä« " È®Î¿
     int  ChooseCardIndex() const;
 
-    // ½ÇÁ¦·Î "Ä«µå 1Àå ÇÃ·¹ÀÌ ½Ãµµ"¸¦ Ã³¸®ÇÏ´Â ÇÔ¼ö
+    //  "Ä« 1 Ã· Ãµ" Ã³Ï´ Ô¼
     // - CanPlayCard() Ã¼Å©
-    // - ¼±ÅÃµÈ Ä«µå°¡ À¯È¿ÇÑÁö Ã¼Å©
-    // - ÇÃ·¹ÀÌ È½¼ö Â÷°¨, Ä«µå ÀÌµ¿(¼ÕÆĞ->¹ö¸²) µî ±âº» Ã³¸®
-    // - È¿°ú Àû¿ëÀº resolver(cardId, *this, mob)·Î ¿ÜºÎ¿¡ À§ÀÓ
-    //   (Ä«µå ·ÎÁ÷À» Player ³»ºÎ¿¡ ³ÖÁö ¾Ê±â À§ÇÑ ±¸Á¶)
-    bool TryPlayOneCard(Player& player , const CardResolver_MobVsPlayer& resolver);
+    // - Ãµ Ä«å°¡ È¿ Ã¼Å©
+    // - Ã· È½ , Ä« Ìµ(->)  âº» Ã³
+    // - È¿  resolver(cardId, *this, mob) ÜºÎ¿ 
+    //   (Ä«  Player Î¿  Ê±  )
+    bool TryPlayOneCard(Player& player, const CardResolver_MobVsPlayer& resolver);
 
-    // nÅÏ ÈÄ HP °¨¼Ò¸¦ ¿¹¾à
-    // ¿¹) "Ã¼·Â ?È¸º¹ ÈÄ 3ÅÏ µÚ ?+25%¸¸Å­ Ã¼·Â °¨¼Ò" °°Àº Ä«µå¿¡¼­ »ç¿ë
-    // turnsLater: ¸î ÅÏ ÈÄ ¹ßµ¿ÇÒÁö
-    // healAmount: (º¯¼ö¸íÀº healAmountÁö¸¸) ½ÇÁ¦·Î´Â °¨¼Ò·®/Æä³ÎÆ¼·®À¸·Î »ç¿ëµÇ´Â °ª
+    // n  HP Ò¸ 
+    // ) "Ã¼ ?È¸  3  ?+25%Å­ Ã¼ "  Ä«å¿¡ 
+    // turnsLater:    ßµ
+    // healAmount: ( healAmount) Î´ Ò·/Æ¼ Ç´ 
     void AddDelayedHpLoss(int turnsLater, int healAmount);
 
-    // nÅÏ ÈÄ ÈúÀ» ¿¹¾à
-    // ¿¹) "2ÅÏ ÈÄ Ã¼·Â ? È¸º¹" °°Àº Ä«µå¿¡¼­ »ç¿ë
+    // n   
+    // ) "2  Ã¼ ? È¸"  Ä«å¿¡ 
     void AddDelayedHeal(int turnsLater, int amount);
 
-    // nÅÏ ÈÄ, ±× ÅÏ¿¡ "Ä«µå ÇÃ·¹ÀÌ Á¦ÇÑ(playLimit)"À» º¯°æ ¿¹¾à
-    // ¿¹) "3ÅÏ ÈÄ 3Àå »ç¿ë °¡´É" °°Àº Ä«µå¿¡¼­ »ç¿ë
+    // n ,  Ï¿ "Ä« Ã· (playLimit)"  
+    // ) "3  3  "  Ä«å¿¡ 
     void SchedulePlayLimit(int turnsLater, int playLimit);
 
-    // ÀÌ¹ø ÅÏ Áï½Ã Ãß°¡·Î ´õ ÇÃ·¹ÀÌ °¡´ÉÇÑ È½¼ö ºÎ¿©
-    // ¿¹) "ÀÌ¹ø ÅÏ Ãß°¡ 1Àå ´õ" °°Àº È¿°ú
+    // Ì¹   ß°  Ã·  È½ Î¿
+    // ) "Ì¹  ß° 1 "  È¿
     void AddExtraPlaysThisTurn(int extraPlays);
 
-    // µå·Î¿ì ±İÁö ÅÏ ºÎ¿©
-    // ¿¹) "´ÙÀ½ 2ÅÏ µ¿¾È µå·Î¿ì ºÒ°¡" °°Àº µğ¹öÇÁ/ÆĞ³ÎÆ¼ ±¸Çö
+    // Î¿   Î¿
+    // ) " 2  Î¿ Ò°"  /Ğ³Æ¼ 
     void AddNoDrawTurns(int turns);
 
-    // ´ÙÀ½ °ø°İ Ä«µå 1È¸¿¡ Àû¿ëÇÒ ¹èÀ² ÀúÀå
-    // ¿¹) "ÀÚ½ÅÀÇ ´ÙÀ½ °ø°İ ÇÇÇØ·® 1.?¹è Áõ°¡" °°Àº È¿°ú
+    //   Ä« 1È¸   
+    // ) "Ú½   Ø· 1.? "  È¿
     void SetNextAtkMultiplier(float mult);
 
-    // ´ÙÀ½ °ø°İ ¹èÀ²ÀÌ ¿¹¾àµÇ¾î ÀÖ´ÂÁö È®ÀÎ
+    //    Ç¾ Ö´ È®
     bool HasNextAtkMultiplier() const;
 
-    // ½ÇÁ¦ °ø°İÄ«µå(AtkCard)¿¡ ¹èÀ²À» Àû¿ëÇÏ°í,
-    // Àû¿ë ÈÄ m_hasNextAtkMultiplier¸¦ false·Î ²ô´Â ½ÄÀ¸·Î "1È¸¼º" Ã³¸®ÇÏ´Â ¿ëµµ
+    //  Ä«(AtkCard)  Ï°,
+    //   m_hasNextAtkMultiplier false   "1È¸" Ã³Ï´ ëµµ
     void ApplyNextAttackModifiers(AtkCard& atk);
 
-    // µ¶ »óÅÂÀÎÁö È®ÀÎ (ÅÏ ½ÃÀÛ ½Ã DOT Ã³¸®, UI »óÅÂ Ç¥½Ã µî)
+    //   È® (   DOT Ã³, UI  Ç¥ )
     bool HasPoison() const;
 
-    // µ¶ »óÅÂ on/off
-    // ¿¹) "»óÅÂ ÀÌ»ó Áï½Ã Á¦°Å" Ä«µå¿¡¼­ SetPoison(false)
+    //   on/off
+    // ) " Ì»  " Ä«å¿¡ SetPoison(false)
     void SetPoison(bool on);
 
-    // ¼ÕÆĞ/µ¦/¹ö¸² ´õ¹ÌÀÇ ÇöÀç Å©±â ¹İÈ¯ (UIÇ¥½Ã, ·ÎÁ÷ ÆÇ´Ü)
+    // //   Å© È¯ (UIÇ¥,  Ç´)
     int  GetHandSize() const;
     int  GetDeckSize() const;
     int  GetDiscardSize() const;
 
-    // ¼ÕÆĞ¿¡ Æ¯Á¤ Ä«µåID¸¦ Á÷Á¢ Ãß°¡
-    // ¿¹) »ó´ë µ¦¿¡¼­ Ä«µå ÈÉÃÄ¼­ ¼ÕÆĞ·Î ³Ö±â / È¿°ú·Î »ı¼ºµÈ Ä«µå Ãß°¡
+    // Ğ¿ Æ¯ Ä«ID  ß°
+    // )   Ä« Ä¼ Ğ· Ö± / È¿  Ä« ß°
     void AddCardToHand(int cardId);
 
-    // µ¦ ÃÖ»ó´Ü Ä«µå 1ÀåÀ» ²¨³» outCardId·Î ¹İÈ¯
-    // ¼º°øÇÏ¸é true, µ¦ÀÌ ºñ¾úÀ¸¸é false
-    // -> "»ó´ë µ¦¿¡¼­ 1Àå »Ì±â" °°Àº ±â´É ±¸Çö¿¡ ÇÙ½É
+    //  Ö» Ä« 1  outCardId È¯
+    // Ï¸ true,   false
+    // -> "  1 Ì±"    Ù½
     bool PopTopDeckCard(int& outCardId);
 
-    // ¼ÕÆĞ¿¡¼­ ¹«ÀÛÀ§ Ä«µå 1ÀåÀ» ²¨³» outCardId·Î ¹İÈ¯
-    // ¿¹) "»ó´ë ÆĞ¿¡¼­ ¹«ÀÛÀ§ Ä«µå 1Àå °¡Á®¿À±â" °°Àº È¿°ú
+    // Ğ¿  Ä« 1  outCardId È¯
+    // ) " Ğ¿  Ä« 1 "  È¿
     bool PopRandomHandCard(int& outCardId);
 
-    // ¼ÕÆĞ¿¡¼­ Æ¯Á¤ ÀÎµ¦½º Ä«µå¸¦ ¹ö¸²(discard)À¸·Î ÀÌµ¿
-    // ¿¹) "ÆĞ 1Àå ¹ö¸®°í 1Àå »Ì±â" °°Àº Ä«µå¿¡¼­ »ç¿ë
+    // Ğ¿ Æ¯ Îµ Ä«å¸¦ (discard) Ìµ
+    // ) " 1  1 Ì±"  Ä«å¿¡ 
     bool DiscardHandCardAt(int index);
 
-    // ¼ÕÆĞ¿¡¼­ ¹«ÀÛÀ§·Î countÀåÀ» ¹ö¸²
-    // ¿¹) "ÆĞ 2Àå ¹ö¸° ÈÄ ..." °°Àº È¿°ú¿¡ »ç¿ë
+    // Ğ¿  count 
+    // ) " 2   ..."  È¿ 
     bool DiscardRandomHandCards(int count);
 
-    // µ¦ ÃÖ»ó´Ü countÀåÀ» "º¸±â"¸¸ ÇÏ°í out¿¡ ´ã±â (µ¦Àº º¯È­ ¾øÀ½)
-    // ¿¹) µ¦ ¼­Ä¡/¹Ì¸®º¸±â/¿¹Áö °°Àº È¿°ú
+    //  Ö» count "" Ï° out  ( È­ )
+    // )  Ä¡/Ì¸/  È¿
     bool PeekTopDeck(int count, std::vector<int>& out) const;
 
-    // µ¦ ÃÖ»ó´Ü ÀÏºÎ¸¦ newOrder ¼ø¼­·Î Àç¹èÄ¡
-    // ¿¹) "µ¦ À§ 3Àå º¸°í ¿øÇÏ´Â ¼ø¼­·Î Á¤·Ä" °°Àº È¿°ú
+    //  Ö» ÏºÎ¸ newOrder  Ä¡
+    // ) "  3  Ï´  "  È¿
     bool ReorderTopDeck(const std::vector<int>& newOrder);
 
-    // ¼ÕÆĞ¸¦ µ¦À¸·Î µÇµ¹¸®°í(º¸Åë ÀüºÎ), ÇÊ¿äÇÏ¸é ¼ÅÇÃ
-    // ¿¹) "¼ÕÆĞ¸¦ µ¦¿¡ µÇµ¹¸°´Ù" ·ù È¿°ú, ¸®¼Â È¿°ú
+    // Ğ¸  Çµ( ), Ê¿Ï¸ 
+    // ) "Ğ¸  Çµ"  È¿,  È¿
     void ReturnHandToDeck(bool shuffleAfter);
 
-    // ====== WinAPI UI ±×¸®±â °ü·Ã ======
-    // area ¹üÀ§ ¾È¿¡ Player °ü·Ã UI¸¦ ±×¸®´Â "»óÀ§" ÇÔ¼ö(ÆĞ³Î+HP+¼ÕÆĞ µî)
+    // ====== WinAPI UI ×¸  ======
+    // area  È¿ Player  UI ×¸ "" Ô¼(Ğ³+HP+ )
     void Draw(HDC hdc, const RECT& area) const;
 
-    // ÇÃ·¹ÀÌ¾î Á¤º¸ ÆĞ³Î(ÀÌ¸§/µ¦Ä«¿îÆ®/¹ö¸²Ä«¿îÆ®/ÅÏ Á¤º¸ µî)À» ±×¸®´Â ¿ëµµ
+    // Ã·Ì¾  Ğ³(Ì¸/Ä«Æ®/Ä«Æ®/  ) ×¸ ëµµ
     void DrawPanel(HDC hdc, const RECT& area) const;
 
-    // HP¹Ù¸¦ ±×¸®´Â ¿ëµµ (ÇöÀçHP/ÃÖ´ëHP ±â¹İ)
+    // HPÙ¸ ×¸ ëµµ (HP/Ö´HP )
     void DrawHPBar(HDC hdc, const RECT& barArea) const;
 
-    // ¼ÕÆĞ ¿µ¿ª¿¡ Ä«µåµéÀ» ±×¸®´Â ¿ëµµ (m_hand ±â¹İ)
+    //   Ä« ×¸ ëµµ (m_hand )
     void DrawHand(HDC hdc, const RECT& area) const;
 
-    // ====== "»ó´ë°¡ ¸¶Áö¸·¿¡ »ç¿ëÇÑ Ä«µå" ÃßÀû ======
-    // »ó´ë(È¤Àº ³»°¡) ¸¶Áö¸·À¸·Î »ç¿ëÇÑ Ä«µå Æ÷ÀÎÅÍ ÀúÀå
-    // ¿¹) "Àü ÅÏ¿¡ »ó´ë°¡ ¸¶Áö¸·À¸·Î »ç¿ëÇÑ Ä«µå Á¾·ù(°ø/¼ö)¿¡ µû¶ó È¿°ú" ±¸Çö¿¡ »ç¿ë
+    // ====== "ë°¡   Ä«"  ======
+    // (È¤ )   Ä«  
+    // ) " Ï¿ ë°¡   Ä« (/)  È¿"  
     void setLastUsedCard(Card* card) { lastUsedCard = card; }
 
-    // ¸¶Áö¸· »ç¿ë Ä«µå Æ÷ÀÎÅÍ ¹İÈ¯
+    //   Ä«  È¯
     Card* getLastUsedCard() const { return lastUsedCard; }
 
 
@@ -238,7 +247,7 @@ public:
     // discarded OR played are the same type.
     bool HasRecentTwoSameCombatType() const;
 
-    // »ó´ëÀÇ ¸¶Áö¸· µ¥¹ÌÁö ÀúÀå
+    //    
     void getLastAttackDamage() const { return; }
     void takeDamage(int damage)
     {
@@ -247,7 +256,7 @@ public:
 
     int getLastdamageTaken() const { return lastDamageTaken; }
 
-    // °ø°İ ¶Ç´Â ¹æ¾î Ä«µåÁß »ó´ë°¡ ¹æ¾î¸¦ »ç¿ëÇßÀ»¶§
+    //  Ç´  Ä« ë°¡ î¸¦ 
     void boostNextAttack(int percent)
     {
         nextAttackBoostPercent = percent;
@@ -256,30 +265,34 @@ public:
     int getNextAttackBoost() const { return nextAttackBoostPercent; }
     void clearAttackBoost() { nextAttackBoostPercent = 0; }
 
-    // ¹ÙÄû¹ú·¹ Ä«µå 
+    //  Ä« 
     void AddCardToDeck(int cardId, bool triggerAcuire = true);
 
-    // ´ÙÀ½ NÅÏ µ¿¾È (ÅÏ Á¾·á ½Ã 1¾¿ °¨¼Ò) HealÀÌ Damage·Î º¯È¯
+    //  N  (   1 ) Heal Damage È¯
     void AddHealToDamageTurns(int turns);
     bool HasHealToDamageDebuff() const;
 
-    // »óÅÂÀÌ»ó È¥¶õ
+    // Ì» È¥
+        // ë‹¤ìŒ Ní„´ ë™ì•ˆ ë°›ëŠ” í”¼í•´ 2ë°°
+    void AddDoubleDamageTakenTurns(int turns);
+    bool HasDoubleDamageTakenDebuff() const;
+
     void AddDisarrayTurns(int turns);
     bool IsDisarray() const;
     int GetDisarrayTurnLeft() const;
 
-    // ÆĞ¸¦ µ¦¿¡ ³Ö°í, ³ÖÀº ¼ö¸¸Å­ ´Ù½Ã µå·Î¿ì
+    // Ğ¸  Ö°,  Å­ Ù½ Î¿
     void ReturnHandToDeckAndRedraw(bool shuffleAfter = true);
 
-    // ÅÏ Áï½Ã ¹ßµ¿
+    //   ßµ
     void TriggerScheduledEffectsNow();
 
-    // ¼Ó¼º º¯È¯
+    // Ó¼ È¯
     void SetNextAtkAttribute(CAttribute attr, CAttribute neutral = E_BREAD);
     void SetNextAtkAttributeRandom(CAttribute neutral = E_BREAD);
     bool HasNextAtkAttributeOverride() const;
 
-    // °ø°İ ±İÁö
+    //  
     void ProhibitPlay(int turns);
     void ProhibitAttackPlay(int turns);
     bool IsPlayProhibited() const;
@@ -294,94 +307,101 @@ public:
 
 
 private:
-    // ÇÃ·¹ÀÌ¾î Ç¥½Ã¿ë ÀÌ¸§
+    // Ã·Ì¾ Ç¥Ã¿ Ì¸
     std::wstring m_name = L"Player";
 
-    // ÇöÀç/ÃÖ´ë HP
-    int m_hp = 1;
-    int m_maxHp = 1;
+    // /Ö´ HP
+    int m_hp = 50;
+    int m_maxHp = 50;
 
-    // ½Çµå
+    // Çµ
     int m_shield = 0;
 
-    // µµÆ®µ©
+
+    // ?í•´ ë°˜ì‚¬(DEF 143)
+    float m_reflectPct = 0.0f;
+    int   m_reflectHitsLeft = 0;
+
+    // Æ®
     std::vector<MobDotInfo> m_dots;
 
-    // ÇöÀç ÅÏ Ä«¿îÅÍ(°ÔÀÓ ÅÏ ¹øÈ£ ÀúÀå)
+    //   Ä«(  È£ )
     int m_turn = 0;
 
-    // ¼ÕÆĞ ÃÖ´ë Å©±â Á¦ÇÑ(±âº» 5Àå)
+    //  Ö´ Å© (âº» 5)
     int m_maxHandSize = 5;
 
-    // Ä«µåµéÀº int Ä«µåID·Î °ü¸®
-    // m_deck: µ¦(»ÌÀ» Ä«µå)
-    // m_hand: ¼ÕÆĞ(ÇÃ·¹ÀÌ °¡´ÉÇÑ Ä«µå)
-    // m_discard: ¹ö¸² ´õ¹Ì
+    // Ä« int Ä«ID 
+    // m_deck: ( Ä«)
+    // m_hand: (Ã·  Ä«)
+    // m_discard:  
     std::vector<int> m_deck;
     std::vector<int> m_hand;
     std::vector<int> m_discard;
 
-    // ÇöÀç ¼±ÅÃµÈ ¼ÕÆĞ ÀÎµ¦½º(Å¬¸¯ÇÑ Ä«µå µî)
+    //  Ãµ  Îµ(Å¬ Ä« )
     int m_selectedIndex = -1;
 
-    // ====== "ÅÏ ´ç ÇÃ·¹ÀÌ °¡´É Ä«µå ¼ö" °ü¸® ======
-    // ±âº» 1Àå/ÅÏ
+    // ====== "  Ã·  Ä« "  ======
+    // âº» 1/
     int  m_playLimitThisTurn = 1;
 
-    // ÀÌ¹ø ÅÏ¿¡ ÀÌ¹Ì ¸î Àå ½è´ÂÁö
+    // Ì¹ Ï¿ Ì¹   
     int  m_playsUsedThisTurn = 0;
 
-    // ÀÌ¹ø ÅÏ¿¡ ÇÃ·¹ÀÌÇß´ÂÁö ¿©ºÎ(°£´Ü Ã¼Å©¿ë)
+    // Ì¹ Ï¿ Ã·ß´ ( Ã¼Å©)
     bool m_playedThisTurn = false;
 
-    // ====== "nÅÏ ÈÄ ÇÃ·¹ÀÌ Á¦ÇÑ º¯°æ ¿¹¾à" ======
+    // ====== "n  Ã·   " ======
     bool m_hasScheduledPlayLimit = false;
     int  m_scheduledPlayLimitTurnsLeft = 0;
     int  m_scheduledPlayLimit = 1;
 
-    // ====== "µå·Î¿ì ±İÁö" È¿°ú ======
-    // 0ÀÌ¸é Á¤»ó µå·Î¿ì, >0ÀÌ¸é ÅÏ¸¶´Ù °¨¼ÒÇÏ¸é¼­ µå·Î¿ì ¸·À½
+    // ====== "Î¿ " È¿ ======
+    // 0Ì¸  Î¿, >0Ì¸ Ï¸ Ï¸é¼­ Î¿ 
     int m_noDrawTurns = 0;
 
-    // ====== Áö¿¬ HP °¨¼Ò ======
-    // "¸î ÅÏ ÈÄ Ã¼·Â °¨¼Ò" °°Àº Æä³ÎÆ¼ Ã³¸®¿ë
+    // ======  HP  ======
+    // "   Ã¼ "  Æ¼ Ã³
     bool m_hasDelayedHpLoss = false;
     int  m_delayedHpLossTurnsLeft = 0;
     int  m_delayedHpLossAmount = 0;
 
-    // ====== Áö¿¬ Èú ======
+    // ======   ======
     bool m_hasDelayedHeal = false;
     int  m_delayedHealTurnsLeft = 0;
     int  m_delayedHealAmount = 0;
 
-    // ====== »óÅÂ ÀÌ»ó ======
+    // ======  Ì» ======
     bool m_hasPoison = false;
 
-    // ====== ´ÙÀ½ °ø°İ ¹èÀ²(1È¸¼º ¹öÇÁ) ======
+    // ======   (1È¸ ) ======
     bool  m_hasNextAtkMultiplier = false;
     float m_nextAtkMultiplier = 1.0f;
 
-    // ====== ¸¶Áö¸· »ç¿ë Ä«µå ÃßÀû ======
-    // "Àü ÅÏ »ó´ë°¡ °ø°İ/¼öºñ/º¸Á¶ Áß ¹«¾ùÀ» ½è´ÂÁö" °°Àº Ä«µå ±¸Çö¿¡ ÇÊ¿ä
+    // ======   Ä«  ======
+    // "  ë°¡ //   "  Ä«  Ê¿
     Card* lastUsedCard = nullptr;
 
-    // ====== »ó´ë¿¡°Ô ¸¶Áö¸·À¸·Î ¹ŞÀº µ¥¹ÎÁö ======
+    // ====== ë¿¡    ======
     int lastDamageTaken = 0;
+    int m_doubleDamageTurns = 0; // ë°›ëŠ” í”¼í•´ 2ë°° ë‚¨ì€ í„´
 
-    // ====== »ó´ë°¡ ¹æ¾î »ç¿ë½Ã =======
+
+    // ====== ë°¡   =======
     int nextAttackBoostPercent = 0;
 
-    // ¹ÙÄû¹ú·¹ Ä«µå °ü·Ã
+    //  Ä« 
     void OnAcquireCard(int cardId);
     void RemoveAllFromHand(int cardId);
 
-    // Èú -> µ¥¹ÌÁö
+    //  -> 
     int m_healToDamageTurnsLeft = 0;
 
-    // »óÅÂÀÌ»ó È¥¶õ
+    // Ì» È¥
     int m_disarrayTurnsLeft = 0;
 
-    // ¼Ó¼ºº¯È¯
+    // Ó¼È¯
     bool m_hasNextAtkAttributeOverride = false;
     CAttribute m_nextAtkAttributeOverride = E_BREAD;
 
@@ -397,7 +417,7 @@ private:
     // Internal: resolve cardId -> CType (returns E_Magic if unknown).
     static CType ResolveCardTypeById(int cardId);
 
-    // °ø°İ Ä«µå ±İÁö
+    //  Ä« 
     int m_playProhibitTurnsLeft = 0;
     int m_attackProhibitTurnsLeft = 0;
 };

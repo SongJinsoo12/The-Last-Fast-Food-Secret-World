@@ -36,13 +36,13 @@ int DefCard::BreadDef(CAttribute /*atkAttr*/, Star rank)
     switch (rank)
     {
     case E_ONE:
-        return 2;
+        return 5;
     case E_TWO:
-        return 3;
+        return 10;
     case E_THREE:
-        return 4;
+        return 15;
     default:
-        return 2;
+        return 5;
     }
 }
 
@@ -60,12 +60,12 @@ int DefCard::DamageReflection(CAttribute /*attr*/, Star rank)
     switch (rank)
     {
     case E_ONE:
-        return 2;
+        return 5;
     case E_TWO:
-        return 3;
+        return 10;
     case E_THREE:
-        return 4;
+        return 15;
     default:
-        return 2;
+        return 5;
     }
 }
