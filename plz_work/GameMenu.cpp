@@ -49,7 +49,7 @@ void GameMenu::Logic()
 
 	if (ButtonMenu.HandleClickId(mx, my) == "Stage" 
 		&& INPUT.isOneClick(GameInput_M::MouseValue::Left)) {
-		STATE.ChangeState(GameState_M::E_InGameState::Stage);
+		STATE.ChangeState(GameState_M::E_InGameState::InGame);
 	}
 	if (ButtonMenu.HandleClickId(mx, my) == "DeckBuild"
 		&& INPUT.isOneClick(GameInput_M::MouseValue::Left)) {

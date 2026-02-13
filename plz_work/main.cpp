@@ -168,6 +168,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		// 5. 메모리 해제
 		DeleteObject(SelectObject(memDC, hOldBitmap));
 		DeleteDC(memDC);
+
 		DrawSimpleHUD(hdc);
 
 		EndPaint(hWnd, &ps);

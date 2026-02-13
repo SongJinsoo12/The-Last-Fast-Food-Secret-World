@@ -4,7 +4,6 @@
 #include "ImageLoad.h"
 #include "ImageManager.h"
 #include "CardTableManager.h"
-#include "Boss.h"
 #include "Player.h"
 #include "InputGame.h"
 #include "Mob.h"
@@ -313,6 +312,7 @@ void CardManager::CardDraw(int drawNum)
 	{
 		cout << m_Hand[i]->GetUid() << " ";
 	}
+	m_isShiny = true;
 	cout << " ]\n";
 }
 
@@ -860,16 +860,19 @@ void CardManager::CardAct(CardManager& player, CardManager& opponent)
 		// 		std::cout << "[Flow] ApplyAttackTo(opponent, card)\n";
 		ApplyAttackTo(opponent, sel);
 		// 		cout << "공격 카드 사용!! " << sel->GetAtk() << "데미지!!\n";
+		m_isSkill = true;
 		break;
 	case E_Deffense:
 		// 		std::cout << "[Flow] ApplyDefense(card)\n";
 		ApplyDefense(sel);
 		// 		cout << "방어 카드 사용!!" << sel->GetDef() << "방어!!\n";
+		m_isDef = true;
 		break;
 	case E_Magic:
 		// 		std::cout << "[Flow] ApplySupport(card, opponent)\n";
 		ApplySupport(sel, opponent);
 		// 		cout << "보조 카드 사용!!\n";
+		m_isRip = true;
 		break;
 	}
 
@@ -880,10 +883,9 @@ void CardManager::CardAct(CardManager& player, CardManager& opponent)
 		<< " shield=" << opponent.ActorShield()
 		<< "\n";
 
-	m_isShiny = true;
-	m_isRip = true;
-	m_isSkill = true;
-	m_isDef = true;
+	
+	
+	
 
 	//이미지 안보이기
 	RENDER.ImageVisible(to_string(m_Hand[m_HandSelection]->GetUid()), false);

@@ -54,9 +54,6 @@
     <ClCompile Include="AtkCard.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Boss.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Button.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -194,9 +191,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Boss.h">
-      <Filter>소스 파일</Filter>
-    </ClInclude>
     <ClInclude Include="External\SoLoud\src\audiosource\wav\dr_flac.h">
       <Filter>SoLoud</Filter>
     </ClInclude>

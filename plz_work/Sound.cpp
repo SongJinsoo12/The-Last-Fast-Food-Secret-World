@@ -28,7 +28,7 @@ void Sound::InitSound()
 
 	//소리 파일 업로드
 	//m_sfxInfo.load()
-	m_bgm.load("sounds/mega2.wav");
+	m_bgm.load("sounds/Hunt_in_Motion.wav");
 	m_bgm.setLooping(true); //반복재생 가능 
 	m_bgm.setVolume(0.5f); //볼륨 조절
 }

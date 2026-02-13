@@ -130,7 +130,6 @@
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AtkCard.cpp" />
-    <ClCompile Include="Boss.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="ButtonManager.cpp" />
     <ClCompile Include="Card.cpp" />
@@ -192,7 +191,6 @@
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AtkCard.h" />
     <ClInclude Include="BattleTypes.h" />
-    <ClInclude Include="Boss.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="ButtonManager.h" />
     <ClInclude Include="Card.h" />

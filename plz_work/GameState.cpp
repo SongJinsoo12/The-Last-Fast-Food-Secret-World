@@ -222,19 +222,19 @@ namespace GameState_M {
 
 		//�ִϸ��̼� �۾�
 		m_shinyEffect.SetId("Card_Shiny_");
-		m_shinyEffect.SetImageSize(200, 200, 100, 128);
+		m_shinyEffect.SetImageSize(1165, 552, 100, 128);
 		m_shinyEffect.SetIndex(10);
 
 		m_ripEffect.SetId("Card_Rip_");
-		m_ripEffect.SetImageSize(300, 200, 100, 128);
+		m_ripEffect.SetImageSize(590, 365, 100, 128);
 		m_ripEffect.SetIndex(15);
 
 		m_skillEffect.SetId("Card_Skill_");
-		m_skillEffect.SetImageSize(430, 200, 128, 128);
+		m_skillEffect.SetImageSize(592, 210, 128, 128);
 		m_skillEffect.SetIndex(27);
 
 		m_defEffect.SetId("Def_Effect_");
-		m_defEffect.SetImageSize(600, 200, 192, 192);
+		m_defEffect.SetImageSize(538, 340, 192, 192);
 		m_defEffect.SetIndex(20);
 
 		//bgm
