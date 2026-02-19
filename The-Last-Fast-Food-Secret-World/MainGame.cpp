@@ -10,6 +10,12 @@ MainGame::MainGame() {
 	CardBox = 0;
 }
 
+void MainGame::AddCardBox(int v) {
+	CardBox += v;
+}
+
+
+
 void MainGame::AddGold(int v) {
 	Coin += v;
 }
@@ -35,4 +41,19 @@ int MainGame::GetLargeStage() {
 int MainGame::GetSmallStage() {
 	return SmallStage;
 
+}
+
+int MainGame::GetCardBox() {
+	return CardBox;
+
+}
+
+int MainGame::GetCoin() {
+	return Coin;
+}
+
+
+void MainGame::AddStage(int Large, int Small) {
+	LargeStage = Large; 
+	SmallStage = Small;
 }

@@ -36,6 +36,16 @@ public:
 	bool RemoveGold(int v);
 	int GetLargeStage();
 	int GetSmallStage();
+	//
+	int GetCoin();
+	//
+	//
+	int GetCardBox();
+	//
+	void AddStage(int Large, int Small);
+	void SetSmallStage(int v);
+	void SetLargeStage(int v);
+	void AddCardBox(int v);
 };
 
 extern MainGame g_MainGame;

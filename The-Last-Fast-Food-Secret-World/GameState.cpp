@@ -59,7 +59,7 @@ namespace GameState_M {
 			//테스트용 스테이지 상태 조정
 		{
 			g_MainGame.GameState = E_STAGE_CLEAR;
-			g_StageResult.StageState = E_STAGE_NORMAL;
+			g_StageResult.StageState = E_STAGE_BOSS;
 			STATE.ChangeState(GameState_M::E_InGameState::InGameResult);
 		}
 		}
@@ -243,13 +243,15 @@ namespace GameState_M {
 		cout << "현 스테이지 상태" << g_StageResult.StageState << endl;
 		cout << "스테이지 넘버" << g_MainGame.GetLargeStage() << "-" << g_MainGame.GetSmallStage() << endl;
 		cout << "게임상태" << g_MainGame.GameState << endl;
+		cout << "골드 확인:" << g_MainGame.GetCoin() << endl;
+		cout << "카드 박스 확인:" << g_MainGame.GetCardBox() << endl;
 	}
 
 	void InGameResult::Update(HDC p_hdc, HWND p_hwnd)
 	{
 		if (INPUT.isOneClick(GameInput_M::MouseValue::Left))
 			INPUT.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
-		if (g_StageResult.m_StageClearBtn.HandleClickId(g_MainGame.mx, g_MainGame.my) == "StageClearBtn_1")
+		if (g_StageResult.m_StageClearBtn.HandleClickId(g_MainGame.mx, g_MainGame.my) == "InGameResult_UI_StageClearBtn1")
 		{
 			cout << "버튼 클릭됨" << endl;
 			
