@@ -277,9 +277,31 @@ namespace GameState_M {
 		}
 	}
 
+	void InGame::DrawSimpleHUD(HDC hdc, const InGame& inGameInstance)
+	{
+		SetBkMode(hdc, TRANSPARENT);
+		SetTextColor(hdc, RGB(255, 255, 255));
+
+		const int pHP = inGameInstance.g_playerActor.GetHP();
+		const int pMax = inGameInstance.g_playerActor.GetMaxHP();
+		const int pSh = inGameInstance.g_playerActor.GetShield();
+
+		const int eHP = inGameInstance.g_enemyActor.GetHP();
+		const int eMax = inGameInstance.g_enemyActor.GetMaxHP();
+		const int eSh = inGameInstance.g_enemyActor.GetShield();
+
+		wchar_t line1[128], line2[128];
+		wsprintfW(line1, L"PLAYER  HP %d/%d   SH %d", pHP, pMax, pSh);
+		wsprintfW(line2, L"ENEMY   HP %d/%d   SH %d", eHP, eMax, eSh);
+
+		TextOutW(hdc, 20, 20, line1, lstrlenW(line1));
+		TextOutW(hdc, 20, 45, line2, lstrlenW(line2));
+	}
+
 
 	void InGame::Update(HDC p_hdc, HWND p_hwnd)
 	{
+		DrawSimpleHUD(p_hdc, *this);
 		// ✅ 현재 턴 주인만 타임리밋(턴 전환)을 돌린다
 		if (m_player.IsMyTurn())
 			m_player.TimeLimit(m_player, m_boss);

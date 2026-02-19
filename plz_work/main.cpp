@@ -83,31 +83,31 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 // HUD: 화면 좌측 상단에 HP/Shield만 2줄 표시
 // ------------------------------------------------------------
 
-Player g_playerActor;
-Mob    g_enemyActor;
-CardManager g_player;
-CardManager g_enemy;
+//Player g_playerActor;
+//Mob    g_enemyActor;
+//CardManager g_player;
+//CardManager g_enemy;
 
-static void DrawSimpleHUD(HDC hdc)
-{
-	SetBkMode(hdc, TRANSPARENT);
-	SetTextColor(hdc, RGB(255, 255, 255));
-
-	const int pHP = g_playerActor.GetHP();
-	const int pMax = g_playerActor.GetMaxHP();
-	const int pSh = g_playerActor.GetShield();
-
-	const int eHP = g_enemyActor.GetHP();
-	const int eMax = g_enemyActor.GetMaxHP();
-	const int eSh = g_enemyActor.GetShield();
-
-	wchar_t line1[128], line2[128];
-	wsprintfW(line1, L"PLAYER  HP %d/%d   SH %d", pHP, pMax, pSh);
-	wsprintfW(line2, L"ENEMY   HP %d/%d   SH %d", eHP, eMax, eSh);
-
-	TextOutW(hdc, 20, 20, line1, lstrlenW(line1));
-	TextOutW(hdc, 20, 45, line2, lstrlenW(line2));
-}
+//static void DrawSimpleHUD(HDC hdc)
+//{
+//	SetBkMode(hdc, TRANSPARENT);
+//	SetTextColor(hdc, RGB(255, 255, 255));
+//
+//	const int pHP = g_playerActor.GetHP();
+//	const int pMax = g_playerActor.GetMaxHP();
+//	const int pSh = g_playerActor.GetShield();
+//
+//	const int eHP = g_enemyActor.GetHP();
+//	const int eMax = g_enemyActor.GetMaxHP();
+//	const int eSh = g_enemyActor.GetShield();
+//
+//	wchar_t line1[128], line2[128];
+//	wsprintfW(line1, L"PLAYER  HP %d/%d   SH %d", pHP, pMax, pSh);
+//	wsprintfW(line2, L"ENEMY   HP %d/%d   SH %d", eHP, eMax, eSh);
+//
+//	TextOutW(hdc, 20, 20, line1, lstrlenW(line1));
+//	TextOutW(hdc, 20, 45, line2, lstrlenW(line2));
+//}
 
 //#define BSIZE 40
 //
@@ -139,8 +139,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		GameState_M::Context::GetInstance().ChangeState(GameState_M::E_InGameState::Lobby);
 
 		// Actor(HP/Shield) 연결: 카드 효과가 실제 HP/Shield에 적용되게 합니다.
-		g_player.BindActors(&g_playerActor, &g_enemyActor);
-		g_enemy.BindActors(nullptr, &g_enemyActor);
+		/*g_player.BindActors(&g_playerActor, &g_enemyActor);
+		g_enemy.BindActors(nullptr, &g_enemyActor);*/
 
 		//SetTimer(hWnd, 1, 500, NULL);
 		break;
@@ -169,7 +169,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		DeleteObject(SelectObject(memDC, hOldBitmap));
 		DeleteDC(memDC);
 
-		DrawSimpleHUD(hdc);
+		/*DrawSimpleHUD(hdc);*/
 
 		EndPaint(hWnd, &ps);
 	}

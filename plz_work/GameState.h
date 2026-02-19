@@ -5,10 +5,13 @@
 #include "Singleton.h"
 #include "CardManager.h"
 #include "Timer.h"
+#include "Player.h"
+#include "Mob.h"
 
 #define STATE GameState_M::Context::GetInstance()
 
 using namespace std;
+
 
 namespace GameState_M {
 	enum class E_InGameState
@@ -103,10 +106,16 @@ namespace GameState_M {
 		void Exit() override;
 
 		void PlayAnimation(Timer& p_timer, Animation& p_effect, bool* p_isPlay);
+
+		static void DrawSimpleHUD(HDC hdc, const InGame& inGameInstance);
 	private:
 		CardManager m_player, m_boss;
 		Timer m_shiny, m_rip, m_skill, m_def;
 		Animation m_shinyEffect, m_ripEffect, m_skillEffect, m_defEffect;
+		Player g_playerActor;
+		Mob    g_enemyActor;
+		CardManager g_player;
+		CardManager g_enemy;
 	};
 
 	class InGameResult :public State {
