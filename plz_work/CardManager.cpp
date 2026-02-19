@@ -738,8 +738,38 @@ void CardManager::TryEndTurn(CardManager& opponent, HWND hWnd)
 
 void CardManager::OpponentAct(CardManager& player)
 {
+	CardDraw(1);
 	BossCardAct(player);
+
+	switch (m_Hand[m_HandSelection]->GetType())
+	{
+	case E_Attack:
+		// 		std::cout << "[Flow] ApplyAttackTo(opponent, card)\n";
+		ApplyAttackTo(player, m_Hand[m_HandSelection]);
+		// 		cout << "공격 카드 사용!! " << sel->GetAtk() << "데미지!!\n";
+		m_isSkill = true;
+		break;
+	case E_Deffense:
+		// 		std::cout << "[Flow] ApplyDefense(card)\n";
+		ApplyDefense(m_Hand[m_HandSelection]);
+		// 		cout << "방어 카드 사용!!" << sel->GetDef() << "방어!!\n";
+		m_isDef = true;
+		break;
+	case E_Magic:
+		// 		std::cout << "[Flow] ApplySupport(card, opponent)\n";
+		ApplySupport(m_Hand[m_HandSelection], player);
+		// 		cout << "보조 카드 사용!!\n";
+		m_isRip = true;
+		break;
+	}
+
+	m_Hand.erase(m_Hand.begin() + m_HandSelection);
+	m_HandCount--;
+
+	player.m_IsMyTurn = !player.m_IsMyTurn;
+	m_IsMyTurn = !m_IsMyTurn;
 }
+
 
 
 
@@ -920,7 +950,11 @@ void CardManager::HandSelect(CardManager& player, CardManager& opponent)
 	else if (GameInput_M::Input::GetInstance().isKeyboard((int)GameInput_M::KeyboardValue::ArrowUp)) m_IsSelect = true;
 	else if (GameInput_M::Input::GetInstance().isKeyboard((int)GameInput_M::KeyboardValue::ArrowDown)) m_IsSelect = false;
 	else if (GameInput_M::Input::GetInstance().isKeyboard((int)GameInput_M::KeyboardValue::Enter)
-		&& m_IsMyTurn) CardAct(player, opponent);
+		&& m_IsMyTurn)
+	{
+		CardAct(player, opponent);
+		opponent.OpponentAct(player);
+	}
 }
 
 //시작 턴 정하기
@@ -938,6 +972,7 @@ void CardManager::StartTurn(CardManager& player, CardManager& opponent)
 	else
 	{
 		opponent.m_IsMyTurn = !opponent.m_IsMyTurn;
+		opponent.OpponentAct(player);
 		//		cout << "상대방의 턴\n";
 				//opponent.OpponentAct(player, opponent, hWnd);
 				//opponent.BossCardAct(player);
@@ -956,7 +991,7 @@ void CardManager::TimeLimit(CardManager& player, CardManager& opponent)
 	}
 
 	m_timer.UpdateTimer();
-	if (!m_timer.CheckTimer(5))
+	if (!m_timer.CheckTimer(10))
 		return;
 
 	// ✅ 여기서 먼저 끊어줘야 같은 프레임/다음 프레임 연속 진입을 막음
@@ -981,109 +1016,127 @@ void CardManager::TimeLimit(CardManager& player, CardManager& opponent)
 		opponent.CardDraw(1);
 		if (opponent.m_pPlayer)        opponent.m_pPlayer->BeginTurn(turnCounter);
 		else if (opponent.m_pEnemyMob) opponent.m_pEnemyMob->BeginTurn(turnCounter);
-		// opponent.BossCardAct(player); // 원할 때만
+		opponent.OpponentAct(player); // 원할 때만
 	}
 }
 
 
-//턴 시간 제한
-//void CardManager::TimeLimit(WPARAM wParam, HWND hWnd, CardManager& player, CardManager& opponent)
-//{
-//	switch (wParam)
-//	{
-//	case TURNTIME:
-//		//턴 엔드
-//		player.m_IsMyTurn = !player.m_IsMyTurn;
-//		opponent.m_IsMyTurn = !opponent.m_IsMyTurn;
-//
-//		//자신의 차례면 드로우
-//		if (player.m_IsMyTurn)
-//		{
-//			CardDraw(1);
-//			cout << "자신의 턴\n";
-//		}
-//		else
-//		{
-//			cout << "상대방의 턴\n";
-//			//opponent.OpponentAct(player, opponent, hWnd);
-//		}
-//
-//		player.DrawPlayerHand();
-//		opponent.DrawOppHand();
-//		break;
-//	default:
-//		break;
-//	}
-//}
 
-//보스 / 몬스터 행동
-//void CardManager::OpponentAct(Player& p_player, Boss& p_boss, CardManager& player, CardManager& opponent, HWND hWnd)
+//void CardManager::BossCardAct(CardManager& player)
 //{
-//	//드로우 
-//	CardDraw(1);
+//	// ✅ 보스 턴이 아닐 때는 행동 금지 (중복 실행/턴 꼬임 방지)
+//	if (!m_IsMyTurn) return;
 //
-//	//임시 정보 표출
-//	string info;
-//	for (int i = 0; i < m_HandCount; i++)
+//	// 패에 카드가 없으면 리턴
+//	if (m_HandCount <= 0) return;
+//
+//	// 선택 인덱스 보정 (보스는 선택 UI가 없어서 -1이면 0으로)
+//	if (m_HandSelection < 0) m_HandSelection = 0;
+//	if (m_HandSelection >= m_HandCount) m_HandSelection = 0;
+//
+//	// (기존 효과 처리 로직이 따로 없어서, 지금은 '카드 1장 소비'만 유지)
+//	switch (m_Hand[m_HandSelection]->GetType())
 //	{
-//		info += (to_string(i) + "번째 카드 정보: ");
-//		info += (to_string(m_Hand[i]->GetStar() + 1) + "성. 공격력 " + to_string(m_Hand[i]->GetAtk())
-//			+ ". 방어력 " + to_string(m_Hand[i]->GetDef()) + ".");
-//		info += m_Hand[i]->GetInfo() + "\n";
-//	}
-//	cout << info << endl;
-//	
-//	//공격 카드로 플레이어를 죽일 수 있다면 1순위 액트
-//	for (int i = 0; i < m_HandCount; i++)
-//	{
-//		if (m_Hand[i]->GetType() == E_Attack)
-//		{
-//			if (m_Hand[i]->GetAtk() >= p_player.GetHP())
-//			{
-//				m_HandSelection = i;
-//				break;
-//			}
-//		}
+//	case E_Attack:
+//		// 공격 로직은 ApplyAttack이 아니라면 별도 구현 필요
+//		break;
+//	case E_Deffense:
+//		break;
+//	case E_Magic:
+//		break;
 //	}
 //
-//	
-//	
+//	// 이미지 안보이기
+//	RENDER.ImageVisible(to_string(m_Hand[m_HandSelection]->GetUid() + BOSSUID), false);
 //
+//	m_Hand.erase(m_Hand.begin() + m_HandSelection);
+//	m_HandCount--;
 //
-//	BossCardAct(player, hWnd);
+//	// 사용한 카드가 패의 가장 오른쪽 카드이면 왼쪽 카드 선택
+//	if (m_HandSelection >= m_HandCount && m_HandSelection != 0)
+//		m_HandSelection--;
 //}
 
 void CardManager::BossCardAct(CardManager& player)
 {
-	// ✅ 보스 턴이 아닐 때는 행동 금지 (중복 실행/턴 꼬임 방지)
+	// 보스 턴이 아닐 때는 행동 금지 (중복 실행/턴 꼬임 방지)
 	if (!m_IsMyTurn) return;
 
-	// 패에 카드가 없으면 리턴
-	if (m_HandCount <= 0) return;
+	// 패가 없으면 행동할 수 없음
+	if (m_HandCount <= 0 || m_Hand.empty()) return;
 
-	// 선택 인덱스 보정 (보스는 선택 UI가 없어서 -1이면 0으로)
-	if (m_HandSelection < 0) m_HandSelection = 0;
-	if (m_HandSelection >= m_HandCount) m_HandSelection = 0;
+	int bestCardIndex = 0;
+	float maxScore = -99999.0f;
 
-	// (기존 효과 처리 로직이 따로 없어서, 지금은 '카드 1장 소비'만 유지)
-	switch (m_Hand[m_HandSelection]->GetType())
+	// 현재 보스와 플레이어의 체력 가져오기
+	int bossHP = ActorHP();
+	int bossMaxHP = ActorMaxHP();
+	int playerHP = player.ActorHP();
+
+	// 손에 있는 카드들을 하나씩 평가해서 점수를 매깁니다.
+	for (int i = 0; i < m_Hand.size(); i++)
 	{
-	case E_Attack:
-		// 공격 로직은 ApplyAttack이 아니라면 별도 구현 필요
-		break;
-	case E_Deffense:
-		break;
-	case E_Magic:
-		break;
+		GameCard* card = m_Hand[i];
+		float currentScore = 0.0f;
+
+		// 1. 공격 카드 평가
+		if (card->GetType() == E_Attack)
+		{
+			currentScore += (float)card->GetAtk() * 10.0f;
+
+			// [킬각] 이 공격으로 플레이어를 죽일 수 있다면 무조건 사용!
+			if (card->GetAtk() >= playerHP) {
+				currentScore += 10000.0f;
+			}
+
+			// 내 체력이 넉넉할 때는 공격을 더 선호함
+			if (bossHP >= bossMaxHP * 0.7f) {
+				currentScore += 50.0f;
+			}
+		}
+		// 2. 방어 카드 평가
+		else if (card->GetType() == E_Deffense)
+		{
+			currentScore += (float)card->GetDef() * 8.0f;
+
+			// [위기 관리] 내 체력이 30% 이하라면 방어/생존 우선
+			if (bossHP <= bossMaxHP * 0.3f) {
+				currentScore *= 2.0f; // 점수 2배
+				currentScore += 200.0f;
+			}
+			// 체력이 많은데 방어 카드를 쓰는 낭비 방지
+			else if (bossHP >= bossMaxHP * 0.8f) {
+				currentScore *= 0.1f; // 점수 10분의 1로 깎음
+			}
+		}
+		// 3. 마법/특수 카드 평가
+		else if (card->GetType() == E_Magic)
+		{
+			currentScore += 60.0f; // 기본 점수
+			int uid = card->GetUid();
+
+			// 예시: CSV 기준 216, 217번이 회복 관련 카드일 경우
+			if (uid == 216 || uid == 217) {
+				if (bossHP <= bossMaxHP * 0.5f) {
+					currentScore += 300.0f; // 체력 반 이하면 회복 강력 추천
+				}
+				else {
+					currentScore -= 100.0f; // 체력 많으면 굳이 안 씀
+				}
+			}
+		}
+
+		// 약간의 랜덤성(0~10점)을 부여해서 매번 똑같은 행동만 하는 것을 방지
+		currentScore += (rand() % 11);
+
+		// 최고 점수 카드 갱신
+		if (currentScore > maxScore) {
+			maxScore = currentScore;
+			bestCardIndex = i;
+		}
 	}
 
-	// 이미지 안보이기
-	RENDER.ImageVisible(to_string(m_Hand[m_HandSelection]->GetUid() + BOSSUID), false);
+	// AI의 최종 결정: 점수가 가장 높은 카드를 선택
+	m_HandSelection = bestCardIndex;
 
-	m_Hand.erase(m_Hand.begin() + m_HandSelection);
-	m_HandCount--;
-
-	// 사용한 카드가 패의 가장 오른쪽 카드이면 왼쪽 카드 선택
-	if (m_HandSelection >= m_HandCount && m_HandSelection != 0)
-		m_HandSelection--;
 }

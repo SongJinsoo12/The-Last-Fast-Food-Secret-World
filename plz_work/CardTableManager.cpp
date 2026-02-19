@@ -79,6 +79,7 @@ void CardTableManager::Init()
 		newCard->SetInfo(info);
 		m_AllCardDataVec[uid] = newCard;
 
+		//카드 이미지 로드
 		CardImageLoad(uid, StrToAit(aitStr), StrToType(typeStr), StrToStar(starStr));
 		CardImageLoad(uid + BOSSUID, StrToAit(aitStr), StrToType(typeStr), StrToStar(starStr));
 	}
