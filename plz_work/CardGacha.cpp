@@ -96,10 +96,10 @@ void CardGacha::EnterGacha()
 	cookie_num = 0;
 	RENDER.SetImage(L"gacha_bg.png", "gacha_bg", Rect(0, 0, 864, 576)
 		, Rect(0, 0, 1280, 720), true, GameImage_M::LayerType::Background);
-	RENDER.SetImage(L"rect_button.png", "back", Rect(0, 0, 100, 110)
+	RENDER.SetImage(L"freebuttons2.png", "back", Rect(0, 32, 16, 16)
 		, Rect(0, 0, 0, 0), false, GameImage_M::LayerType::UI);
 	//돌아가는 버튼위치 고민중
-	m_GachaBtnM.AddButton(make_shared<RectButton>("back", RECT{ 50, 600, 250, 660 }));
+	m_GachaBtnM.AddButton(make_shared<RectButton>("back", RECT{ 50, 600, 110, 660 }));
 }
 
 void CardGacha::DrawGacha(HDC p_hdc, int p_mx, int p_my, WCHAR p_text[])

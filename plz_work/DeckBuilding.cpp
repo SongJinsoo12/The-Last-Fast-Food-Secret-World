@@ -411,9 +411,9 @@ void DeckBuilding::EnterDeckBuild()
 	cout << "maxpage : " << max_page << endl;
 	DrawOnly_pre = inven_list[0];
 
-	RENDER.SetImage(L"rect_button.png", "rb1"
-		, Rect(0, 0, 100, 101), Rect(0, 0, 0, 0), false, GameImage_M::LayerType::UI);
-	btnManager.AddButton(make_shared<RectButton>("rb1", RECT{ 10, 10, 100, 60 }));
+	RENDER.SetImage(L"freebuttons2.png", "back"
+		, Rect(32, 32, 16, 16), Rect(0, 0, 0, 0), false, GameImage_M::LayerType::UI);
+	btnManager.AddButton(make_shared<RectButton>("back", RECT{ 10, 10, 100, 60 }));
 
 	RENDER.SetImage(L"Deck_bg1.png", "Deck_bg", Rect(0, 0, 1536, 1024)
 		, Rect(0, 0, 1280, 720), true, GameImage_M::LayerType::Background);
@@ -424,7 +424,7 @@ void DeckBuilding::ExitDeckBuild()
 	for (int i = 0; i < inven_list[filter].size(); i++) RENDER.ImageVisible(to_string(inven_list[filter][i].GetUid()), false);
 	for (int i = 0; i < myDeck.size(); i++) RENDER.ImageVisible(to_string(myDeck[i].GetUid()), false);
 	RENDER.RemoveIDIamage("s_card");
-	RENDER.RemoveIDIamage("rb1");
+	RENDER.RemoveIDIamage("back");
 	RENDER.RemoveIDIamage("left");
 	RENDER.RemoveIDIamage("right");
 	RENDER.RemoveIDIamage("filter");
@@ -475,7 +475,7 @@ void DeckBuilding::DrawDeckBuild(HDC p_hdc, WCHAR p_text[])
 	DrawInventory(p_hdc, p_text, inven_list[filter]); //필터에 따른 인벤 출력
 	DrawMyDeck(p_hdc, p_text);	//마이덱
 
-	RENDER.ImageVisible("rb1", true);
+	RENDER.ImageVisible("back", true);
 	RENDER.RemoveIDIamage("s_card");
 	if (SelectedCard)
 	{
@@ -488,16 +488,16 @@ void DeckBuilding::DrawDeckBuild(HDC p_hdc, WCHAR p_text[])
 			, true, GameImage_M::LayerType::Background);
 	}
 
-	RENDER.SetImage(L"rect_button.png", "left"
-		, Rect(0, 0, 100, 101), Rect(0, 0, 0, 0), true, GameImage_M::LayerType::UI);
-	btnManager.AddButton(make_shared<RectButton>("left", RECT{ 920, 620, 1030, 660 }));//인벤좌로이동
+	RENDER.SetImage(L"freebuttons2.png", "left"
+		, Rect(32, 32, 16, 16), Rect(0, 0, 0, 0), true, GameImage_M::LayerType::UI);
+	btnManager.AddButton(make_shared<RectButton>("left", RECT{ 920, 620, 1030, 680 }));//인벤좌로이동
 
-	RENDER.SetImage(L"rect_button.png", "right"
-		, Rect(0, 0, 100, 101), Rect(0, 0, 0, 0), true, GameImage_M::LayerType::UI);
-	btnManager.AddButton(make_shared<RectButton>("right", RECT{ 1140, 620, 1250, 660 }));//인벤우로이동
+	RENDER.SetImage(L"freebuttons2.png", "right"
+		, Rect(0, 16, 16, 16), Rect(0, 0, 0, 0), true, GameImage_M::LayerType::UI);
+	btnManager.AddButton(make_shared<RectButton>("right", RECT{ 1140, 620, 1250, 680 }));//인벤우로이동
 
-	wsprintf(p_text, TEXT("%d / %d"), i_page + 1, max_page + 1);
-	TextOut(p_hdc, 1105, 640, p_text, lstrlen(p_text));
+	//wsprintf(p_text, TEXT("%d / %d"), i_page + 1, max_page + 1);
+	//TextOut(p_hdc, 1055, 640, p_text, lstrlen(p_text));
 
 	//카드설명화면--
 	MoveToEx(p_hdc, 350, 0, NULL);
@@ -507,16 +507,12 @@ void DeckBuilding::DrawDeckBuild(HDC p_hdc, WCHAR p_text[])
 	LineTo(p_hdc, 900, 720);
 	//--인벤토리
 
-	RENDER.SetImage(L"rect_button.png", "filter"
-		, Rect(0, 0, 100, 101), Rect(0, 0, 0, 0), true, GameImage_M::LayerType::UI);
-	btnManager.AddButton(make_shared<RectButton>("filter", RECT{ 915, 20, 1065, 70 }));
-	wsprintf(p_text, TEXT("%d"), filter);
-	TextOut(p_hdc, 925, 40, p_text, lstrlen(p_text));
+	RENDER.SetImage(L"freebuttons2.png", "filter"
+		, Rect(32, 16, 16, 16), Rect(0, 0, 0, 0), true, GameImage_M::LayerType::UI);
+	btnManager.AddButton(make_shared<RectButton>("filter", RECT{ 960, 20, 1020, 80 }));
 
-	RENDER.SetImage(L"rect_button.png", "help"
-		, Rect(0, 0, 100, 101), Rect(0, 0, 0, 0), true, GameImage_M::LayerType::UI);
-	btnManager.AddButton(make_shared<RectButton>("help", RECT{ 915 + 180, 20, 1065 + 180, 70 }));
-	wsprintf(p_text, TEXT("?"));
-	TextOut(p_hdc, 960 + 180, 40, p_text, lstrlen(p_text));
+	RENDER.SetImage(L"freebuttons2.png", "help"
+		, Rect(0, 48, 16, 16), Rect(0, 0, 0, 0), true, GameImage_M::LayerType::UI);
+	btnManager.AddButton(make_shared<RectButton>("help", RECT{ 960 + 180, 20, 1020 + 180, 80 }));
 
 }

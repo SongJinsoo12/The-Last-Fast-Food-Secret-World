@@ -93,7 +93,7 @@ void Shop::ExitShop()
 	RENDER.RemoveIDIamage("bg");
 	RENDER.RemoveIDIamage("shelf1");
 	RENDER.RemoveIDIamage("shelf2");
-	RENDER.RemoveIDIamage("employee");
+	RENDER.RemoveIDIamage("store");
 	RENDER.RemoveIDIamage("textbox");
 	RENDER.RemoveIDIamage("one");
 	RENDER.RemoveIDIamage("ten");
@@ -106,6 +106,7 @@ void Shop::ExitShop()
 
 void Shop::DrawShop(HDC p_hdc, WCHAR p_text[])
 {
+	SetBkMode(p_hdc, TRANSPARENT);
 	if (this->isSelect)
 	{
 		for (int i = 0; i < 4; i++)
@@ -118,9 +119,9 @@ void Shop::DrawShop(HDC p_hdc, WCHAR p_text[])
 			TextOut(p_hdc, 100 + i * 100, 625, p_text, lstrlen(p_text));
 		}
 	}
-	RENDER.SetImage(L"rect_button.png", "back", Rect(0, 0, 100, 101)
+	RENDER.SetImage(L"freebuttons2.png", "back", Rect(32, 32, 16, 16)
 		, Rect(0, 0, 0, 0), true, GameImage_M::LayerType::UI);
-	m_ShopBtnM.AddButton(make_shared<RectButton>("back", RECT{ 10, 50, 60, 70 }));
+	m_ShopBtnM.AddButton(make_shared<RectButton>("back", RECT{ 10, 50, 100, 150 }));
 
 	m_ShopBtnM.DrawAll();
 }
@@ -156,9 +157,9 @@ bool Shop::DrawEnterShop()
 			}
 
 			//상점 주인 / 상호작용 추가하기
-			RENDER.SetImage(L"employee.png", "employee"
-				, Rect(0, 0, 250, 235), Rect(0, 0, 0, 0), true, GameImage_M::LayerType::UI);
-			m_ShopBtnM.AddButton(make_shared<CircleButton>("employee", 280, 320, 180));
+			RENDER.SetImage(L"store.png", "store"
+				, Rect(0, 0, 382, 350), Rect(0, 0, 0, 0), true, GameImage_M::LayerType::Background);
+			m_ShopBtnM.AddButton(make_shared<CircleButton>("store", 280, 320, 180));
 			return true;
 		}
 	}

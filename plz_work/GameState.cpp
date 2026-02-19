@@ -99,10 +99,10 @@ namespace GameState_M {
 		if (INPUT.isClick() == (int)GameInput_M::MouseValue::Left)
 		{
 			INPUT.GetMousePos(&g_MainGame.mx, &g_MainGame.my);
-			if (btnManager.HandleClickId(g_MainGame.mx, g_MainGame.my) == "rb1")
+			if (btnManager.HandleClickId(g_MainGame.mx, g_MainGame.my) == "back")
 			{
 				cout << "버튼클릭" << endl;
-				STATE.ChangeState(GameState_M::E_InGameState::Shop);
+				STATE.ChangeState(GameState_M::E_InGameState::Menu);
 			}
 			g_DeckBuild.DeckBuild(g_MainGame.mx, g_MainGame.my, 'L');
 		}
@@ -162,10 +162,6 @@ namespace GameState_M {
 				}
 				g_Shop.DrawGachaButton(p_hdc, g_MainGame.mx, g_MainGame.my, text);
 			}
-
-			//임시 - 우클릭 시 덱빌딩화면 전환
-			if (GameInput_M::Input::GetInstance().isClick() == (int)GameInput_M::MouseValue::Right)
-				STATE.ChangeState(GameState_M::E_InGameState::DeckBuild);
 		}
 	}
 
